@@ -61,13 +61,13 @@
                     <i class="fa-solid fa-cube" style="color: #38bdf8; font-size: 1rem;"></i>
                     <span>النماذج</span>
                 </button>
+                <button class="sidebar-btn-util" onclick="app.openTermuxHelperModal()" title="أوامر واختصارات Termux">
+                    <i class="fa-solid fa-terminal" style="color: #34d399; font-size: 1rem;"></i>
+                    <span>Termux</span>
+                </button>
                 <button class="sidebar-btn-util" onclick="app.openDiagnosticsModal()" title="فحص الأنظمة وتشخيص الأخطاء">
                     <i class="fa-solid fa-stethoscope" style="color: #c084fc; font-size: 1rem;"></i>
                     <span>الفحص</span>
-                </button>
-                <button class="sidebar-btn-util" onclick="app.exportChat('markdown')" title="تصدير المحادثة كملف Markdown">
-                    <i class="fa-solid fa-download" style="color: #94a3b8; font-size: 1rem;"></i>
-                    <span>تصدير</span>
                 </button>
                 <button class="sidebar-btn-util" onclick="app.openSettingsModal()" title="الإعدادات والمفاتيح">
                     <i class="fa-solid fa-gear" style="color: #8ab4f8; font-size: 1rem;"></i>
@@ -77,7 +77,7 @@
         </div>
     </aside>
 
-    <!-- Main Chat Viewport -->
+    <!-- Main Chat & Studio Viewport -->
     <main class="chat-main-viewport">
         <!-- Header -->
         <header class="gemini-header">
@@ -93,6 +93,12 @@
                     <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: var(--text-muted);"></i>
                 </div>
 
+                <!-- Engineering Persona Preset Selector -->
+                <div class="persona-selector-pill" id="persona-pill" onclick="app.cyclePersona()" title="تبديل تخصص المهندس (Security / Perf / Tests / Architect)">
+                    <i class="fa-solid fa-shield-halved" id="persona-icon"></i>
+                    <span id="persona-label">مطور شامل</span>
+                </div>
+
                 <!-- Active GitHub Project Pill (Desktop/Tablet) -->
                 <div class="repo-selector-pill" id="header-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتبديل مشروع GitHub">
                     <i class="fa-brands fa-github"></i>
@@ -101,6 +107,16 @@
             </div>
 
             <div class="gemini-header-right">
+                <!-- Toggle Split-Pane Code Studio -->
+                <button class="icon-btn" id="btn-toggle-studio" title="فتح استوديو الأكواد المنقسم (Split Code Studio)" onclick="app.toggleCodeStudio()">
+                    <i class="fa-solid fa-columns"></i>
+                </button>
+
+                <!-- Dual Model Arena -->
+                <button class="icon-btn" title="حلبة مقارنة نموذجين جنباً إلى جنب (Dual Model Arena)" onclick="app.openDualModelArena()">
+                    <i class="fa-solid fa-bolt text-warning" style="color: #fbbf24;"></i>
+                </button>
+
                 <!-- Direct Export Full Project as ZIP -->
                 <button class="icon-btn" title="تحميل وتصدير المشروع كاملاً كملف ZIP" onclick="app.downloadProjectAsZip()">
                     <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
@@ -110,7 +126,7 @@
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
 
-                <button class="icon-btn" id="stt-lang-btn" title="لغة الإملاء الصوتي (AR / EN)" onclick="app.toggleSTTLang()">
+                <button class="icon-btn" id="stt-lang-btn" title="لغة الإملاء الصوتي (AR / FR / EN)" onclick="app.toggleSTTLang()">
                     <span id="stt-lang-label" style="font-size: 0.72rem; font-weight: 800; color: #8ab4f8;">AR</span>
                 </button>
 
@@ -132,117 +148,176 @@
             </div>
         </div>
 
-        <!-- Messages Scroll Area -->
-        <div class="messages-scroll-area" id="chat-messages" onscroll="app.handleScrollEvent()">
-            <div class="messages-container" id="chat-messages-container">
-                <!-- Dynamic Messages Or Welcome Hero -->
-            </div>
-        </div>
-
-        <!-- Floating Scroll-To-Bottom Pill -->
-        <div class="scroll-down-floating-pill" id="scroll-to-bottom-btn" onclick="app.scrollToBottom(true)">
-            <i class="fa-solid fa-arrow-down"></i>
-            <span>التمرير لآخر الرد</span>
-        </div>
-
-        <!-- Floating Prompt Input Dock -->
-        <div class="input-dock-wrapper">
-            <!-- Quick Suggestion Prompts Carousel -->
-            <div class="quick-prompts-carousel" id="quick-prompts-tray">
-                <div class="prompt-chip-pill" onclick="app.sendQuickPrompt('قم بعمل مراجعة وفحص كامل لكافة ملفات المشروع واكتشاف أي أخطاء معمارية وتحسين الأداء')">
-                    <i class="fa-solid fa-stethoscope" style="color: #c084fc;"></i>
-                    <span>فحص أخطاء المشروع بالكامل</span>
-                </div>
-                <div class="prompt-chip-pill" onclick="app.ingestCurrentGitHubRepo()">
-                    <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399;"></i>
-                    <span>جلب كود مستودع GitHub</span>
-                </div>
-                <div class="prompt-chip-pill" onclick="document.getElementById('universal-file-input').click()">
-                    <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
-                    <span>رفع وفك ضغط مشروع ZIP</span>
-                </div>
-                <div class="prompt-chip-pill" onclick="app.downloadProjectAsZip()">
-                    <i class="fa-solid fa-download" style="color: #38bdf8;"></i>
-                    <span>تصدير حزمة ZIP للمشروع</span>
-                </div>
-                <div class="prompt-chip-pill" onclick="app.sendQuickPrompt('اكتب ميزة برمجية جديدة للمشروع مع تحديد مسار الملف بوضوح لعمل Commit مباشر إلى GitHub')">
-                    <i class="fa-brands fa-github" style="color: #34d399;"></i>
-                    <span>كود جديد مع Direct Commit</span>
-                </div>
-            </div>
-
-            <div class="input-dock-container">
-                <!-- Attachment Preview Bar (with GitHub Codebase & ZIP Extraction Support) -->
-                <div class="attachment-preview-tray" id="attachment-preview-bar">
-                    <div id="preview-thumb-box" style="width: 38px; height: 38px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #18191c; flex-shrink: 0;">
-                        <img id="attachment-img-tag" src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                        <i id="attachment-icon-tag" class="fa-solid fa-file text-info" style="font-size: 1.1rem; display: none;"></i>
+        <!-- Workbench Content Split View (Chat Pane & Code Studio Pane) -->
+        <div class="workbench-content-split">
+            <!-- Left / Main: Chat Stream Pane -->
+            <div class="chat-stream-pane">
+                <!-- Messages Scroll Area -->
+                <div class="messages-scroll-area" id="chat-messages" onscroll="app.handleScrollEvent()">
+                    <div class="messages-container" id="chat-messages-container">
+                        <!-- Dynamic Messages Or Welcome Hero -->
                     </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <div id="attachment-file-name" class="truncate" style="font-size: 0.82rem; font-weight: 700; color: #fff;">project.zip</div>
-                        <div id="extraction-status-text" class="truncate" style="font-size: 0.72rem; color: #34d399;">جاري المعالجة...</div>
-                    </div>
-                    <button id="btn-browse-extracted-zip" class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem; display: none;" onclick="app.openZipInspectorModal()" title="تصفح ملفات المشروع المستخرج">
-                        <i class="fa-solid fa-folder-open"></i>
-                        <span>تصفح الكود</span>
-                    </button>
-                    <button style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px;" onclick="app.removeAttachment()" title="إلغاء المرفق">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
                 </div>
 
-                <!-- Gemini Input Capsule -->
-                <div class="gemini-input-capsule">
-                    <textarea 
-                        class="gemini-textarea" 
-                        id="user-input" 
-                        placeholder="اسأل OX-Alpha Pro، أو ارفع ملفاتك ومشروعك ZIP، أو انقر أيقونة السحابة لجلب كود GitHub كاملاً..."
-                        rows="1"
-                    ></textarea>
+                <!-- Floating Scroll-To-Bottom Pill -->
+                <div class="scroll-down-floating-pill" id="scroll-to-bottom-btn" onclick="app.scrollToBottom(true)">
+                    <i class="fa-solid fa-arrow-down"></i>
+                    <span>التمرير لآخر الرد</span>
+                </div>
 
-                    <div class="gemini-input-toolbar">
-                        <div class="input-left-buttons">
-                            <!-- 1-Click Ingest GitHub Repository Code into Chat Context -->
-                            <button class="tool-dock-btn" id="btn-sync-github-repo" title="جلب ومزامنة كود مستودع GitHub بالكامل للمحادثة" onclick="app.ingestCurrentGitHubRepo()">
-                                <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399;"></i>
+                <!-- Floating Prompt Input Dock -->
+                <div class="input-dock-wrapper">
+                    <!-- Quick Suggestion Prompts Carousel -->
+                    <div class="quick-prompts-carousel" id="quick-prompts-tray">
+                        <div class="prompt-chip-pill" onclick="app.sendQuickPrompt('قم بعمل مراجعة وفحص كامل لكافة ملفات المشروع واكتشاف أي ثغرات أمنية وأخطاء معمارية وتحسين الأداء')">
+                            <i class="fa-solid fa-shield-halved" style="color: #c084fc;"></i>
+                            <span>فحص الأمان والهيكل المعماري</span>
+                        </div>
+                        <div class="prompt-chip-pill" onclick="app.ingestCurrentGitHubRepo()">
+                            <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399;"></i>
+                            <span>جلب كود مستودع GitHub</span>
+                        </div>
+                        <div class="prompt-chip-pill" onclick="document.getElementById('universal-file-input').click()">
+                            <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
+                            <span>رفع وفك ضغط مشروع ZIP</span>
+                        </div>
+                        <div class="prompt-chip-pill" onclick="app.openDualModelArena()">
+                            <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i>
+                            <span>حلبة مقارنة نموذجين</span>
+                        </div>
+                        <div class="prompt-chip-pill" onclick="app.downloadProjectAsZip()">
+                            <i class="fa-solid fa-download" style="color: #38bdf8;"></i>
+                            <span>تصدير حزمة ZIP للمشروع</span>
+                        </div>
+                        <div class="prompt-chip-pill" onclick="app.sendQuickPrompt('اكتب ميزة برمجية جديدة للمشروع مع تحديد مسار الملف بوضوح لعمل Commit مباشر إلى GitHub')">
+                            <i class="fa-brands fa-github" style="color: #34d399;"></i>
+                            <span>كود جديد مع Direct Commit</span>
+                        </div>
+                    </div>
+
+                    <div class="input-dock-container">
+                        <!-- Attachment Preview Bar -->
+                        <div class="attachment-preview-tray" id="attachment-preview-bar">
+                            <div id="preview-thumb-box" style="width: 38px; height: 38px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #18191c; flex-shrink: 0;">
+                                <img id="attachment-img-tag" src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                <i id="attachment-icon-tag" class="fa-solid fa-file text-info" style="font-size: 1.1rem; display: none;"></i>
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <div id="attachment-file-name" class="truncate" style="font-size: 0.82rem; font-weight: 700; color: #fff;">project.zip</div>
+                                <div id="extraction-status-text" class="truncate" style="font-size: 0.72rem; color: #34d399;">جاري المعالجة...</div>
+                            </div>
+                            <button id="btn-browse-extracted-zip" class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem; display: none;" onclick="app.openZipInspectorModal()" title="تصفح ملفات المشروع المستخرج">
+                                <i class="fa-solid fa-folder-open"></i>
+                                <span>تصفح الكود</span>
                             </button>
-
-                            <!-- Direct 1-Click Export Project as ZIP -->
-                            <button class="tool-dock-btn" title="تحميل وتصدير المشروع كاملاً كملف ZIP" onclick="app.downloadProjectAsZip()">
-                                <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
-                            </button>
-
-                            <!-- Web Search Toggle -->
-                            <button class="tool-dock-btn" id="btn-web-search" title="البحث الحي في الويب" onclick="app.toggleWebSearch()">
-                                <i class="fa-solid fa-globe"></i>
-                            </button>
-
-                            <!-- Universal File / ZIP Attach -->
-                            <button class="tool-dock-btn" id="btn-attach-file" title="إرفاق مشروع ZIP أو PDF أو صورة أو كود" onclick="document.getElementById('universal-file-input').click()">
-                                <i class="fa-solid fa-paperclip"></i>
-                            </button>
-                            <input type="file" id="universal-file-input" accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
-
-                            <!-- Voice Dictation (STT) -->
-                            <button class="tool-dock-btn" id="btn-mic" title="إملاء صوتي" onclick="app.toggleRecording()">
-                                <i class="fa-solid fa-microphone"></i>
-                            </button>
-
-                            <!-- GitHub Current Project Workbench -->
-                            <button class="tool-dock-btn" title="مستكشف ملفات المشروع الحالي" onclick="app.openGitHubWorkbench()">
-                                <i class="fa-brands fa-github" style="color: #34d399;"></i>
+                            <button style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px;" onclick="app.removeAttachment()" title="إلغاء المرفق">
+                                <i class="fa-solid fa-xmark"></i>
                             </button>
                         </div>
 
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <button class="btn-dispatch-stop" id="btn-stop" title="إيقاف التوليد" onclick="app.stopCurrentSessionStream()">
-                                <i class="fa-solid fa-stop"></i>
-                            </button>
-                            <button class="btn-dispatch-send" id="btn-send" title="إرسال" onclick="app.sendUserMessage()">
-                                <i class="fa-solid fa-arrow-up"></i>
-                            </button>
+                        <!-- Gemini Input Capsule -->
+                        <div class="gemini-input-capsule">
+                            <textarea 
+                                class="gemini-textarea" 
+                                id="user-input" 
+                                placeholder="اسأل OX-Alpha Pro، أو ارفع ملفاتك ومشروعك ZIP، أو انقر أيقونة السحابة لجلب كود GitHub كاملاً..."
+                                rows="1"
+                            ></textarea>
+
+                            <div class="gemini-input-toolbar">
+                                <div class="input-left-buttons">
+                                    <!-- Autonomous Agent Mode Toggle -->
+                                    <button class="tool-dock-btn" id="btn-agent-mode" title="تفعيل وضع الوكيل الذاتي المستقل (Autonomous Agent ReAct Loop)" onclick="app.toggleAutonomousAgent()">
+                                        <i class="fa-solid fa-robot" style="color: #c084fc;"></i>
+                                    </button>
+
+                                    <!-- Smart Router Toggle -->
+                                    <button class="tool-dock-btn active" id="btn-smart-router" title="التوجيه الذكي للنموذج المناسب تلقائياً حسب نوع المهمة" onclick="app.toggleSmartRouter()">
+                                        <i class="fa-solid fa-brain" style="color: #38bdf8;"></i>
+                                    </button>
+
+                                    <!-- 1-Click Ingest GitHub Repository Code into Chat Context -->
+                                    <button class="tool-dock-btn" id="btn-sync-github-repo" title="جلب ومزامنة كود مستودع GitHub بالكامل للمحادثة" onclick="app.ingestCurrentGitHubRepo()">
+                                        <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399;"></i>
+                                    </button>
+
+                                    <!-- Direct 1-Click Export Project as ZIP -->
+                                    <button class="tool-dock-btn" title="تحميل وتصدير المشروع كاملاً كملف ZIP" onclick="app.downloadProjectAsZip()">
+                                        <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
+                                    </button>
+
+                                    <!-- Web Search Toggle -->
+                                    <button class="tool-dock-btn" id="btn-web-search" title="البحث الحي في الويب" onclick="app.toggleWebSearch()">
+                                        <i class="fa-solid fa-globe"></i>
+                                    </button>
+
+                                    <!-- Universal File / ZIP Attach -->
+                                    <button class="tool-dock-btn" id="btn-attach-file" title="إرفاق مشروع ZIP أو PDF أو صورة أو كود" onclick="document.getElementById('universal-file-input').click()">
+                                        <i class="fa-solid fa-paperclip"></i>
+                                    </button>
+                                    <input type="file" id="universal-file-input" accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
+
+                                    <!-- Voice Dictation (STT) -->
+                                    <button class="tool-dock-btn" id="btn-mic" title="إملاء صوتي" onclick="app.toggleRecording()">
+                                        <i class="fa-solid fa-microphone"></i>
+                                    </button>
+
+                                    <!-- GitHub Current Project Workbench -->
+                                    <button class="tool-dock-btn" title="مستكشف ملفات المشروع الحالي" onclick="app.openGitHubWorkbench()">
+                                        <i class="fa-brands fa-github" style="color: #34d399;"></i>
+                                    </button>
+                                </div>
+
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <button class="btn-dispatch-stop" id="btn-stop" title="إيقاف التوليد" onclick="app.stopCurrentSessionStream()">
+                                        <i class="fa-solid fa-stop"></i>
+                                    </button>
+                                    <button class="btn-dispatch-send" id="btn-send" title="إرسال" onclick="app.sendUserMessage()">
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Right: Code Studio Pane (Split-Screen Workspace) -->
+            <div class="code-studio-pane" id="code-studio-pane">
+                <div class="studio-tabs-bar" id="studio-tabs-container">
+                    <div style="display: flex; align-items: center; gap: 6px; overflow-x: auto;" id="studio-open-files-tabs">
+                        <div class="studio-tab-item active" onclick="app.switchStudioFile('main.ts')">
+                            <i class="fa-solid fa-file-code" style="color: #38bdf8;"></i>
+                            <span>src/App.tsx</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+                        <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem;" onclick="app.runStudioCode()" title="تشغيل الكود الحي">
+                            <i class="fa-solid fa-play" style="color: #34d399;"></i>
+                            <span>تشغيل</span>
+                        </button>
+                        <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem;" onclick="app.openDiffViewerForActiveStudioFile()" title="عرض الفروقات Git Diff">
+                            <i class="fa-solid fa-code-compare" style="color: #fbbf24;"></i>
+                            <span>Diff</span>
+                        </button>
+                        <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem;" onclick="app.commitStudioFile()" title="Commit مباشر لـ GitHub">
+                            <i class="fa-brands fa-github" style="color: #34d399;"></i>
+                            <span>Commit</span>
+                        </button>
+                        <button class="icon-btn" style="width: 28px; height: 28px; font-size: 0.75rem;" onclick="app.toggleCodeStudio(false)">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="studio-editor-area">
+                    <textarea class="studio-textarea-code" id="studio-editor-textarea" spellcheck="false" oninput="app.handleStudioCodeChange(this.value)">// استوديو الأكواد المنقسم (Code Studio)
+// سيظهر هنا أي كود ملف يتم توليده أو اختياره من مستودع GitHub أو مشروع ZIP.</textarea>
+                </div>
+
+                <!-- Studio Bottom Console / Output -->
+                <div class="terminal-box" id="studio-terminal" style="display: block; max-height: 140px; border-top: 1px solid var(--border-subtle);">
+                    ⚡ طرفية المخرجات جاهزة للتشغيل
                 </div>
             </div>
         </div>
@@ -252,8 +327,9 @@
 <!-- Modals -->
 
 <!-- 1. Repositories Hub Modal -->
-<div class="modal-overlay-backdrop" id="repos-modal">
+<div class="modal-overlay-backdrop" id="repos-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
@@ -261,6 +337,10 @@
                     <span>مشاريع ومستودعات GitHub</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
+                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.75rem;" onclick="app.openBranchManagerModal()">
+                        <i class="fa-solid fa-code-branch"></i>
+                        <span>الفروع و PR</span>
+                    </button>
                     <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.75rem;" onclick="app.fetchUserGitHubRepositories(true)">
                         <i class="fa-solid fa-rotate" id="refresh-repos-icon"></i>
                         <span>تحديث</span>
@@ -284,7 +364,7 @@
                     </button>
                 </div>
                 <div style="display: flex; gap: 6px;">
-                    <input type="password" id="inline-github-token-input" class="form-input-box" style="font-size: 0.8rem; padding: 7px 12px;" placeholder="أو أدخل رمز الوصول PAT: ghp_... / github_pat_...">
+                    <input type="password" id="inline-github-token-input" class="form-input-box" style="font-size: 16px; padding: 7px 12px;" placeholder="أو أدخل رمز الوصول PAT: ghp_... / github_pat_...">
                     <button class="btn-new-thread" style="width: auto; padding: 6px 14px; font-size: 0.76rem; white-space: nowrap;" onclick="app.saveInlineGitHubToken()">
                         <span>ربط</span>
                     </button>
@@ -334,8 +414,9 @@
 </div>
 
 <!-- 2. Model Explorer Modal -->
-<div class="modal-overlay-backdrop" id="models-modal">
+<div class="modal-overlay-backdrop" id="models-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
@@ -397,9 +478,195 @@
     </div>
 </div>
 
-<!-- 3. Settings Modal -->
-<div class="modal-overlay-backdrop" id="settings-modal">
+<!-- 3. Dual Model Arena Modal -->
+<div class="modal-overlay-backdrop" id="arena-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide" style="height: 92vh; max-height: 92vh;">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
+                    <span>حلبة مقارنة نموذجين جنباً إلى جنب (Dual Model Arena)</span>
+                </div>
+                <button class="icon-btn" onclick="app.closeModals()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Arena Input -->
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="arena-prompt-input" class="form-input-box" placeholder="أدخل المسألة أو الكود للمقارنة المباشرة بين النموذجين...">
+                <button class="btn-new-thread" style="width: auto; padding: 8px 18px; white-space: nowrap;" onclick="app.executeArenaComparison()">
+                    <i class="fa-solid fa-play"></i>
+                    <span>بدء المقارنة</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="arena-split-view">
+            <!-- Column A -->
+            <div class="arena-column-card">
+                <div class="arena-header-bar">
+                    <select id="arena-model-a" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;">
+                        <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B (مجاني)</option>
+                        <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
+                        <option value="deepseek/deepseek-r1">DeepSeek R1 (Thinking)</option>
+                    </select>
+                    <span id="arena-gauge-a" style="font-size: 0.72rem; color: #34d399;">جاهز</span>
+                </div>
+                <div class="arena-body-scroll markdown-body" id="arena-output-a" dir="auto">
+                    بانتظار بدء المقارنة...
+                </div>
+            </div>
+
+            <!-- Column B -->
+            <div class="arena-column-card">
+                <div class="arena-header-bar">
+                    <select id="arena-model-b" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;">
+                        <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
+                        <option value="openrouter/free">OpenRouter Free Router</option>
+                        <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B</option>
+                    </select>
+                    <span id="arena-gauge-b" style="font-size: 0.72rem; color: #34d399;">جاهز</span>
+                </div>
+                <div class="arena-body-scroll markdown-body" id="arena-output-b" dir="auto">
+                    بانتظار بدء المقارنة...
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
+                <span>إغلاق</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 4. Interactive Git Diff Modal -->
+<div class="modal-overlay-backdrop" id="diff-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-code-compare" style="color: #fbbf24;"></i>
+                    <span>مقارنة الفروقات قبل الرفع (Git Diff): <span id="diff-file-path-title" style="color: #38bdf8;">src/App.tsx</span></span>
+                </div>
+                <button class="icon-btn" onclick="app.closeModals()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-body-scrollable">
+            <div class="git-diff-container" id="git-diff-output-box">
+                <!-- Populated with colored diff lines -->
+            </div>
+        </div>
+
+        <div class="modal-footer-bar">
+            <button class="btn-new-thread" style="width: auto; padding: 7px 18px; font-size: 0.8rem;" id="btn-diff-confirm-commit" onclick="app.confirmCommitFromDiff()">
+                <i class="fa-brands fa-github"></i>
+                <span>قبول ورفع Commit مباشر إلى GitHub</span>
+            </button>
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
+                <span>إغلاق</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 5. Termux Quick Command Helper Modal -->
+<div class="modal-overlay-backdrop" id="termux-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-terminal" style="color: #34d399;"></i>
+                    <span>أوامر Termux الجاهزة لنشر المشروع</span>
+                </div>
+                <button class="icon-btn" onclick="app.closeModals()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-body-scrollable">
+            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 12px;">انقر على أي أمر لنسخه ولصقه مباشرة في تطبيق Termux على الهاتف:</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o /sdcard/Download/ox-alpha-workbench-pro.zip -d . && git init && git branch -M main && git add . && git commit -m \'feat: update\' && git remote add origin https://github.com/naderba69/daschai.git && git push -u origin main --force', this)">
+                    <div style="font-weight: 700; color: #34d399; font-size: 0.82rem; margin-bottom: 4px;">🚀 أمر فك الضغط والرفع الإجباري الشامل إلى GitHub</div>
+                    <code style="font-size: 0.72rem; color: #94a3b8; word-break: break-all;">cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o ...</code>
+                </div>
+
+                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('pkg update -y && pkg install git nodejs -y', this)">
+                    <div style="font-weight: 700; color: #38bdf8; font-size: 0.82rem; margin-bottom: 4px;">📦 تثبيت وتحديث Git و Node.js في Termux</div>
+                    <code style="font-size: 0.75rem; color: #94a3b8;">pkg update -y && pkg install git nodejs -y</code>
+                </div>
+
+                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('git status', this)">
+                    <div style="font-weight: 700; color: #fbbf24; font-size: 0.82rem; margin-bottom: 4px;">🔍 فحص حالة الملفات المعدلة (Git Status)</div>
+                    <code style="font-size: 0.75rem; color: #94a3b8;">git status</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
+                <span>إغلاق</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Branch & Pull Request Modal -->
+<div class="modal-overlay-backdrop" id="branch-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-code-branch" style="color: #38bdf8;"></i>
+                    <span>إدارة الفروع و Pull Requests</span>
+                </div>
+                <button class="icon-btn" onclick="app.closeModals()">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-body-scrollable">
+            <div class="form-group-item">
+                <label class="form-label-title">إنشاء فرع جديد (New Branch)</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="new-branch-name-input" class="form-input-box" placeholder="feat/new-feature">
+                    <button class="btn-new-thread" style="width: auto; padding: 6px 14px; white-space: nowrap;" onclick="app.createGitHubBranch()">إنشاء</button>
+                </div>
+            </div>
+
+            <div class="form-group-item" style="margin-top: 14px;">
+                <label class="form-label-title">فتح Pull Request رسمي على GitHub</label>
+                <input type="text" id="pr-title-input" class="form-input-box" placeholder="عنوان الـ Pull Request...">
+                <textarea id="pr-body-input" class="form-input-box" rows="3" style="margin-top: 6px;" placeholder="شرح التعديلات والميزات..."></textarea>
+                <button class="btn-new-thread" style="width: 100%; margin-top: 8px;" onclick="app.createPullRequest()">🚀 فتح Pull Request</button>
+            </div>
+        </div>
+
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
+                <span>إغلاق</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- 7. Settings Modal -->
+<div class="modal-overlay-backdrop" id="settings-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box">
+        <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
@@ -523,9 +790,10 @@
     </div>
 </div>
 
-<!-- 4. GitHub Workbench Modal (File Tree & Viewer) -->
-<div class="modal-overlay-backdrop" id="github-modal">
+<!-- 8. GitHub Workbench Modal (File Tree & Viewer) -->
+<div class="modal-overlay-backdrop" id="github-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
@@ -556,9 +824,13 @@
                 <div style="padding: 10px 14px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
                     <span id="gh-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.8rem; color: #94a3b8; max-width: 60%;">اختر ملفاً من الشجرة للمعاينة</span>
                     <div style="display: flex; gap: 6px;">
+                        <button class="sidebar-btn-util" style="padding: 3px 10px; font-size: 0.72rem;" onclick="app.openSelectedGitHubFileInStudio()">
+                            <i class="fa-solid fa-columns" style="color: #38bdf8;"></i>
+                            <span>فتح في الاستوديو</span>
+                        </button>
                         <button class="sidebar-btn-util" style="padding: 3px 10px; font-size: 0.72rem;" onclick="app.askAICodeReview()">
                             <i class="fa-solid fa-wand-magic-sparkles" style="color: #c084fc;"></i>
-                            <span>مراجعة بالذكاء الاصطناعي</span>
+                            <span>مراجعة AI</span>
                         </button>
                     </div>
                 </div>
@@ -574,9 +846,10 @@
     </div>
 </div>
 
-<!-- 5. ZIP Project Inspector Modal -->
-<div class="modal-overlay-backdrop" id="zip-modal">
+<!-- 9. ZIP Project Inspector Modal -->
+<div class="modal-overlay-backdrop" id="zip-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
@@ -617,9 +890,10 @@
     </div>
 </div>
 
-<!-- 6. Diagnostics Modal -->
-<div class="modal-overlay-backdrop" id="diagnostics-modal">
+<!-- 10. Diagnostics Modal -->
+<div class="modal-overlay-backdrop" id="diagnostics-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box">
+        <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
@@ -669,15 +943,15 @@
                 <div class="diag-box-item">
                     <div>
                         <div style="font-weight: 700; font-size: 0.88rem;">محرك النطق والتعرف الصوتي (Web Speech)</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">دعم STT / TTS</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">دعم STT / TTS (AR, FR, EN)</div>
                     </div>
                     <div id="diag-speech-status"><span style="color: var(--text-dim); font-size: 0.8rem;">جاهز</span></div>
                 </div>
 
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">ذاكرة التخزين المحلي (LocalStorage)</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="diag-storage-details">سعة التخزين وحالة الحصص</div>
+                        <div style="font-weight: 700; font-size: 0.88rem;">ذاكرة التخزين الآمنة (Safe Persistence)</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="diag-storage-details">حماية عدم فقدان المحادثات</div>
                     </div>
                     <div id="diag-storage-status"><span style="color: var(--success); font-size: 0.8rem;">سليمة 🟢</span></div>
                 </div>

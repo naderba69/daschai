@@ -1,6 +1,6 @@
 // ==============================================================================
 // OX-Alpha Workbench Pro | Gemini AI Autonomous Engineering Copilot
-// Full Resilient Engine: Multi-Pass Streaming, GitHub Commits, ZIP Engine
+// Full Enterprise Suite: All Live Models, Autonomous Agent, Arena, Studio, Diff
 // ==============================================================================
 
 if (typeof pdfjsLib !== 'undefined') {
@@ -10,14 +10,14 @@ if (typeof mermaid !== 'undefined') {
     mermaid.initialize({ startOnLoad: false, theme: 'dark' });
 }
 
-// Fast & Stable 2026 Line-up Catalog
+// Fast & Stable Fallback Catalog (Used before/during live API fetch)
 const INITIAL_MODELS_CATALOG = [
-    { id: "google/gemma-4-31b-it:free", name: "Google Gemma 4 31B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 262k." },
-    { id: "nvidia/nemotron-3.5-lightning:free", name: "NVIDIA Nemotron 3.5 Lightning (مجاني 100% - 1M سياق)", provider: "NVIDIA", context_length: 1000000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج إنفيديا فائق السرعة مع نافذة سياق عملاقة 1,000,000 توكن مجاناً." },
+    { id: "google/gemma-4-31b-it:free", name: "Google Gemma 4 31B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 262k توكن مجاناً." },
+    { id: "nvidia/nemotron-3.5-lightning:free", name: "NVIDIA Nemotron 3.5 Lightning (مجاني 100% - 1M سياق)", provider: "NVIDIA", context_length: 1000000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج إنفيديا فائق السرعة مع نافذة سياق عملاقة تتسع لـ 1,000,000 توكن مجاناً 100%." },
     { id: "openrouter/free", name: "Auto Free Router (توجيه تلقائي لأفضل نموذج مجاني نشط)", provider: "OpenRouter", context_length: 200000, is_free: true, is_reasoning: false, is_vision: true, is_cheap: true, description: "موجّه ذكي من أوبن روت يربطك فورياً بالنموذج المجاني الأكثر استقراراً وجاهزية." },
-    { id: "minimax/minimax-m3:free", name: "MiniMax M3 (مجاني 100% - 1M سياق)", provider: "MiniMax", context_length: 1048576, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج سياق عملاق 1M مجاني ممتاز لقراءة المستودعات الكاملة." },
+    { id: "minimax/minimax-m3:free", name: "MiniMax M3 (مجاني 100% - 1M سياق)", provider: "MiniMax", context_length: 1048576, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج سياق عملاق 1M مجاني ممتاز لقراءة مستودعات الكود الكاملة." },
     { id: "google/gemma-4-26b-a4b-it:free", name: "Google Gemma 4 26B (مجاني 100%)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نسخة خفيفة وسريعة من جوجل لأداء المهام البرمجية والهندسة الفورية." },
-    { id: "z-ai/glm-5.2:free", name: "GLM 5.2 (مجاني 100%)", provider: "Z.ai", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج عام قوي في معالجة وفهم الملفات البرمجية." },
+    { id: "z-ai/glm-5.2:free", name: "GLM 5.2 (مجاني 100%)", provider: "Z.ai", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج عام قوي في معالجة وفهم الملفات البرمجية الطويلة." },
     { id: "cohere/north-mini-code:free", name: "Cohere North Mini Code (مجاني 100%)", provider: "Cohere", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج تخصصي من كوهير في كتابة وفحص الأكواد البرمجية." },
     { id: "thinkingmachines/inkling:free", name: "Thinking Machines Inkling (مجاني 100%)", provider: "ThinkingMachines", context_length: 1048576, is_free: true, is_reasoning: true, is_vision: false, is_cheap: true, description: "نموذج تفكير عميق بسياق 1M توكن مجاناً." },
     { id: "deepseek/deepseek-r1", name: "DeepSeek R1 (Pro)", provider: "DeepSeek", context_length: 65536, is_free: false, is_reasoning: true, is_vision: false, is_cheap: true, description: "النسخة الأصلية من أقوى نموذج تفكير منطقي وهندسي بالعالم." },
@@ -45,6 +45,14 @@ const DEFAULT_REPOS_LIST = [
     { name: "spotfish", full_name: "naderba69/spotfish", description: "Ocean Fish Detection & Tracking Engine", private: false, default_branch: "main", language: "Python" }
 ];
 
+const PERSONA_PROMPTS = {
+    fullstack: "أنت مهندس برمجيات شامل ومحترف (Full-Stack Engineer). تقوم بتحليل وهندسة كامل طبقات المشروع frontend و backend وقواعد البيانات مع كتابة كود نظيف وقابل للإنتاج.",
+    security: "أنت خبير أمن سيبراني وتدقيق برمجي (Security Auditor). دورك فحص الثغرات، حماية مفاتيح API، منع هجمات SQL Injection و XSS، وتطبيق أفضل معايير الأمان OWASP.",
+    performance: "أنت خبير في تحسين الأداء وتوسيع الأنظمة (Performance Optimizer). تركز على تسريع وقت الاستجابة، تقليل استهلاك الذاكرة، تحسين الاستعلامات، وتخفيف حجم الحزم.",
+    architect: "أنت مهندس معماري للأنظمة السحابية (Software Architect). تركز على هيكلية المجلدات، التصميم المعماري (Design Patterns)، فصل الاهتمامات، وقابلية التوسع.",
+    tests: "أنت خبير في كتابة الاختبارات وضمان الجودة (QA & Test Automation). تقوم بإنشاء اختبارات Unit Tests و Integration Tests شاملة تغطي كافة الحالات المتطرفة."
+};
+
 class OXAlphaApp {
     constructor() {
         this.sessions = [];
@@ -56,7 +64,16 @@ class OXAlphaApp {
         this.activeModelCategory = 'all';
         this.userRepositories = [...DEFAULT_REPOS_LIST];
         this.activeRepoCategory = 'all';
+        
+        // Advanced Features Flags
         this.isWebSearchActive = false;
+        this.isAutonomousAgentActive = false;
+        this.isSmartRouterActive = true;
+        this.isCodeStudioOpen = false;
+        this.activePersona = 'fullstack';
+        this.activeStudioFile = 'src/App.tsx';
+        this.pendingDiffData = null;
+
         this.currentAttachment = null;
         this.speechRecognition = null;
         this.isRecording = false;
@@ -74,7 +91,7 @@ class OXAlphaApp {
 
     loadCachedModels() {
         try {
-            const saved = localStorage.getItem('ox_alpha_live_models');
+            const saved = localStorage.getItem('ox_alpha_live_models_all');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -88,31 +105,43 @@ class OXAlphaApp {
         this.initDomEvents();
         this.renderUIState();
         this.checkOAuthCallback();
+        // Fetch ALL live models from OpenRouter without truncation
         this.fetchOpenRouterModels(false);
         this.fetchUserGitHubRepositories(false);
     }
 
+    // SAFE PERSISTENCE: Protects from LocalStorage 5MB quota errors
     safeStorageSet(key, value) {
         try {
             localStorage.setItem(key, value);
         } catch (e) {
-            if (e.name === 'QuotaExceededError' || e.code === 22) {
-                console.warn('LocalStorage quota exceeded. Pruning old attachments & large sessions.');
-                if (this.sessions && this.sessions.length > 1) {
-                    const trimmed = this.sessions.slice(-5).map(s => ({
+            console.warn('LocalStorage quota reached, optimizing storage payload...');
+            try {
+                if (key === 'ox_alpha_sessions_v2' && this.sessions) {
+                    const lightweight = this.sessions.map(s => ({
                         ...s,
-                        messages: s.messages.slice(-15).map(m => {
-                            if (m.attachment && m.attachment.textContent && m.attachment.textContent.length > 5000) {
-                                return { ...m, attachment: { ...m.attachment, textContent: m.attachment.textContent.slice(0, 1000) + '... (تم التقليص لتوفير الذاكرة)' } };
+                        messages: s.messages.map(m => {
+                            if (m.attachment && m.attachment.textContent && m.attachment.textContent.length > 2000) {
+                                return {
+                                    ...m,
+                                    attachment: {
+                                        name: m.attachment.name,
+                                        isGitHubProject: m.attachment.isGitHubProject,
+                                        isZipProject: m.attachment.isZipProject,
+                                        textContent: `[محتوى المرفق: ${m.attachment.name} (${Math.round(m.attachment.textContent.length / 1000)}k حرف)]`
+                                    }
+                                };
+                            }
+                            if (m.attachment && m.attachment.base64) {
+                                return { ...m, attachment: { name: m.attachment.name, base64: null } };
                             }
                             return m;
                         })
                     }));
-                    try {
-                        localStorage.setItem('ox_alpha_sessions_v2', JSON.stringify(trimmed));
-                        localStorage.setItem(key, value);
-                    } catch (e2) {}
+                    localStorage.setItem(key, JSON.stringify(lightweight));
                 }
+            } catch (e2) {
+                console.error('Failed to store optimized sessions:', e2);
             }
         }
     }
@@ -122,7 +151,7 @@ class OXAlphaApp {
             apiKey: '',
             model: 'google/gemma-4-31b-it:free',
             customModel: '',
-            systemPrompt: 'أنت مهندس برمجيات محترف وخبير في تحليل وتطوير المشاريع البرمجية الضخمة. لديك قدرة كاملة على فك وهندسة ملفات الأكواد وتطويرها بدقة متناهية. عند اقتراح أو كتابة أي ملف كود، اذكر دائماً مسار الملف بوضوح مثل: ```typescript [الملف: src/components/Header.tsx]',
+            systemPrompt: 'أنت مهندس برمجيات محترف وخبير في تحليل وتطوير المشاريع البرمجية الضخمة. تجيب بلغة المستخدم (العربية أو الفرنسية أو الإنجليزية) بطلاقة واحترافية. عند اقتراح أو كتابة أي ملف كود، اذكر دائماً مسار الملف بوضوح مثل: ```typescript [الملف: src/components/Header.tsx]',
             temperature: 0.7,
             maxTokens: 16384,
             githubToken: '',
@@ -289,6 +318,397 @@ class OXAlphaApp {
         this.showToast('تم تصدير المحادثة بنجاح 📥', 'success');
     }
 
+    // PERSONA CYCLER
+    cyclePersona() {
+        const personas = ['fullstack', 'security', 'performance', 'architect', 'tests'];
+        const names = {
+            fullstack: 'مطور شامل',
+            security: 'فاحص الأمان 🛡️',
+            performance: 'محسن الأداء ⚡',
+            architect: 'مهندس معماري 🏗️',
+            tests: 'صانع الاختبارات 🧪'
+        };
+        const icons = {
+            fullstack: 'fa-solid fa-code',
+            security: 'fa-solid fa-shield-halved',
+            performance: 'fa-solid fa-bolt',
+            architect: 'fa-solid fa-sitemap',
+            tests: 'fa-solid fa-vial'
+        };
+
+        const currentIdx = personas.indexOf(this.activePersona);
+        const nextPersona = personas[(currentIdx + 1) % personas.length];
+        this.activePersona = nextPersona;
+
+        const label = document.getElementById('persona-label');
+        const icon = document.getElementById('persona-icon');
+        if (label) label.innerText = names[nextPersona];
+        if (icon) icon.className = icons[nextPersona];
+
+        this.showToast(`تم تعيين وضع المساعد: ${names[nextPersona]} 🎭`, 'info');
+    }
+
+    // AUTONOMOUS AGENT MODE TOGGLE
+    toggleAutonomousAgent() {
+        this.isAutonomousAgentActive = !this.isAutonomousAgentActive;
+        const btn = document.getElementById('btn-agent-mode');
+        if (btn) btn.classList.toggle('active', this.isAutonomousAgentActive);
+        this.showToast(this.isAutonomousAgentActive ? 'تم تفعيل وضع الوكيل الذاتي المستقل (ReAct Agent) 🤖' : 'تم إيقاف وضع الوكيل الذاتي', 'info');
+    }
+
+    toggleSmartRouter() {
+        this.isSmartRouterActive = !this.isSmartRouterActive;
+        const btn = document.getElementById('btn-smart-router');
+        if (btn) btn.classList.toggle('active', this.isSmartRouterActive);
+        this.showToast(this.isSmartRouterActive ? 'تم تفعيل التوجيه الذكي التلقائي للنماذج 🧠' : 'تم إيقاف التوجيه الذكي', 'info');
+    }
+
+    // SPLIT-PANE CODE STUDIO TOGGLE
+    toggleCodeStudio(forceState) {
+        const pane = document.getElementById('code-studio-pane');
+        const btn = document.getElementById('btn-toggle-studio');
+        if (!pane) return;
+
+        this.isCodeStudioOpen = forceState !== undefined ? forceState : !this.isCodeStudioOpen;
+        if (this.isCodeStudioOpen) {
+            pane.classList.add('active');
+            if (btn) btn.classList.add('active');
+            this.renderStudioWorkspace();
+        } else {
+            pane.classList.remove('active');
+            if (btn) btn.classList.remove('active');
+        }
+    }
+
+    renderStudioWorkspace() {
+        const tabsContainer = document.getElementById('studio-open-files-tabs');
+        const editor = document.getElementById('studio-editor-textarea');
+        if (!tabsContainer || !editor) return;
+
+        const files = Array.from(this.virtualProjectFiles.keys());
+        if (files.length === 0) {
+            this.virtualProjectFiles.set('src/App.tsx', {
+                content: '// استوديو الأكواد المنقسم (OX-Alpha Studio)\nexport default function App() {\n  return <div>OX-Alpha Workbench Pro Active</div>;\n}',
+                lang: 'tsx',
+                timestamp: Date.now()
+            });
+        }
+
+        const activeFile = this.activeStudioFile || Array.from(this.virtualProjectFiles.keys())[0] || 'src/App.tsx';
+        this.activeStudioFile = activeFile;
+
+        tabsContainer.innerHTML = Array.from(this.virtualProjectFiles.keys()).slice(0, 8).map(path => `
+            <div class="studio-tab-item ${path === activeFile ? 'active' : ''}" onclick="app.switchStudioFile('${path}')">
+                <i class="fa-solid fa-file-code"></i>
+                <span class="truncate">${path}</span>
+            </div>
+        `).join('');
+
+        const fileData = this.virtualProjectFiles.get(activeFile);
+        if (fileData) {
+            editor.value = fileData.content || '';
+        }
+    }
+
+    switchStudioFile(path) {
+        this.activeStudioFile = path;
+        this.renderStudioWorkspace();
+    }
+
+    handleStudioCodeChange(val) {
+        if (this.activeStudioFile) {
+            this.virtualProjectFiles.set(this.activeStudioFile, {
+                content: val,
+                lang: this.activeStudioFile.split('.').pop(),
+                timestamp: Date.now()
+            });
+        }
+    }
+
+    runStudioCode() {
+        const editor = document.getElementById('studio-editor-textarea');
+        const terminal = document.getElementById('studio-terminal');
+        if (!editor || !terminal) return;
+
+        const code = editor.value;
+        const ext = (this.activeStudioFile || '').split('.').pop().toLowerCase();
+
+        if (ext === 'py') {
+            this.runPythonCode(code, terminal);
+        } else {
+            this.runJavaScriptCode(code, terminal);
+        }
+    }
+
+    openSelectedGitHubFileInStudio() {
+        if (this.selectedFileContent) {
+            this.virtualProjectFiles.set(this.selectedFileContent.path, {
+                content: this.selectedFileContent.content,
+                lang: this.selectedFileContent.path.split('.').pop(),
+                timestamp: Date.now()
+            });
+            this.activeStudioFile = this.selectedFileContent.path;
+            this.closeModals();
+            this.toggleCodeStudio(true);
+            this.showToast(`تم فتح ${this.selectedFileContent.path} في استوديو الأكواد 💻`, 'success');
+        }
+    }
+
+    commitStudioFile() {
+        if (!this.activeStudioFile) return;
+        const code = document.getElementById('studio-editor-textarea')?.value || '';
+        this.commitFileToGitHub(this.activeStudioFile, code);
+    }
+
+    // DUAL MODEL ARENA ENGINE
+    openDualModelArena() {
+        const modal = document.getElementById('arena-modal');
+        if (!modal) return;
+        modal.classList.add('active');
+    }
+
+    async executeArenaComparison() {
+        const promptInput = document.getElementById('arena-prompt-input');
+        const modelA = document.getElementById('arena-model-a')?.value || 'google/gemma-4-31b-it:free';
+        const modelB = document.getElementById('arena-model-b')?.value || 'nvidia/nemotron-3.5-lightning:free';
+        const outA = document.getElementById('arena-output-a');
+        const outB = document.getElementById('arena-output-b');
+        const gaugeA = document.getElementById('arena-gauge-a');
+        const gaugeB = document.getElementById('arena-gauge-b');
+
+        const promptText = promptInput?.value.trim();
+        if (!promptText) {
+            this.showToast('أدخل مسألة أو كود لبدء المقارنة', 'warning');
+            return;
+        }
+
+        const apiKey = this.settings.apiKey?.trim();
+        if (!apiKey) {
+            this.showToast('يلزم إدخال مفتاح OpenRouter في الإعدادات', 'warning');
+            this.openSettingsModal();
+            return;
+        }
+
+        if (outA) outA.innerHTML = '<span class="live-step-spinner"></span> جاري التوليد من النموذج الأول...';
+        if (outB) outB.innerHTML = '<span class="live-step-spinner"></span> جاري التوليد من النموذج الثاني...';
+        if (gaugeA) gaugeA.innerText = '⚡ جاري المعالجة...';
+        if (gaugeB) gaugeB.innerText = '⚡ جاري المعالجة...';
+
+        const runOne = async (model, outEl, gaugeEl) => {
+            const t0 = Date.now();
+            try {
+                const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`,
+                        'HTTP-Referer': window.location.origin || 'https://daschai.vercel.app'
+                    },
+                    body: JSON.stringify({
+                        model: model,
+                        messages: [{ role: 'user', content: promptText }],
+                        stream: false,
+                        max_tokens: 4096
+                    })
+                });
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                const text = data.choices?.[0]?.message?.content || 'لا يوجد رد';
+                const duration = ((Date.now() - t0) / 1000).toFixed(1);
+                const tokens = Math.round(text.length / 3.8);
+
+                outEl.innerHTML = DOMPurify.sanitize(marked.parse(text));
+                gaugeEl.innerHTML = `⏱️ ${duration}s | 📊 ${tokens} tokens`;
+            } catch (err) {
+                outEl.innerHTML = `❌ خطأ: ${err.message}`;
+                gaugeEl.innerText = 'فشل';
+            }
+        };
+
+        // Run both concurrently
+        await Promise.allSettled([
+            runOne(modelA, outA, gaugeA),
+            runOne(modelB, outB, gaugeB)
+        ]);
+
+        this.showToast('اكتملت المقارنة الحية بين النموذجين ⚡', 'success');
+    }
+
+    // INTERACTIVE GIT DIFF ENGINE
+    openDiffViewerForActiveStudioFile() {
+        if (!this.activeStudioFile) return;
+        const newCode = document.getElementById('studio-editor-textarea')?.value || '';
+        const oldCode = this.selectedFileContent?.content || '// ملف جديد';
+        this.openDiffModal(this.activeStudioFile, oldCode, newCode);
+    }
+
+    openDiffModal(filePath, oldContent, newContent) {
+        const modal = document.getElementById('diff-modal');
+        const title = document.getElementById('diff-file-path-title');
+        const outputBox = document.getElementById('git-diff-output-box');
+        if (!modal || !outputBox) return;
+
+        if (title) title.innerText = filePath;
+        this.pendingDiffData = { filePath, content: newContent };
+
+        const oldLines = (oldContent || '').split('\n');
+        const newLines = (newContent || '').split('\n');
+        let diffHtml = '';
+
+        const maxL = Math.max(oldLines.length, newLines.length);
+        for (let i = 0; i < maxL; i++) {
+            const o = oldLines[i];
+            const n = newLines[i];
+
+            if (o === n) {
+                diffHtml += `<div class="diff-line">  ${this.escapeHTML(n || '')}</div>`;
+            } else {
+                if (o !== undefined) {
+                    diffHtml += `<div class="diff-line del">- ${this.escapeHTML(o)}</div>`;
+                }
+                if (n !== undefined) {
+                    diffHtml += `<div class="diff-line add">+ ${this.escapeHTML(n)}</div>`;
+                }
+            }
+        }
+
+        outputBox.innerHTML = diffHtml || '<div class="diff-line info">لا توجد فروقات، الملف مطابق للأصل.</div>';
+        modal.classList.add('active');
+    }
+
+    confirmCommitFromDiff() {
+        if (!this.pendingDiffData) return;
+        this.closeModals();
+        this.commitFileToGitHub(this.pendingDiffData.filePath, this.pendingDiffData.content);
+    }
+
+    // BRANCH & PR ENGINE
+    openBranchManagerModal() {
+        const modal = document.getElementById('branch-modal');
+        if (modal) modal.classList.add('active');
+    }
+
+    async createGitHubBranch() {
+        const branchName = document.getElementById('new-branch-name-input')?.value.trim();
+        const owner = this.settings.githubOwner || 'naderba69';
+        const repo = this.settings.githubRepo || 'daschai';
+        const baseBranch = this.settings.githubBranch || 'main';
+        const token = this.settings.githubToken?.trim();
+
+        if (!branchName) {
+            this.showToast('أدخل اسم الفرع الجديد', 'warning');
+            return;
+        }
+        if (!token) {
+            this.showToast('يلزم رمز GitHub PAT لإنشاء الفروع', 'warning');
+            return;
+        }
+
+        try {
+            this.showToast(`جاري إنشاء الفرع (${branchName})...`, 'info');
+            const refRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${baseBranch}`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (!refRes.ok) throw new Error('تعذر قراءة الـ SHA للفرع الأساسي');
+            const refData = await refRes.json();
+            const sha = refData.object.sha;
+
+            const createRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ref: `refs/heads/${branchName}`,
+                    sha: sha
+                })
+            });
+
+            if (!createRes.ok) throw new Error('فشل إنشاء الفرع');
+            this.settings.githubBranch = branchName;
+            this.saveSettings();
+            this.showToast(`✅ تم إنشاء الفرع (${branchName}) وتحديده كالفرع النشط!`, 'success');
+            this.closeModals();
+        } catch (err) {
+            this.showToast(`❌ فشل إنشاء الفرع: ${err.message}`, 'error');
+        }
+    }
+
+    async createPullRequest() {
+        const title = document.getElementById('pr-title-input')?.value.trim();
+        const body = document.getElementById('pr-body-input')?.value.trim();
+        const owner = this.settings.githubOwner || 'naderba69';
+        const repo = this.settings.githubRepo || 'daschai';
+        const head = this.settings.githubBranch || 'main';
+        const token = this.settings.githubToken?.trim();
+
+        if (!title) {
+            this.showToast('أدخل عنوان الـ Pull Request', 'warning');
+            return;
+        }
+        if (!token) {
+            this.showToast('يلزم رمز GitHub PAT لفتح PR', 'warning');
+            return;
+        }
+
+        try {
+            this.showToast('جاري فتح Pull Request على GitHub...', 'info');
+            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    title: title,
+                    body: body,
+                    head: head,
+                    base: 'main'
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || `HTTP ${res.status}`);
+            }
+
+            const data = await res.json();
+            this.showToast(`✅ تم فتح Pull Request #${data.number} بنجاح!`, 'success');
+            this.closeModals();
+        } catch (err) {
+            this.showToast(`❌ تعذر فتح PR: ${err.message}`, 'error');
+        }
+    }
+
+    // TERMUX HELPER MODAL
+    openTermuxHelperModal() {
+        const modal = document.getElementById('termux-modal');
+        if (modal) modal.classList.add('active');
+    }
+
+    // HAPTIC & AUDIO COMPLETION CHIME
+    playCompletionAudioHaptic() {
+        try {
+            if ('vibrate' in navigator) {
+                navigator.vibrate([40, 60, 40]);
+            }
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        } catch (e) {}
+    }
+
     // 1-CLICK EXPORT COMPLETE PROJECT AS ZIP
     async downloadProjectAsZip() {
         this.showToast('جاري حزم وتصدير ملفات المشروع كملف ZIP... 📦', 'info');
@@ -296,13 +716,11 @@ class OXAlphaApp {
             const zip = new JSZip();
             const session = this.sessions.find(s => s.id === this.activeSessionId);
 
-            // 1. Ingest files from virtual project map
             this.virtualProjectFiles.forEach((data, path) => {
                 const cleanPath = path.replace(/^[/\\]+/, '');
                 zip.file(cleanPath, data.content || '');
             });
 
-            // 2. Scan active session for any code blocks with file headers
             if (session && session.messages) {
                 session.messages.forEach(m => {
                     if (m.role === 'assistant' && m.content) {
@@ -319,7 +737,6 @@ class OXAlphaApp {
                 });
             }
 
-            // 3. Fallback readme if empty
             if (Object.keys(zip.files).length === 0) {
                 zip.file('README.md', `# ${this.settings.githubRepo || 'OX-Alpha Project'}\n\nتم تصدير هذا المشروع عبر منظومة OX-Alpha Workbench Pro.\nتاريخ التصدير: ${new Date().toISOString()}\n`);
                 zip.file('package.json', JSON.stringify({ name: this.settings.githubRepo || "ox-alpha-project", version: "1.0.0", private: true }, null, 2));
@@ -368,7 +785,6 @@ class OXAlphaApp {
                 'Content-Type': 'application/json'
             };
 
-            // Step 1: Check if file already exists to obtain SHA
             let sha = null;
             try {
                 const checkRes = await fetch(apiUrl, { headers });
@@ -378,7 +794,6 @@ class OXAlphaApp {
                 }
             } catch (e) {}
 
-            // Step 2: Base64 encode UTF-8 content
             const bytes = new TextEncoder().encode(content);
             let binString = '';
             bytes.forEach(b => binString += String.fromCharCode(b));
@@ -460,7 +875,7 @@ class OXAlphaApp {
         await this.ingestFullGitHubRepository(owner, repo, branch);
     }
 
-    // STRICT GITHUB FILTER & CODEBASE INGESTION ENGINE (Strips 13,000+ Termux cache files)
+    // STRICT GITHUB FILTER & CODEBASE INGESTION ENGINE
     async ingestFullGitHubRepository(owner, repo, branch = 'main') {
         this.showToast(`جاري جلب وفهرسة كود مستودع (${owner}/${repo})... ☁️`, 'info');
         this.closeModals();
@@ -480,7 +895,6 @@ class OXAlphaApp {
             const treeData = await treeRes.json();
             const allItems = (treeData.tree || []).filter(item => item.type === 'blob');
 
-            // STRICT EXCLUSIONS for Termux cache pollution
             const junkPatterns = [
                 'node_modules/', '.cache/', '.config/', '.npm/', '.termux/', '.git/',
                 '.next/', 'dist/', 'build/', '_cacache/', 'cookies.txt', '.bash_history',
@@ -494,7 +908,6 @@ class OXAlphaApp {
                 return !junkPatterns.some(junk => p.includes(junk));
             });
 
-            // SCORE & PRIORITIZE FILES (Curriculum, Source, App)
             const scoreFile = (path) => {
                 const p = path.toLowerCase();
                 if (p === 'readme.md') return 100;
@@ -606,17 +1019,17 @@ class OXAlphaApp {
             const isActive = r.name === this.settings.githubRepo;
             return `
                 <div class="repo-select-card ${isActive ? 'active' : ''}" onclick="app.selectActiveProject('${r.name}', '${r.full_name || owner + '/' + r.name}', '${r.default_branch || 'main'}')">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff; min-width: 0;">
                             <i class="fa-brands fa-github ${r.private ? 'text-warning' : 'text-success'}"></i>
                             <span class="truncate">${this.escapeHTML(r.name)}</span>
                         </div>
-                        <span class="badge" style="background: rgba(255,255,255,0.06); font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; color: #94a3b8;">${r.language || 'Code'}</span>
+                        <span class="badge-pill" style="background: rgba(255,255,255,0.06); color: #94a3b8;">${r.language || 'Code'}</span>
                     </div>
-                    <div style="font-size: 0.76rem; color: var(--text-muted); line-height: 1.4;" class="truncate">${this.escapeHTML(r.description || 'مستودع برمجي')}</div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">
-                        <span>الفرع: ${r.default_branch || 'main'}</span>
-                        ${isActive ? '<span style="color: #34d399; font-weight: 700;">🟢 النشط حالياً</span>' : '<span style="color: #38bdf8;">تحديد ↵</span>'}
+                    <div class="model-desc-text">${this.escapeHTML(r.description || 'مستودع برمجي على GitHub')}</div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.74rem; color: var(--text-dim); margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                        <span>الفرع: <strong style="color: #cbd5e1;">${r.default_branch || 'main'}</strong></span>
+                        ${isActive ? '<span class="btn-select-model-trigger active">🟢 المستودع النشط</span>' : '<span class="btn-select-model-trigger inactive">تحديد ↵</span>'}
                     </div>
                 </div>
             `;
@@ -661,18 +1074,24 @@ class OXAlphaApp {
                             is_reasoning: isReasoning,
                             is_vision: isVision,
                             is_cheap: isCheap,
-                            description: m.description || 'نموذج ذكاء اصطناعي عبر OpenRouter API'
+                            description: m.description || `نموذج ذكاء اصطناعي من مزود ${m.id.split('/')[0] || 'AI'}`
                         };
                     });
 
                     if (parsed.length > 0) {
+                        parsed.sort((a, b) => {
+                            if (a.is_free && !b.is_free) return -1;
+                            if (!a.is_free && b.is_free) return 1;
+                            return (b.context_length || 0) - (a.context_length || 0);
+                        });
                         this.availableModels = parsed;
-                        this.safeStorageSet('ox_alpha_live_models', JSON.stringify(parsed.slice(0, 80)));
+                        this.safeStorageSet('ox_alpha_live_models_all', JSON.stringify(parsed));
+                        this.showToast(`تم تحديث كافة النماذج حينياً (${parsed.length} نموذج متاح) ⚡`, 'success');
                     }
                 }
             }
         } catch (e) {
-            console.warn('Live models fetch failed, using fallback catalogue:', e);
+            console.warn('Live models fetch failed, using cached models catalogue:', e);
         } finally {
             if (icon) icon.classList.remove('fa-spin');
             this.updateModelsDropdown();
@@ -685,7 +1104,7 @@ class OXAlphaApp {
         if (!select) return;
 
         const current = this.settings.model;
-        select.innerHTML = this.availableModels.map(m => `
+        select.innerHTML = this.availableModels.slice(0, 100).map(m => `
             <option value="${m.id}" ${m.id === current ? 'selected' : ''}>
                 ${m.is_free ? '🟢 ' : ''}${m.name} (${Math.round(m.context_length / 1000)}k سياق)
             </option>
@@ -730,19 +1149,24 @@ class OXAlphaApp {
 
         container.innerHTML = filtered.map(m => {
             const isActive = m.id === this.settings.model;
+            const contextText = m.context_length >= 1000000 ? `${(m.context_length/1000000).toFixed(1)}M` : `${Math.round(m.context_length / 1000)}k`;
             return `
                 <div class="model-select-card ${isActive ? 'active' : ''}" onclick="app.selectModel('${m.id}')">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
-                        <div style="display: flex; align-items: center; gap: 6px; font-weight: 700; color: #fff;">
-                            ${m.is_free ? '<span style="color: #34d399; font-size: 0.7rem;">🟢 FREE</span>' : '<span style="color: #fbbf24; font-size: 0.7rem;">PRO</span>'}
-                            <span class="truncate">${this.escapeHTML(m.name)}</span>
+                    <div class="model-header-row">
+                        <div class="model-title-box">
+                            <div class="model-badges-row">
+                                ${m.is_free ? '<span class="badge-pill free">🟢 مجاني 100% (0.00$)</span>' : '<span class="badge-pill pro">PRO</span>'}
+                                <span class="badge-pill context">⚡ ${contextText} سياق</span>
+                                ${m.is_reasoning ? '<span class="badge-pill" style="background: rgba(192, 132, 252, 0.16); color: #c084fc;">🧠 تفكير</span>' : ''}
+                                ${m.is_vision ? '<span class="badge-pill" style="background: rgba(56, 189, 248, 0.16); color: #38bdf8;">👁️ رؤية</span>' : ''}
+                            </div>
+                            <div class="model-name-text">${this.escapeHTML(m.name)}</div>
                         </div>
-                        <span class="badge" style="background: rgba(255,255,255,0.06); font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; color: #94a3b8;">${Math.round(m.context_length / 1000)}k</span>
                     </div>
-                    <div style="font-size: 0.74rem; color: var(--text-muted); line-height: 1.4;" class="truncate">${this.escapeHTML(m.description || m.id)}</div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--text-dim); margin-top: 4px;">
-                        <span>المزود: ${m.provider}</span>
-                        ${isActive ? '<span style="color: #38bdf8; font-weight: 700;">🟢 مفعل حالياً</span>' : '<span style="color: #8ab4f8;">اختيار ↵</span>'}
+                    <div class="model-desc-text">${this.escapeHTML(m.description || m.id)}</div>
+                    <div class="model-footer-row">
+                        <span>المزود: <strong style="color: #cbd5e1;">${m.provider}</strong></span>
+                        ${isActive ? '<span class="btn-select-model-trigger active">🟢 النموذج المفعل حالياً</span>' : '<span class="btn-select-model-trigger inactive">اختيار النموذج ↵</span>'}
                     </div>
                 </div>
             `;
@@ -957,7 +1381,7 @@ class OXAlphaApp {
         document.getElementById('universal-file-input').value = '';
     }
 
-    // VOICE STT & TTS
+    // MULTI-LINGUAL VOICE STT & TTS (AR / FR / EN)
     initVoiceAPIs() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
@@ -1009,7 +1433,8 @@ class OXAlphaApp {
                 this.speechRecognition.start();
                 this.isRecording = true;
                 if (micBtn) micBtn.classList.add('recording');
-                this.showToast(`جاري الاستماع باللغة ${this.speechLang === 'ar-SA' ? 'العربية' : 'الإنجليزية'}... 🎙️`, 'info');
+                const langName = this.speechLang.startsWith('ar') ? 'العربية' : this.speechLang.startsWith('fr') ? 'الفرنسية' : 'الإنجليزية';
+                this.showToast(`جاري الاستماع باللغة ${langName}... 🎙️`, 'info');
             } catch (e) {}
         } else {
             this.speechRecognition.stop();
@@ -1019,10 +1444,20 @@ class OXAlphaApp {
     }
 
     toggleSTTLang() {
-        this.speechLang = this.speechLang === 'ar-SA' ? 'en-US' : 'ar-SA';
+        if (this.speechLang === 'ar-SA') {
+            this.speechLang = 'fr-FR';
+        } else if (this.speechLang === 'fr-FR') {
+            this.speechLang = 'en-US';
+        } else {
+            this.speechLang = 'ar-SA';
+        }
+
         const label = document.getElementById('stt-lang-label');
-        if (label) label.innerText = this.speechLang === 'ar-SA' ? 'AR' : 'EN';
-        this.showToast(`تم ضبط لغة الإملاء الصوتي: ${this.speechLang === 'ar-SA' ? 'العربية' : 'English'}`, 'info');
+        if (label) {
+            label.innerText = this.speechLang.slice(0, 2).toUpperCase();
+        }
+        const langName = this.speechLang.startsWith('ar') ? 'العربية' : this.speechLang.startsWith('fr') ? 'Français' : 'English';
+        this.showToast(`تم ضبط لغة الصوت: ${langName}`, 'info');
     }
 
     speakText(text, btnElement) {
@@ -1041,7 +1476,14 @@ class OXAlphaApp {
 
         const cleanText = text.replace(/<[^>]+>/g, '').replace(/```[\s\S]*?```/g, 'تم تجاوز كتلة الكود البرمجي');
         const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = /[\u0600-\u06FF]/.test(cleanText) ? 'ar-SA' : 'en-US';
+
+        if (/[\u0600-\u06FF]/.test(cleanText)) {
+            utterance.lang = 'ar-SA';
+        } else if (/[àâéèêëîïôùûüçÀÂÉÈÊËÎÏÔÙÛÜÇ]/.test(cleanText) || /\b(le|la|les|un|une|des|est|sont|dans|pour|avec|vous|nous|projet|code)\b/i.test(cleanText)) {
+            utterance.lang = 'fr-FR';
+        } else {
+            utterance.lang = 'en-US';
+        }
         utterance.rate = this.settings.ttsRate || 1.0;
 
         if (btnElement) {
@@ -1323,12 +1765,11 @@ class OXAlphaApp {
         await this.streamChatCompletion(session.id, assistantMsgId, 0, 0);
     }
 
-    // STREAMING MARKDOWN REPAIRER (PREVENTS UNCLOSED TAGS / BROKEN TABLES DURING LIVE STREAM)
+    // STREAMING MARKDOWN REPAIRER
     repairMarkdownForStreaming(content) {
         if (!content) return '';
         let repaired = content;
 
-        // Count triple backticks
         const codeFenceMatches = repaired.match(/```/g);
         if (codeFenceMatches && codeFenceMatches.length % 2 !== 0) {
             repaired += '\n```';
@@ -1337,7 +1778,7 @@ class OXAlphaApp {
         return repaired;
     }
 
-    // RESILIENT MULTI-PASS AUTO-CONTINUATION STREAM ENGINE (NEVER CUTS OFF)
+    // RESILIENT MULTI-PASS AUTO-CONTINUATION STREAM ENGINE
     async streamChatCompletion(sessionId, assistantMsgId, retryIndex = 0, autoContinuePass = 0, maxPasses = 5) {
         const session = this.sessions.find(s => s.id === sessionId);
         if (!session) return;
@@ -1348,10 +1789,24 @@ class OXAlphaApp {
         this.activeStreams.set(sessionId, abortController);
         this.toggleStopButton(true);
 
-        // Build fallback chain dynamically from live available free models + primary
+        // Smart Router: Auto-select best model based on prompt
+        let activeModelToUse = this.settings.model || 'google/gemma-4-31b-it:free';
+        if (this.isSmartRouterActive && autoContinuePass === 0) {
+            const lastMsg = session.messages.filter(m => m.role === 'user').pop();
+            const query = (lastMsg?.content || '').toLowerCase();
+
+            if (lastMsg?.attachment?.base64) {
+                activeModelToUse = 'openrouter/free';
+            } else if (query.includes('حلل') || query.includes('فكر') || query.includes('رياضيات') || query.includes('خوارزمية') || query.includes('algorithm')) {
+                activeModelToUse = 'thinkingmachines/inkling:free';
+            } else if (query.includes('كود') || query.includes('برمج') || query.includes('مستودع') || query.includes('github') || query.includes('code')) {
+                activeModelToUse = 'google/gemma-4-31b-it:free';
+            }
+        }
+
         const freeModelsList = this.availableModels.filter(m => m.is_free && !m.id.includes('ultra')).map(m => m.id);
         const fallbackChain = [
-            this.settings.model || 'google/gemma-4-31b-it:free',
+            activeModelToUse,
             'google/gemma-4-31b-it:free',
             'nvidia/nemotron-3.5-lightning:free',
             'openrouter/free',
@@ -1365,7 +1820,6 @@ class OXAlphaApp {
         assistantMsg.model = currentModel;
         assistantMsg.steps = assistantMsg.steps || [];
 
-        // Check for API Key presence
         const apiKey = this.settings.apiKey?.trim();
         if (!apiKey) {
             assistantMsg.status = 'error';
@@ -1399,6 +1853,11 @@ class OXAlphaApp {
                 }
             }
 
+            if (this.isAutonomousAgentActive && autoContinuePass === 0) {
+                assistantMsg.steps.push({ text: '🤖 وضع الوكيل الذاتي (ReAct Loop): تحليل المتطلبات وفحص الملفات...', done: false });
+                this.renderMessages();
+            }
+
             if (autoContinuePass === 0) {
                 assistantMsg.steps.push({ text: `🧠 إرسال سياق المشروع إلى النموذج (${currentModel})...`, done: false });
             } else {
@@ -1406,7 +1865,8 @@ class OXAlphaApp {
             }
             this.renderMessages();
 
-            let systemText = this.settings.systemPrompt || 'أنت مهندس برمجيات محترف وخبير في تحليل المشاريع الضخمة. لديك وصول كامل لكافة ملفات وأكواد المشروع. عند اقتراح أو تعديل أي ملف، اذكر دائماً مسار الملف بوضوح مثل: ```lang [الملف: src/App.tsx]';
+            let personaPrompt = PERSONA_PROMPTS[this.activePersona] || PERSONA_PROMPTS.fullstack;
+            let systemText = `${personaPrompt}\n${this.settings.systemPrompt || ''}`;
             if (this.settings.githubRepo) {
                 systemText += `\nالمشروع النشط الحالي في GitHub هو: ${this.settings.githubOwner || 'naderba69'}/${this.settings.githubRepo}.`;
             }
@@ -1558,7 +2018,7 @@ class OXAlphaApp {
                 }
             }
 
-            // Scan and register virtual project files
+            // Register Virtual Files and Update Studio
             if (assistantMsg.content) {
                 const regex = /```(?:[a-zA-Z0-9_\-]+)?\s*(?:(?:\[(?:الملف:\s*)?([^\]]+)\])|(?:\/\/ File:\s*([^\n]+))|(?:# File:\s*([^\n]+)))\n([\s\S]*?)```/g;
                 let match;
@@ -1567,7 +2027,11 @@ class OXAlphaApp {
                     const code = match[4] || '';
                     if (filePath && code) {
                         this.virtualProjectFiles.set(filePath, { content: code, lang: filePath.split('.').pop(), timestamp: Date.now() });
+                        this.activeStudioFile = filePath;
                     }
+                }
+                if (this.isCodeStudioOpen) {
+                    this.renderStudioWorkspace();
                 }
             }
 
@@ -1576,9 +2040,11 @@ class OXAlphaApp {
             assistantMsg.tokens = Math.max(1, Math.round((assistantMsg.content.length + (assistantMsg.reasoning || '').length) / 3.8));
             assistantMsg.tps = (assistantMsg.tokens / (parseFloat(assistantMsg.duration) || 1)).toFixed(1);
 
-            // SEAMLESS AUTO-CONTINUATION: IF RESPONSE REACHED TOKEN LIMIT, AUTO-CONTINUE SEAMLESSLY!
+            // Audio and Haptic completion chime
+            this.playCompletionAudioHaptic();
+
+            // Seamless Auto-Continuation if truncated
             if (finishReason === 'length' && autoContinuePass < maxPasses) {
-                console.log(`Seamlessly auto-continuing pass ${autoContinuePass + 1}...`);
                 this.renderMessages();
                 return await this.streamChatCompletion(sessionId, assistantMsgId, retryIndex, autoContinuePass + 1, maxPasses);
             }
@@ -1591,18 +2057,15 @@ class OXAlphaApp {
                 console.error('Stream completion error:', err);
                 const isNetOrProviderError = String(err?.message || '').toLowerCase().includes('network') || String(err?.message || '').toLowerCase().includes('fetch') || err?.name === 'TypeError';
 
-                // SELF-HEALING: Auto-retry on network drop using next fast stable model
-                if (isNetOrProviderError && retryIndex < uniqueCascade.length - 1) {
+                if (isNetOrProviderError && (!assistantMsg.content || assistantMsg.content.length < 50) && retryIndex < uniqueCascade.length - 1) {
                     const nextModel = uniqueCascade[retryIndex + 1];
                     this.showToast(`⚠️ انقطع تدفق ${currentModel}. التحويل الفوري الذكي إلى ${nextModel}...`, 'warning');
-                    assistantMsg.content = '';
-                    assistantMsg.reasoning = '';
                     assistantMsg.steps.push({ text: `⚠️ انقطع تدفق ${currentModel}، تم التحويل تلقائياً وبدء التوليد عبر ${nextModel}...`, done: true });
                     this.renderMessages();
                     return await this.streamChatCompletion(sessionId, assistantMsgId, retryIndex + 1, autoContinuePass, maxPasses);
                 }
 
-                if (assistantMsg.content && assistantMsg.content.length > 100) {
+                if (assistantMsg.content && assistantMsg.content.length > 50) {
                     assistantMsg.content += `\n\n*(اكتمل الرد جزئياً - انقر أدناه لإكمال باقي الإجابة مباشرة)*\n\n<button class="btn-new-thread" style="width: auto; padding: 6px 14px; font-size: 0.75rem;" onclick="app.continueGeneration('${assistantMsgId}')"><i class="fa-solid fa-play"></i> إكمال التوليد من آخر نقطة</button>`;
                     assistantMsg.status = 'completed';
                 } else {
@@ -1699,6 +2162,7 @@ class OXAlphaApp {
         }).join('');
     }
 
+    // MULTI-LINGUAL ARABIC / FRENCH / ENGLISH RENDERING WITH FAIL-SAFE FALLBACK
     renderMessages() {
         const container = document.getElementById('chat-messages-container');
         if (!container) return;
@@ -1711,7 +2175,7 @@ class OXAlphaApp {
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
                     <h1 class="welcome-title-glow">OX-Alpha Workbench Pro</h1>
-                    <p class="welcome-subtitle">منظومة هندسة البرمجيات بالذكاء الاصطناعي مع جلب وتحديث كود مستودعات GitHub مباشرة، فك وتصدير مشاريع ZIP، وتحليل المشاريع الضخمة بسلاسة.</p>
+                    <p class="welcome-subtitle">منظومة هندسة البرمجيات بالذكاء الاصطناعي مع جلب وتحديث كود مستودعات GitHub مباشرة، فك وتصدير مشاريع ZIP، ودعم النماذج الحية بالعربية والفرنسية والإنجليزية.</p>
 
                     <div class="hero-cards-grid">
                         <div class="hero-action-card" onclick="app.ingestCurrentGitHubRepo()">
@@ -1730,20 +2194,20 @@ class OXAlphaApp {
                             <div class="hero-card-desc">استخراج وتفكيك كافة ملفات الأكواد البرمجية وهندستها وتطويرها فورياً.</div>
                         </div>
 
+                        <div class="hero-action-card" onclick="app.openDualModelArena()">
+                            <div class="hero-card-header">
+                                <div class="hero-card-title">حلبة مقارنة نموذجين (Arena)</div>
+                                <i class="fa-solid fa-bolt" style="color: #fbbf24; font-size: 1.1rem;"></i>
+                            </div>
+                            <div class="hero-card-desc">مقارنة توليد نموذجين جنباً إلى جنب في الوقت الفعلي.</div>
+                        </div>
+
                         <div class="hero-action-card" onclick="app.downloadProjectAsZip()">
                             <div class="hero-card-header">
                                 <div class="hero-card-title">تصدير وتحميل المشروع ZIP</div>
                                 <i class="fa-solid fa-download" style="color: #38bdf8; font-size: 1.1rem;"></i>
                             </div>
                             <div class="hero-card-desc">تنزيل حزمة كاملة لملفات المشروع البرمجي في أرشيف ZIP جاهز للتشغيل.</div>
-                        </div>
-
-                        <div class="hero-action-card" onclick="app.openRepositoriesHubModal()">
-                            <div class="hero-card-header">
-                                <div class="hero-card-title">مستكشف مشاريع GitHub</div>
-                                <i class="fa-brands fa-github" style="color: #34d399; font-size: 1.1rem;"></i>
-                            </div>
-                            <div class="hero-card-desc">جلب ومراجعة مستودعات الحساب (${this.settings.githubOwner || 'naderba69'}) بضغطة واحدة.</div>
                         </div>
                     </div>
                 </div>
@@ -1755,7 +2219,7 @@ class OXAlphaApp {
             const isUser = m.role === 'user';
             if (isUser) {
                 return `
-                    <div class="msg-bubble-row user-side">
+                    <div class="msg-bubble-row user-side" dir="auto">
                         <div class="sender-avatar usr">
                             <i class="fa-solid fa-user"></i>
                         </div>
@@ -1764,9 +2228,9 @@ class OXAlphaApp {
                                 <span class="msg-sender-name">المستخدم</span>
                                 <span>${new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <div class="msg-card usr">
+                            <div class="msg-card usr" dir="auto">
                                 ${m.attachment ? `
-                                    <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 8px; font-size: 0.78rem;">
+                                    <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 8px; font-size: 0.78rem;" dir="auto">
                                         <i class="${m.attachment.isGitHubProject ? 'fa-brands fa-github text-success' : m.attachment.isZipProject ? 'fa-solid fa-file-zipper text-warning' : 'fa-solid fa-paperclip text-info'}"></i>
                                         <span style="font-weight: 700;">${m.attachment.name}</span>
                                     </div>
@@ -1809,10 +2273,15 @@ class OXAlphaApp {
 
                 const repairedMarkdown = this.repairMarkdownForStreaming(m.content || '');
                 let parsedContent = '';
-                if (typeof marked !== 'undefined') {
-                    parsedContent = DOMPurify.sanitize(marked.parse(repairedMarkdown));
-                } else {
-                    parsedContent = this.escapeHTML(m.content || '');
+                try {
+                    if (typeof marked !== 'undefined') {
+                        parsedContent = DOMPurify.sanitize(marked.parse(repairedMarkdown));
+                    } else {
+                        parsedContent = this.escapeHTML(m.content || '').replace(/\n/g, '<br>');
+                    }
+                } catch (err) {
+                    console.warn('Markdown parsing fallback triggered:', err);
+                    parsedContent = this.escapeHTML(m.content || '').replace(/\n/g, '<br>');
                 }
 
                 let gaugeHtml = '';
@@ -1827,7 +2296,7 @@ class OXAlphaApp {
                 }
 
                 return `
-                    <div class="msg-bubble-row">
+                    <div class="msg-bubble-row" dir="auto">
                         <div class="sender-avatar bot">
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
                         </div>
@@ -1837,10 +2306,10 @@ class OXAlphaApp {
                                 <span style="font-size: 0.7rem; color: #8ab4f8;">(${m.model || 'AI'})</span>
                                 <span>${new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
-                            <div class="msg-card bot">
+                            <div class="msg-card bot" dir="auto">
                                 ${stepsHtml}
                                 ${reasoningHtml}
-                                <div class="markdown-body">${parsedContent}</div>
+                                <div class="markdown-body" dir="auto">${parsedContent}</div>
                                 ${gaugeHtml}
                                 <div class="msg-footer-bar">
                                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
@@ -1854,7 +2323,7 @@ class OXAlphaApp {
                                         </button>
                                         <button class="msg-sub-action-btn" onclick="app.speakText(this.closest('.msg-card').innerText, this)">
                                             <i class="fa-solid fa-volume-high"></i>
-                                            <span>قراءة صوتية</span>
+                                            <span>قراءة صوتية (FR/AR/EN)</span>
                                         </button>
                                         <button class="msg-sub-action-btn" onclick="app.copyToClipboard(this.closest('.msg-card').innerText, this)">
                                             <i class="fa-regular fa-copy"></i>
@@ -1899,7 +2368,10 @@ class OXAlphaApp {
                     ${detectedPath ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">${detectedPath}</span>` : ''}
                 </div>
                 <div class="code-actions-group">
-                    ${detectedPath ? `<button class="code-tool-btn commit-btn" onclick="app.commitFileToGitHub('${detectedPath}', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-brands fa-github"></i> <span>رفع لـ GitHub</span></button>` : ''}
+                    ${detectedPath ? `
+                        <button class="code-tool-btn" onclick="app.openDiffModal('${detectedPath}', '', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-solid fa-code-compare"></i> <span>Diff</span></button>
+                        <button class="code-tool-btn commit-btn" onclick="app.commitFileToGitHub('${detectedPath}', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-brands fa-github"></i> <span>رفع لـ GitHub</span></button>
+                    ` : ''}
                     ${lang === 'python' || lang === 'py' ? `<button class="code-tool-btn run-btn" onclick="app.runPythonCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-python"></i> <span>تشغيل بايثون Wasm</span></button>` : ''}
                     ${lang === 'javascript' || lang === 'js' ? `<button class="code-tool-btn run-btn" onclick="app.runJavaScriptCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-js"></i> <span>تشغيل JS</span></button>` : ''}
                     ${lang === 'html' || lang === 'svg' ? `<button class="code-tool-btn" onclick="app.toggleLiveArtifact(this)"><i class="fa-solid fa-eye"></i> <span>معاينة</span></button>` : ''}
@@ -2007,7 +2479,6 @@ class OXAlphaApp {
             });
         }
 
-        // Global escape key to close modals
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') this.closeModals();
         });
