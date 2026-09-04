@@ -34,8 +34,8 @@
 
     <style>
 /* ==============================================================================
-   OX-Alpha Workbench Pro | Gemini Obsidian Dark Theme & Ultra UI
-   Complete Enterprise Suite: Autonomous Agent, Arena, Studio, Diff, Multilingual
+   OX-Alpha Workbench Pro | Gemini Obsidian Clean Architecture & Design System
+   Strict Multi-Screen Responsiveness, Zero Overlap, Native Mobile Bottom-Sheets
    ============================================================================== */
 
 :root {
@@ -45,10 +45,9 @@
     --bg-card: #282a2c;
     --bg-card-hover: #333538;
     --bg-input: #1e1f20;
-    --bg-glass: rgba(30, 31, 32, 0.88);
-    --bg-glass-heavy: rgba(19, 19, 20, 0.95);
+    --bg-glass: rgba(30, 31, 32, 0.92);
     
-    /* Gemini Borders */
+    /* Borders */
     --border-subtle: rgba(255, 255, 255, 0.08);
     --border-light: rgba(255, 255, 255, 0.14);
     --border-glow: #4285f4;
@@ -61,12 +60,9 @@
     --gemini-cyan: #24d6dd;
     --gemini-aurora: linear-gradient(135deg, #4285f4 0%, #9b72cf 50%, #e57cd8 100%);
     --gemini-aurora-glow: 0 0 28px rgba(155, 114, 207, 0.35);
-    --gemini-aurora-subtle: linear-gradient(135deg, rgba(66,133,244,0.12), rgba(155,114,207,0.12), rgba(229,124,216,0.12));
     
     --primary: #8ab4f8;
-    --primary-glow: rgba(138, 180, 248, 0.25);
     --success: #34d399;
-    --success-glow: rgba(52, 211, 153, 0.2);
     --warning: #fbbf24;
     --danger: #f87171;
     --info: #38bdf8;
@@ -80,25 +76,22 @@
     --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
     /* Measurements */
-    --sidebar-width: 290px;
-    --header-height: 60px;
+    --sidebar-width: 280px;
+    --header-height: 56px;
     --radius-xs: 6px;
     --radius-sm: 10px;
-    --radius-md: 16px;
-    --radius-lg: 22px;
-    --radius-xl: 28px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
     --radius-pill: 9999px;
     
     /* Shadows & Transitions */
     --shadow-sm: 0 2px 10px rgba(0,0,0,0.3);
     --shadow-md: 0 8px 30px rgba(0,0,0,0.5);
     --shadow-lg: 0 16px 48px rgba(0,0,0,0.7);
-    --shadow-glow: 0 0 30px rgba(66, 133, 244, 0.2);
-    --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Reset & Base */
+/* Base Reset */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -117,13 +110,12 @@ html, body {
     direction: rtl;
     text-align: right;
     -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
 }
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 ::-webkit-scrollbar-track {
     background: transparent;
@@ -147,7 +139,7 @@ html, body {
     background-color: var(--bg-base);
 }
 
-/* Sidebar (Gemini Clean Drawer) */
+/* Sidebar Drawer */
 .sidebar {
     width: var(--sidebar-width);
     height: 100%;
@@ -157,7 +149,7 @@ html, body {
     flex-direction: column;
     flex-shrink: 0;
     z-index: 60;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), width 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .sidebar-overlay {
@@ -169,7 +161,7 @@ html, body {
     z-index: 55;
     display: none;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
 }
 
 .sidebar-overlay.active {
@@ -177,21 +169,15 @@ html, body {
     opacity: 1;
 }
 
-.sidebar-top {
-    padding: 16px 16px 12px 16px;
+.sidebar-header {
+    padding: 14px 14px 10px 14px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     border-bottom: 1px solid var(--border-subtle);
 }
 
-.app-brand {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.brand-info {
+.brand-row {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -199,7 +185,6 @@ html, body {
     user-select: none;
 }
 
-/* Gemini Animated Sparkle Icon */
 .gemini-sparkle-icon {
     width: 32px;
     height: 32px;
@@ -211,24 +196,15 @@ html, body {
     color: #ffffff;
     font-size: 1.1rem;
     box-shadow: 0 0 16px rgba(155, 114, 207, 0.4);
-    animation: pulse-gemini 4s ease-in-out infinite;
-}
-
-@keyframes pulse-gemini {
-    0%, 100% { transform: scale(1); filter: brightness(1); }
-    50% { transform: scale(1.05); filter: brightness(1.2) drop-shadow(0 0 10px rgba(66, 133, 244, 0.6)); }
 }
 
 .brand-title {
-    font-size: 1.15rem;
+    font-size: 1.12rem;
     font-weight: 800;
-    letter-spacing: -0.3px;
+    color: #ffffff;
     display: flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 .brand-badge {
@@ -238,50 +214,32 @@ html, body {
     color: #fff;
     padding: 2px 7px;
     border-radius: var(--radius-pill);
-    letter-spacing: 0.5px;
-    -webkit-text-fill-color: #ffffff;
-    box-shadow: 0 0 8px rgba(66, 133, 244, 0.4);
 }
 
-/* New Chat Button (Gemini Pill Style) */
 .btn-new-thread {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
     width: 100%;
-    padding: 11px 18px;
+    padding: 9px 16px;
     background: #282a2c;
     color: #f1f5f9;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-pill);
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 700;
     cursor: pointer;
-    transition: var(--transition-bounce);
-    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
 }
 
 .btn-new-thread:hover {
     background: #333538;
     border-color: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
-.btn-new-thread:active {
-    transform: translateY(0);
-}
-
-.btn-new-thread i {
-    font-size: 0.85rem;
-    background: var(--gemini-aurora);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* GitHub Active Repo Pill in Sidebar */
-.sidebar-repo-badge {
+.sidebar-repo-pill {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -295,15 +253,22 @@ html, body {
     transition: var(--transition);
 }
 
-.sidebar-repo-badge:hover {
+.sidebar-repo-pill:hover {
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(52, 211, 153, 0.4);
     color: #fff;
 }
 
-/* Search in Sidebar */
-.sidebar-search {
-    padding: 8px 16px;
+.repo-info-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+}
+
+/* Sidebar Search */
+.sidebar-search-container {
+    padding: 8px 14px;
 }
 
 .sidebar-search-box {
@@ -311,15 +276,13 @@ html, body {
     align-items: center;
     gap: 8px;
     padding: 7px 12px;
-    background: #18191a;
+    background: #141517;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
-    transition: var(--transition);
 }
 
 .sidebar-search-box:focus-within {
     border-color: var(--gemini-blue);
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
 }
 
 .sidebar-search-box input {
@@ -333,22 +296,22 @@ html, body {
 }
 
 /* Sessions List */
-.sidebar-sessions {
+.sidebar-sessions-list {
     flex: 1;
     overflow-y: auto;
-    padding: 6px 12px;
+    padding: 4px 10px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
 }
 
 .session-item-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 9px 12px;
+    padding: 8px 12px;
     border-radius: var(--radius-pill);
-    font-size: 0.83rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition);
@@ -365,7 +328,6 @@ html, body {
     background-color: #282a2c;
     color: #ffffff;
     font-weight: 700;
-    box-shadow: var(--shadow-sm);
 }
 
 .session-item-row.active::before {
@@ -400,11 +362,19 @@ html, body {
     50% { transform: scale(1.4); opacity: 0.4; }
 }
 
-/* Sidebar Tools Grid Footer */
-.sidebar-footer {
-    padding: 12px 14px;
+/* Sidebar Tools Footer */
+.sidebar-footer-nav {
+    padding: 10px 12px 14px 12px;
     border-top: 1px solid var(--border-subtle);
-    background: #1a1a1c;
+    background: #18191c;
+}
+
+.nav-section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    padding: 0 4px;
 }
 
 .sidebar-tools-grid {
@@ -413,16 +383,16 @@ html, body {
     gap: 6px;
 }
 
-.sidebar-btn-util {
+.tool-grid-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    padding: 8px 4px;
+    padding: 7px 4px;
     background: #242528;
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     color: var(--text-muted);
     font-size: 0.72rem;
     font-weight: 600;
@@ -430,15 +400,15 @@ html, body {
     transition: var(--transition);
 }
 
-.sidebar-btn-util:hover {
+.tool-grid-btn:hover {
     background: #2e3034;
     color: #fff;
     border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
 }
 
-/* Main Viewport & Split-Pane Studio */
-.chat-main-viewport {
+/* Main Viewport */
+.main-viewport {
     flex: 1;
     height: 100%;
     display: flex;
@@ -448,108 +418,14 @@ html, body {
     overflow: hidden;
 }
 
-/* Split Pane Mode */
-.workbench-content-split {
-    flex: 1;
-    display: flex;
-    width: 100%;
-    height: calc(100% - var(--header-height));
-    overflow: hidden;
-    position: relative;
-}
-
-.chat-stream-pane {
-    flex: 1;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-    min-width: 320px;
-}
-
-/* Code Studio Pane */
-.code-studio-pane {
-    width: 50%;
-    height: 100%;
-    background: #121316;
-    border-right: 1px solid var(--border-subtle);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 30;
-}
-
-.code-studio-pane.active {
-    display: flex;
-}
-
-.studio-tabs-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 12px;
-    background: #1a1a1e;
-    border-bottom: 1px solid var(--border-subtle);
-    overflow-x: auto;
-    flex-shrink: 0;
-}
-
-.studio-tab-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    background: #24252a;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
-    color: #cbd5e1;
-    font-family: var(--font-mono);
-    font-size: 0.76rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.studio-tab-item.active {
-    background: #2d3038;
-    color: #38bdf8;
-    border-color: #38bdf8;
-}
-
-.studio-editor-area {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    background: #0d0e11;
-}
-
-.studio-textarea-code {
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #f1f5f9;
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    line-height: 1.65;
-    padding: 16px;
-    resize: none;
-    direction: ltr;
-    text-align: left;
-    white-space: pre;
-    tab-size: 4;
-}
-
-/* Gemini Header Bar */
-.gemini-header {
+/* Top Navbar (Strict 56px Single-Line, Zero Overlap) */
+.top-navbar {
     height: var(--header-height);
-    padding: 0 20px;
+    padding: 0 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(19, 19, 20, 0.85);
+    background: rgba(19, 19, 20, 0.95);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-subtle);
@@ -557,22 +433,43 @@ html, body {
     flex-shrink: 0;
 }
 
-.gemini-header-left {
+.navbar-left {
     display: flex;
     align-items: center;
     gap: 10px;
-    flex-wrap: wrap;
+    min-width: 0;
+    overflow: hidden;
 }
 
-.gemini-header-right {
+.navbar-right {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-shrink: 0;
 }
 
-.icon-btn {
-    width: 38px;
-    height: 38px;
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.nav-sparkle {
+    background: var(--gemini-aurora);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 1.2rem;
+}
+
+.nav-icon-btn {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     background: #282a2c;
     border: 1px solid var(--border-subtle);
@@ -582,22 +479,55 @@ html, body {
     justify-content: center;
     cursor: pointer;
     transition: var(--transition);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
-.icon-btn:hover {
+.nav-icon-btn:hover {
     background: #333538;
     color: #ffffff;
     border-color: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
 }
 
-.icon-btn:active {
-    transform: scale(0.95);
+.nav-model-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    background: #1e1f20;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #f1f5f9;
+    cursor: pointer;
+    transition: var(--transition);
+    max-width: 240px;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-/* Persona Selector Pill */
-.persona-selector-pill {
+.nav-model-pill:hover {
+    background: #282a2c;
+    border-color: var(--gemini-blue);
+}
+
+.live-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 6px #34d399;
+    flex-shrink: 0;
+}
+
+.pill-arrow {
+    font-size: 0.62rem;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.nav-persona-pill {
     display: flex;
     align-items: center;
     gap: 6px;
@@ -605,104 +535,93 @@ html, body {
     background: rgba(155, 114, 207, 0.12);
     border: 1px solid rgba(155, 114, 207, 0.3);
     border-radius: var(--radius-pill);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 700;
     color: #c084fc;
     cursor: pointer;
+    white-space: nowrap;
     transition: var(--transition);
 }
 
-.persona-selector-pill:hover {
+.nav-persona-pill:hover {
     background: rgba(155, 114, 207, 0.22);
     border-color: #c084fc;
-    transform: translateY(-1px);
 }
 
-/* Model Selector Pill (Gemini Style) */
-.model-selector-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 14px;
-    background: #1e1f20;
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-pill);
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #f1f5f9;
-    cursor: pointer;
-    transition: var(--transition-bounce);
-    box-shadow: var(--shadow-sm);
-}
-
-.model-selector-pill:hover {
-    background: #282a2c;
-    border-color: var(--gemini-blue);
-    box-shadow: 0 0 16px rgba(66, 133, 244, 0.25);
-    transform: translateY(-1px);
-}
-
-.status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #34d399;
-    box-shadow: 0 0 8px #34d399;
-    flex-shrink: 0;
-}
-
-.repo-selector-pill {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    padding: 6px 12px;
-    background: rgba(52, 211, 153, 0.08);
-    border: 1px solid rgba(52, 211, 153, 0.25);
-    border-radius: var(--radius-pill);
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #34d399;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.repo-selector-pill:hover {
-    background: rgba(52, 211, 153, 0.16);
-    border-color: rgba(52, 211, 153, 0.5);
-    transform: translateY(-1px);
-}
-
-/* API Key Banner Alert */
-.api-key-alert-bar {
-    padding: 8px 18px;
+/* API Key Banner */
+.api-key-banner {
+    padding: 8px 16px;
     background: linear-gradient(90deg, rgba(245, 158, 11, 0.15) 0%, rgba(239, 68, 68, 0.15) 100%);
     border-bottom: 1px solid rgba(245, 158, 11, 0.3);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: #fbbf24;
-    animation: fadeIn 0.3s ease;
+    flex-shrink: 0;
 }
 
-.api-key-alert-btn {
-    padding: 4px 10px;
+.banner-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow: hidden;
+}
+
+.banner-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.banner-btn-link {
+    padding: 3px 8px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.banner-btn-action {
+    padding: 3px 10px;
     border-radius: var(--radius-pill);
     background: #f59e0b;
     color: #000;
+    font-size: 0.72rem;
     font-weight: 700;
-    font-size: 0.74rem;
     border: none;
     cursor: pointer;
-    transition: var(--transition);
 }
 
-/* Messages Scroll Viewport */
-.messages-scroll-area {
+/* Content Workspace (Chat + Studio Split) */
+.content-workspace {
+    flex: 1 1 auto;
+    display: flex;
+    width: 100%;
+    height: calc(100% - var(--header-height));
+    overflow: hidden;
+    position: relative;
+}
+
+/* Chat Pane */
+.chat-pane {
     flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    background: var(--bg-base);
+}
+
+/* Messages Scroll Wrapper (Clean In-Flow Layout) */
+.messages-scroll-wrapper {
+    flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 24px 16px 140px 16px;
+    padding: 20px 16px 12px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -711,13 +630,13 @@ html, body {
 
 .messages-container {
     width: 100%;
-    max-width: 880px;
+    max-width: 860px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 20px;
 }
 
-/* Welcome Hero Box (Gemini Signature) */
+/* Welcome Hero Box */
 .welcome-hero-box {
     display: flex;
     flex-direction: column;
@@ -728,39 +647,35 @@ html, body {
     width: 100%;
     max-width: 760px;
     margin: auto;
-    animation: fadeIn 0.4s ease;
 }
 
 .welcome-logo-badge {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     border-radius: var(--radius-lg);
     background: var(--gemini-aurora);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: #ffffff;
-    box-shadow: 0 0 35px rgba(155, 114, 207, 0.5);
-    margin-bottom: 16px;
-    animation: pulse-gemini 4s infinite;
+    box-shadow: 0 0 30px rgba(155, 114, 207, 0.45);
+    margin-bottom: 14px;
 }
 
 .welcome-title-glow {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 900;
-    background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
+    color: #ffffff;
+    margin-bottom: 8px;
     letter-spacing: -0.5px;
 }
 
 .welcome-subtitle {
-    font-size: 0.96rem;
+    font-size: 0.94rem;
     color: var(--text-muted);
-    max-width: 600px;
-    line-height: 1.7;
+    max-width: 580px;
+    line-height: 1.65;
     margin-bottom: 24px;
 }
 
@@ -775,65 +690,44 @@ html, body {
     background: #1e1f20;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 14px 16px;
+    padding: 14px;
     text-align: right;
     cursor: pointer;
     transition: var(--transition);
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero-action-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--gemini-aurora-subtle);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    gap: 4px;
 }
 
 .hero-action-card:hover {
     background: #282a2c;
     border-color: rgba(66, 133, 244, 0.4);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.hero-action-card:hover::before {
-    opacity: 1;
 }
 
 .hero-card-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
-    z-index: 1;
 }
 
 .hero-card-title {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 700;
     color: #f1f5f9;
 }
 
 .hero-card-desc {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
-    line-height: 1.45;
-    position: relative;
-    z-index: 1;
+    line-height: 1.4;
 }
 
 /* Message Bubble Row */
 .msg-bubble-row {
     display: flex;
-    gap: 14px;
+    gap: 12px;
     width: 100%;
-    animation: fadeIn 0.25s ease;
 }
 
 .msg-bubble-row.user-side {
@@ -841,21 +735,20 @@ html, body {
 }
 
 .sender-avatar {
-    width: 36px;
-    height: 36px;
+    width: 34px;
+    height: 34px;
     border-radius: var(--radius-sm);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    font-size: 1rem;
-    font-weight: 800;
+    font-size: 0.95rem;
 }
 
 .sender-avatar.bot {
     background: var(--gemini-aurora);
     color: #ffffff;
-    box-shadow: 0 0 16px rgba(155, 114, 207, 0.35);
+    box-shadow: 0 0 14px rgba(155, 114, 207, 0.35);
 }
 
 .sender-avatar.usr {
@@ -875,10 +768,9 @@ html, body {
 .msg-meta-bar {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-size: 0.76rem;
+    gap: 8px;
+    font-size: 0.74rem;
     color: var(--text-dim);
-    padding: 0 4px;
 }
 
 .msg-sender-name {
@@ -886,11 +778,11 @@ html, body {
     color: var(--text-muted);
 }
 
-/* Message Card - UNRESTRICTED HEIGHT (NO CUTOFF / NO TRUNCATION) */
+/* Message Card (Unrestricted Height & Multilingual Layout) */
 .msg-card {
-    padding: 16px 20px;
+    padding: 14px 18px;
     border-radius: var(--radius-lg);
-    font-size: 0.95rem;
+    font-size: 0.94rem;
     line-height: 1.8;
     color: #f1f5f9;
     word-break: break-word;
@@ -912,31 +804,26 @@ html, body {
 .msg-card.bot {
     background-color: transparent;
     border: none;
-    padding: 4px 0;
+    padding: 2px 0;
     width: 100%;
 }
 
-/* Reasoning Chain Box (Gemini 2.0 Thinking / DeepSeek R1) */
+/* Reasoning Box */
 .reasoning-chain-card {
     background: #18191b;
     border: 1px solid rgba(155, 114, 207, 0.25);
     border-radius: var(--radius-md);
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     overflow: hidden;
-    transition: var(--transition);
-}
-
-.reasoning-chain-card:hover {
-    border-color: rgba(155, 114, 207, 0.5);
 }
 
 .reasoning-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 14px;
+    padding: 9px 14px;
     background: rgba(155, 114, 207, 0.08);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #c084fc;
     cursor: pointer;
@@ -944,9 +831,9 @@ html, body {
 }
 
 .reasoning-content {
-    padding: 14px;
+    padding: 12px 14px;
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     line-height: 1.6;
     color: #94a3b8;
     white-space: pre-wrap;
@@ -954,7 +841,7 @@ html, body {
     background: #121315;
     direction: ltr;
     text-align: left;
-    max-height: 350px;
+    max-height: 300px;
     overflow-y: auto;
 }
 
@@ -963,7 +850,7 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     padding: 8px 12px;
     background: rgba(66, 133, 244, 0.06);
     border: 1px solid rgba(66, 133, 244, 0.18);
@@ -974,7 +861,7 @@ html, body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: #93c5fd;
 }
 
@@ -991,64 +878,53 @@ html, body {
     to { transform: rotate(360deg); }
 }
 
-/* Markdown Typography - Multi-lingual Auto Direction */
+/* Markdown Typography */
 .markdown-body {
-    font-size: 0.96rem;
+    font-size: 0.95rem;
     line-height: 1.82;
     color: #f1f5f9;
-    max-height: none !important;
-    overflow: visible !important;
     unicode-bidi: plaintext;
 }
 
-.markdown-body p, 
-.markdown-body h1, 
-.markdown-body h2, 
-.markdown-body h3, 
-.markdown-body h4, 
-.markdown-body li, 
-.markdown-body blockquote {
+.markdown-body p, .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body li, .markdown-body blockquote {
     unicode-bidi: plaintext;
 }
 
 .markdown-body p {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
 }
 
 .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
     color: #ffffff;
     font-weight: 800;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-top: 18px;
+    margin-bottom: 8px;
     line-height: 1.4;
 }
 
 .markdown-body ul, .markdown-body ol {
-    margin-bottom: 14px;
-    padding-right: 24px;
+    margin-bottom: 12px;
+    padding-right: 22px;
     padding-left: 0;
 }
 
-/* LTR List Alignment for French & English */
-.markdown-body[dir="ltr"] ul, .markdown-body[dir="ltr"] ol,
-[dir="ltr"] .markdown-body ul, [dir="ltr"] .markdown-body ol {
-    padding-left: 24px;
+.markdown-body[dir="ltr"] ul, .markdown-body[dir="ltr"] ol, [dir="ltr"] .markdown-body ul, [dir="ltr"] .markdown-body ol {
+    padding-left: 22px;
     padding-right: 0;
 }
 
 .markdown-body li {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .markdown-body blockquote {
-    padding: 10px 18px;
+    padding: 8px 16px;
     background: rgba(66, 133, 244, 0.08);
     border-right: 4px solid var(--gemini-blue);
     border-left: none;
     border-radius: 4px;
     color: #cbd5e1;
-    margin-bottom: 14px;
-    font-style: normal;
+    margin-bottom: 12px;
 }
 
 .markdown-body[dir="ltr"] blockquote, [dir="ltr"] .markdown-body blockquote {
@@ -1059,14 +935,14 @@ html, body {
 .markdown-body table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 16px;
-    font-size: 0.88rem;
+    margin-bottom: 14px;
+    font-size: 0.86rem;
     overflow-x: auto;
     display: block;
 }
 
 .markdown-body th, .markdown-body td {
-    padding: 10px 14px;
+    padding: 8px 12px;
     border: 1px solid var(--border-subtle);
     text-align: right;
 }
@@ -1078,38 +954,26 @@ html, body {
 .markdown-body th {
     background: #282a2c;
     color: #ffffff;
-    font-weight: 700;
-}
-
-.markdown-body tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.02);
-}
-
-.markdown-body tr:hover {
-    background: rgba(255, 255, 255, 0.05);
 }
 
 .markdown-body code:not(pre code) {
     background: #282a2c;
     color: #38bdf8;
     padding: 2px 6px;
-    border-radius: 5px;
+    border-radius: 4px;
     font-family: var(--font-mono);
     font-size: 0.85em;
-    border: 1px solid rgba(255, 255, 255, 0.08);
     direction: ltr;
     display: inline-block;
 }
 
-/* macOS Style Code Block Box (Strictly LTR) */
+/* Code Blocks */
 .code-block-box {
-    position: relative;
-    margin: 16px 0;
+    margin: 14px 0;
     background: #18191c;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
     direction: ltr !important;
     text-align: left !important;
 }
@@ -1118,11 +982,11 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 14px;
+    padding: 7px 12px;
     background: #222428;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: #94a3b8;
     direction: ltr !important;
 }
@@ -1130,7 +994,7 @@ html, body {
 .code-actions-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: wrap;
     direction: ltr !important;
 }
@@ -1138,13 +1002,13 @@ html, body {
 .code-tool-btn {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 4px 10px;
+    gap: 4px;
+    padding: 3px 8px;
     background: #2c2e33;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
     color: #e2e8f0;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
@@ -1153,8 +1017,6 @@ html, body {
 .code-tool-btn:hover {
     background: #383a40;
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
 }
 
 .code-tool-btn.commit-btn {
@@ -1163,30 +1025,20 @@ html, body {
     border-color: rgba(52, 211, 153, 0.3);
 }
 
-.code-tool-btn.commit-btn:hover {
-    background: rgba(52, 211, 153, 0.28);
-    border-color: #34d399;
-}
-
 .code-tool-btn.run-btn {
     background: rgba(66, 133, 244, 0.15);
     color: #93c5fd;
     border-color: rgba(66, 133, 244, 0.3);
 }
 
-.code-tool-btn.run-btn:hover {
-    background: rgba(66, 133, 244, 0.28);
-    border-color: #60a5fa;
-}
-
 .code-block-box pre {
     margin: 0;
-    padding: 16px;
+    padding: 14px;
     overflow-x: auto;
     direction: ltr !important;
     text-align: left !important;
     font-family: var(--font-mono) !important;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     line-height: 1.6;
     background: #18191c;
 }
@@ -1196,69 +1048,66 @@ html, body {
     background: transparent !important;
     padding: 0 !important;
     border: none !important;
-    direction: ltr !important;
-    text-align: left !important;
 }
 
-/* Terminal Drawer in Code Block */
 .terminal-box {
     display: none;
-    padding: 12px 14px;
+    padding: 10px 12px;
     background: #0d0e11;
     border-top: 1px solid var(--border-subtle);
     font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: #34d399;
     direction: ltr;
     text-align: left;
     white-space: pre-wrap;
-    max-height: 220px;
+    max-height: 200px;
     overflow-y: auto;
 }
 
 .live-artifact-frame {
     display: none;
     width: 100%;
-    height: 320px;
+    height: 300px;
     border: none;
     background: #ffffff;
     border-top: 1px solid var(--border-subtle);
 }
 
-/* Token / TPS Speed Gauge */
+/* Speed Gauge */
 .token-speed-gauge {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 6px 12px;
+    gap: 10px;
+    padding: 5px 10px;
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--text-dim);
-    margin-top: 10px;
+    margin-top: 8px;
     width: fit-content;
 }
 
-/* Message Footer Action Bar */
+/* Footer Action Bar */
 .msg-footer-bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 10px;
-    padding-top: 6px;
+    margin-top: 8px;
+    padding-top: 4px;
 }
 
 .msg-sub-action-btn {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 5px 12px;
+    gap: 5px;
+    padding: 4px 10px;
     background: #282a2c;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
     color: var(--text-muted);
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 600;
     cursor: pointer;
     transition: var(--transition);
@@ -1267,14 +1116,12 @@ html, body {
 .msg-sub-action-btn:hover {
     background: #333538;
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
 }
 
-/* Floating Sticky Scroll Down Pill */
-.scroll-down-floating-pill {
-    position: fixed;
-    bottom: 110px;
+/* Floating Scroll-To-Bottom Pill */
+.scroll-to-bottom-pill {
+    position: absolute;
+    bottom: 120px;
     left: 50%;
     transform: translateX(-50%) translateY(20px);
     opacity: 0;
@@ -1282,51 +1129,65 @@ html, body {
     background: #282a2c;
     border: 1px solid var(--gemini-blue);
     color: #ffffff;
-    padding: 7px 16px;
+    padding: 6px 14px;
     border-radius: var(--radius-pill);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    box-shadow: var(--shadow-md), 0 0 16px rgba(66, 133, 244, 0.3);
+    box-shadow: var(--shadow-md), 0 0 14px rgba(66, 133, 244, 0.3);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     cursor: pointer;
     transition: all 0.25s ease;
-    z-index: 45;
+    z-index: 35;
 }
 
-.scroll-down-floating-pill.visible {
+.scroll-to-bottom-pill.visible {
     opacity: 1;
     pointer-events: auto;
     transform: translateX(-50%) translateY(0);
 }
 
-/* Quick Prompts Carousel Bar */
-.quick-prompts-carousel {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 4px 16px 8px 16px;
+/* ==============================================================================
+   BOTTOM INPUT DOCK (In-Flow Flex Layout: NEVER Overlaps Messages!)
+   ============================================================================== */
+
+.input-dock-footer {
+    flex-shrink: 0;
     width: 100%;
     max-width: 860px;
     margin: 0 auto;
-    scrollbar-width: none;
+    padding: 6px 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: var(--bg-base);
+    z-index: 30;
 }
 
-.quick-prompts-carousel::-webkit-scrollbar {
+/* Quick Suggestions Carousel */
+.quick-suggestions-carousel {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 2px 0;
+}
+
+.quick-suggestions-carousel::-webkit-scrollbar {
     display: none;
 }
 
-.prompt-chip-pill {
+.suggestion-chip {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 14px;
+    padding: 5px 12px;
     background: #1e1f20;
     border: 1px solid var(--border-light);
     border-radius: var(--radius-pill);
     color: var(--text-muted);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 600;
     white-space: nowrap;
     cursor: pointer;
@@ -1334,104 +1195,132 @@ html, body {
     flex-shrink: 0;
 }
 
-.prompt-chip-pill:hover {
+.suggestion-chip:hover {
     background: #282a2c;
     color: #ffffff;
     border-color: var(--gemini-blue);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-/* Floating Prompt Input Dock (Gemini Capsule) */
-.input-dock-wrapper {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 8px 16px 20px 16px;
-    background: linear-gradient(180deg, transparent 0%, rgba(19, 19, 20, 0.95) 40%, #131314 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 50;
-}
-
-.input-dock-container {
-    width: 100%;
-    max-width: 860px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.attachment-preview-tray {
+/* Attachment Preview Tray */
+.attachment-tray {
     display: none;
     align-items: center;
     gap: 10px;
-    padding: 8px 14px;
+    padding: 6px 12px;
     background: #282a2c;
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--radius-md);
-    margin-bottom: 4px;
-    box-shadow: var(--shadow-sm);
 }
 
-.gemini-input-capsule {
-    background: rgba(30, 31, 32, 0.92);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
+.attachment-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #18191c;
+    flex-shrink: 0;
+}
+
+.attachment-meta {
+    flex: 1;
+    min-width: 0;
+}
+
+.attachment-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.attachment-status {
+    font-size: 0.7rem;
+    color: #34d399;
+}
+
+.attachment-browse-btn {
+    padding: 3px 8px;
+    background: #333538;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: #fff;
+    font-size: 0.7rem;
+    cursor: pointer;
+}
+
+.attachment-remove-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+/* Gemini Input Card */
+.gemini-input-card {
+    background: #1e1f20;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: var(--radius-xl);
-    padding: 10px 16px;
-    box-shadow: var(--shadow-md), 0 0 20px rgba(0, 0, 0, 0.4);
+    border-radius: 24px;
+    padding: 10px 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.gemini-input-capsule:focus-within {
+.gemini-input-card:focus-within {
     border-color: rgba(66, 133, 244, 0.6);
-    box-shadow: var(--shadow-md), 0 0 24px rgba(66, 133, 244, 0.2);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 20px rgba(66, 133, 244, 0.2);
 }
 
-.gemini-textarea {
+.gemini-input-field {
     width: 100%;
     background: transparent;
     border: none;
     outline: none;
     color: #ffffff;
-    font-size: 0.95rem;
+    font-size: 0.94rem;
     font-family: var(--font-arabic);
     line-height: 1.6;
     resize: none;
-    max-height: 180px;
+    max-height: 160px;
     min-height: 24px;
     direction: rtl;
     text-align: right;
     unicode-bidi: plaintext;
 }
 
-.gemini-textarea::placeholder {
+.gemini-input-field::placeholder {
     color: var(--text-dim);
 }
 
-.gemini-input-toolbar {
+.gemini-input-actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 4px;
+    gap: 8px;
 }
 
-.input-left-buttons {
+.action-buttons-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex: 1;
+    min-width: 0;
 }
 
-.tool-dock-btn {
-    width: 36px;
-    height: 36px;
+.action-buttons-group::-webkit-scrollbar {
+    display: none;
+}
+
+.action-btn {
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: transparent;
     border: none;
@@ -1440,32 +1329,36 @@ html, body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     transition: var(--transition);
+    flex-shrink: 0;
 }
 
-.tool-dock-btn:hover {
+.action-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     color: #ffffff;
-    transform: scale(1.08);
 }
 
-.tool-dock-btn.active {
+.action-btn.active {
     background: rgba(66, 133, 244, 0.2);
     color: var(--gemini-blue);
-    box-shadow: 0 0 10px rgba(66, 133, 244, 0.4);
 }
 
-.tool-dock-btn.recording {
+.action-btn.recording {
     background: rgba(239, 68, 68, 0.25);
     color: #ef4444;
     animation: pulse-stream 1s infinite;
 }
 
-/* Gemini Send / Stop Circular Buttons */
-.btn-dispatch-send {
-    width: 40px;
-    height: 40px;
+.send-button-wrapper {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.btn-send-message {
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--gemini-aurora);
     border: none;
@@ -1474,23 +1367,19 @@ html, body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 1rem;
-    box-shadow: 0 0 16px rgba(155, 114, 207, 0.4);
-    transition: var(--transition-bounce);
+    font-size: 0.95rem;
+    box-shadow: 0 0 14px rgba(155, 114, 207, 0.4);
+    transition: var(--transition);
 }
 
-.btn-dispatch-send:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 24px rgba(155, 114, 207, 0.7);
+.btn-send-message:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 20px rgba(155, 114, 207, 0.6);
 }
 
-.btn-dispatch-send:active {
-    transform: scale(0.92);
-}
-
-.btn-dispatch-stop {
-    width: 40px;
-    height: 40px;
+.btn-stop-stream {
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: #ef4444;
     border: none;
@@ -1499,24 +1388,142 @@ html, body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 0.95rem;
-    box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
-    transition: var(--transition-bounce);
-}
-
-.btn-dispatch-stop:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 24px rgba(239, 68, 68, 0.7);
+    font-size: 0.9rem;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
 }
 
 /* ==============================================================================
-   DUAL MODEL ARENA STYLES
+   SPLIT CODE STUDIO PANE
+   ============================================================================== */
+
+.code-studio-pane {
+    width: 50%;
+    height: 100%;
+    background: #121316;
+    border-right: 1px solid var(--border-subtle);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 30;
+}
+
+.code-studio-pane.active {
+    display: flex;
+}
+
+.studio-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: #1a1a1e;
+    border-bottom: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    flex-shrink: 0;
+}
+
+.studio-tabs-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+}
+
+.studio-tab-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: #24252a;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: #cbd5e1;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    cursor: pointer;
+}
+
+.studio-tab-item.active {
+    background: #2d3038;
+    color: #38bdf8;
+    border-color: #38bdf8;
+}
+
+.studio-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.studio-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: #24252a;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xs);
+    color: #fff;
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.studio-close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.studio-editor-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    background: #0d0e11;
+}
+
+.studio-code-canvas {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #f1f5f9;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    padding: 14px;
+    resize: none;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+    tab-size: 4;
+}
+
+.studio-console {
+    padding: 8px 12px;
+    background: #090a0d;
+    border-top: 1px solid var(--border-subtle);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: #34d399;
+    direction: ltr;
+    text-align: left;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+/* ==============================================================================
+   DUAL MODEL ARENA & GIT DIFF
    ============================================================================== */
 
 .arena-split-view {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 12px;
     height: 100%;
     overflow: hidden;
     padding: 12px;
@@ -1525,14 +1532,14 @@ html, body {
 .arena-column-card {
     background: #18191c;
     border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     display: flex;
     flex-direction: column;
     overflow: hidden;
 }
 
 .arena-header-bar {
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: #22242a;
     border-bottom: 1px solid var(--border-subtle);
     display: flex;
@@ -1543,18 +1550,14 @@ html, body {
 .arena-body-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 14px;
-    font-size: 0.9rem;
-    line-height: 1.7;
+    padding: 12px;
+    font-size: 0.88rem;
+    line-height: 1.65;
 }
-
-/* ==============================================================================
-   GIT DIFF VIEWER STYLES
-   ============================================================================== */
 
 .git-diff-container {
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     line-height: 1.6;
     background: #0d0e11;
     border-radius: var(--radius-sm);
@@ -1584,7 +1587,7 @@ html, body {
 }
 
 /* ==============================================================================
-   MODALS (GEMINI GLASS DESIGN & MOBILE PINNED BOTTOM-SHEET STABILIZATION)
+   MODALS (GEMINI GLASS DESIGN & MOBILE PINNED BOTTOM-SHEET)
    ============================================================================== */
 
 .modal-overlay-backdrop {
@@ -1597,7 +1600,7 @@ html, body {
     align-items: center;
     justify-content: center;
     z-index: 100;
-    padding: 20px;
+    padding: 16px;
     opacity: 0;
     transition: opacity 0.25s ease;
 }
@@ -1610,45 +1613,39 @@ html, body {
 .modal-card-box {
     background: #1e1f20;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     width: 100%;
-    max-width: 640px;
-    height: 86vh;
-    max-height: 86vh;
+    max-width: 620px;
+    height: 85vh;
+    max-height: 85vh;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     box-shadow: 0 24px 70px rgba(0, 0, 0, 0.85);
-    animation: modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
 }
 
 .modal-card-box.wide {
-    max-width: 980px;
-}
-
-@keyframes modalScaleIn {
-    from { transform: scale(0.94) translateY(12px); opacity: 0; }
-    to { transform: scale(1) translateY(0); opacity: 1; }
+    max-width: 940px;
 }
 
 .mobile-sheet-drag-handle {
     display: none;
-    width: 44px;
-    height: 5px;
+    width: 40px;
+    height: 4px;
     background: rgba(255, 255, 255, 0.22);
     border-radius: var(--radius-pill);
-    margin: 8px auto 4px auto;
+    margin: 8px auto 2px auto;
     flex-shrink: 0;
 }
 
 .modal-pinned-top {
-    padding: 14px 20px 12px 20px;
+    padding: 12px 18px 10px 18px;
     border-bottom: 1px solid var(--border-subtle);
     background: #1a1a1c;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     flex-shrink: 0;
     position: sticky;
     top: 0;
@@ -1659,22 +1656,22 @@ html, body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
+    gap: 10px;
 }
 
 .modal-title-heading {
-    font-size: 1.08rem;
+    font-size: 1.05rem;
     font-weight: 800;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     color: #ffffff;
     min-width: 0;
 }
 
 .modal-tab-strip {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
@@ -1687,12 +1684,12 @@ html, body {
 }
 
 .modal-tab-button {
-    padding: 7px 16px;
+    padding: 6px 14px;
     background: #282a2c;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
@@ -1704,7 +1701,6 @@ html, body {
     background: var(--gemini-aurora);
     color: #ffffff;
     border-color: transparent;
-    box-shadow: 0 0 14px rgba(155, 114, 207, 0.4);
 }
 
 .modal-search-wrapper {
@@ -1714,17 +1710,15 @@ html, body {
 .modal-search-input-box {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 9px 16px;
+    gap: 8px;
+    padding: 8px 14px;
     background: #121314;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-pill);
-    transition: var(--transition);
 }
 
 .modal-search-input-box:focus-within {
     border-color: var(--gemini-blue);
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.25);
 }
 
 .modal-search-input-box input {
@@ -1742,56 +1736,51 @@ html, body {
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    padding: 16px 20px;
+    padding: 14px 18px;
 }
 
 .modal-footer-bar {
-    padding: 12px 20px;
+    padding: 10px 18px;
     border-top: 1px solid var(--border-subtle);
     background: #1a1a1c;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 8px;
     flex-shrink: 0;
     position: sticky;
     bottom: 0;
     z-index: 10;
-    padding-bottom: max(12px, env(safe-area-inset-bottom));
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
 }
 
 /* Grids inside Modals */
 .repos-grid-layout, .models-grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
 }
 
 .repo-select-card, .model-select-card {
     background: #282a2c;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
-    padding: 14px 16px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
     transition: var(--transition);
-    user-select: none;
-    position: relative;
 }
 
 .repo-select-card:hover, .model-select-card:hover {
     background: #333538;
     border-color: var(--gemini-blue);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
 .repo-select-card.active, .model-select-card.active {
     border-color: var(--gemini-blue);
     background: rgba(66, 133, 244, 0.12);
-    box-shadow: 0 0 20px rgba(66, 133, 244, 0.3);
 }
 
 .model-header-row {
@@ -1804,13 +1793,13 @@ html, body {
 .model-title-box {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 3px;
     flex: 1;
     min-width: 0;
 }
 
 .model-name-text {
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 700;
     color: #ffffff;
     line-height: 1.35;
@@ -1819,28 +1808,25 @@ html, body {
 .model-badges-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     flex-wrap: wrap;
 }
 
 .badge-pill {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 7px;
     border-radius: var(--radius-pill);
-    letter-spacing: 0.2px;
 }
 
 .badge-pill.free {
     background: rgba(52, 211, 153, 0.16);
     color: #34d399;
-    border: 1px solid rgba(52, 211, 153, 0.35);
 }
 
 .badge-pill.pro {
     background: rgba(251, 191, 36, 0.16);
     color: #fbbf24;
-    border: 1px solid rgba(251, 191, 36, 0.35);
 }
 
 .badge-pill.context {
@@ -1849,60 +1835,56 @@ html, body {
 }
 
 .model-desc-text {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--text-muted);
-    line-height: 1.45;
+    line-height: 1.4;
 }
 
 .model-footer-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.74rem;
+    font-size: 0.72rem;
     color: var(--text-dim);
     margin-top: 2px;
-    padding-top: 8px;
+    padding-top: 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .btn-select-model-trigger {
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    padding: 4px 12px;
+    padding: 3px 10px;
     border-radius: var(--radius-pill);
-    border: 1px solid transparent;
-    transition: var(--transition);
 }
 
 .btn-select-model-trigger.active {
     background: rgba(52, 211, 153, 0.15);
     color: #34d399;
-    border-color: rgba(52, 211, 153, 0.4);
 }
 
 .btn-select-model-trigger.inactive {
     background: rgba(66, 133, 244, 0.15);
     color: #8ab4f8;
-    border-color: rgba(66, 133, 244, 0.3);
 }
 
 /* Forms */
 .form-group-item {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 5px;
+    margin-bottom: 10px;
 }
 
 .form-label-title {
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 700;
     color: #e2e8f0;
 }
 
 .form-input-box {
     width: 100%;
-    padding: 10px 14px;
+    padding: 8px 12px;
     background: #121314;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-sm);
@@ -1910,48 +1892,45 @@ html, body {
     font-size: 16px; /* 16px prevents iOS zoom */
     font-family: var(--font-arabic);
     outline: none;
-    transition: var(--transition);
 }
 
 .form-input-box:focus {
     border-color: var(--gemini-blue);
-    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
 }
 
-/* Workbench Layout (GitHub & ZIP Tree) */
 .workbench-layout-container {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    height: 480px;
+    grid-template-columns: 260px 1fr;
+    height: 460px;
     overflow: hidden;
 }
 
 /* Toast Notifications */
 #toast-container {
     position: fixed;
-    top: 20px;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 200;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     pointer-events: none;
 }
 
 .toast-msg-pill {
     pointer-events: auto;
-    padding: 10px 18px;
+    padding: 8px 16px;
     border-radius: var(--radius-pill);
     background: #282a2c;
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: #fff;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: var(--shadow-md), 0 0 20px rgba(0, 0, 0, 0.6);
+    box-shadow: var(--shadow-md);
     animation: toastSlideDown 0.25s ease;
 }
 
@@ -1975,37 +1954,38 @@ html, body {
     to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
 .truncate {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Diagnostics Grid */
+/* Helper Text Classes */
+.text-emerald { color: #34d399; }
+.text-amber { color: #fbbf24; }
+.text-blue { color: #38bdf8; }
+.text-purple { color: #c084fc; }
+.text-danger { color: #f87171; }
+
 .diag-grid-box {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 14px;
+    gap: 8px;
+    margin-bottom: 12px;
 }
 
 .diag-box-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 12px 14px;
+    padding: 10px 14px;
     background: #282a2c;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
 }
 
 /* ==============================================================================
-   RESPONSIVE BREAKPOINTS (MOBILE & TABLET FIXES)
+   RESPONSIVE BREAKPOINTS (MOBILE & TABLET HARMONY)
    ============================================================================== */
 
 @media (max-width: 900px) {
@@ -2020,15 +2000,15 @@ html, body {
     .sidebar.active {
         transform: translateX(0);
     }
-    .workbench-layout-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: 180px 1fr;
-        height: 520px;
-    }
     .code-studio-pane {
         width: 100%;
         position: absolute;
         inset: 0;
+    }
+    .workbench-layout-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 160px 1fr;
+        height: 480px;
     }
     .arena-split-view {
         grid-template-columns: 1fr;
@@ -2036,70 +2016,70 @@ html, body {
 }
 
 @media (max-width: 768px) {
+    .top-navbar {
+        padding: 0 10px;
+    }
+    .nav-model-pill {
+        max-width: 130px;
+        padding: 4px 8px;
+        font-size: 0.74rem;
+    }
+    .nav-persona-pill {
+        display: none; /* Accessible in Settings/Drawer on mobile */
+    }
     .modal-overlay-backdrop {
         align-items: flex-end;
         justify-content: center;
         padding: 0;
     }
-
     .modal-card-box, .modal-card-box.wide {
         width: 100vw;
         max-width: 100vw;
         height: 90vh;
         height: 90dvh;
         max-height: 90dvh;
-        border-radius: 24px 24px 0 0;
+        border-radius: 20px 20px 0 0;
         margin: 0;
         border-left: none;
         border-right: none;
         border-bottom: none;
         animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     @keyframes modalSlideUp {
         from { transform: translateY(100%); opacity: 0; }
         to { transform: translateY(0); opacity: 1; }
     }
-
     .mobile-sheet-drag-handle {
         display: block;
     }
-
     .modal-pinned-top {
-        padding: 8px 16px 12px 16px;
+        padding: 6px 14px 10px 14px;
     }
-
     .modal-body-scrollable {
-        padding: 12px 14px;
+        padding: 10px 12px;
     }
-
     .modal-footer-bar {
-        padding: 10px 16px;
-        padding-bottom: max(14px, env(safe-area-inset-bottom));
+        padding: 8px 14px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
     }
-
     .models-grid-layout, .repos-grid-layout {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 8px;
     }
-
     .hero-cards-grid {
         grid-template-columns: 1fr;
     }
-    .gemini-header {
-        padding: 0 12px;
-    }
-    .repo-selector-pill {
-        display: none;
-    }
     .welcome-title-glow {
-        font-size: 1.7rem;
+        font-size: 1.6rem;
     }
-    .messages-scroll-area {
-        padding: 16px 10px 140px 10px;
+    .messages-scroll-wrapper {
+        padding: 14px 10px 8px 10px;
+    }
+    .input-dock-footer {
+        padding: 4px 10px 12px 10px;
     }
     .msg-card.usr {
-        max-width: 92%;
+        max-width: 90%;
     }
 }
 
@@ -2110,39 +2090,29 @@ html, body {
     <!-- Sidebar Backdrop for Mobile -->
     <div class="sidebar-overlay" id="sidebar-backdrop" onclick="app.toggleSidebar(false)"></div>
 
-    <!-- Sidebar -->
+    <!-- Sidebar Drawer -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-top">
-            <div class="app-brand">
-                <div class="brand-info" onclick="app.createNewSession(true)">
-                    <div class="gemini-sparkle-icon">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i>
-                    </div>
-                    <div class="brand-title">
-                        OX-Alpha
-                        <span class="brand-badge">PRO</span>
-                    </div>
-                </div>
-                <button class="icon-btn" id="sidebar-close-btn" style="display: none;" onclick="app.toggleSidebar(false)">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="brand-row" onclick="app.createNewSession(true)">
+                <div class="gemini-sparkle-icon">✦</div>
+                <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
             </div>
-
-            <button class="btn-new-thread" id="new-chat-btn" onclick="app.createNewSession(true)">
+            <button class="btn-new-thread" onclick="app.createNewSession(true)">
                 <i class="fa-solid fa-plus"></i>
                 <span>محادثة جديدة</span>
             </button>
-
-            <div class="sidebar-repo-badge" onclick="app.openRepositoriesHubModal()" title="انقر لتغيير مستودع GitHub">
-                <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
-                    <i class="fa-brands fa-github" style="color: #34d399;"></i>
+            <div class="sidebar-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتغيير مستودع GitHub">
+                <div class="repo-info-row">
+                    <i class="fa-brands fa-github text-emerald"></i>
                     <span id="sidebar-active-repo-name" class="truncate">daschai</span>
                 </div>
                 <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem;"></i>
             </div>
         </div>
 
-        <div class="sidebar-search">
+        <!-- Sidebar Search -->
+        <div class="sidebar-search-container">
             <div class="sidebar-search-box">
                 <i class="fa-solid fa-magnifying-glass" style="color: var(--text-dim);"></i>
                 <input type="text" id="session-search-input" placeholder="بحث في المحادثات..." oninput="app.filterSessions(this.value)">
@@ -2150,283 +2120,238 @@ html, body {
         </div>
 
         <!-- Sessions List -->
-        <div class="sidebar-sessions" id="sessions-list">
+        <div class="sidebar-sessions-list" id="sessions-list">
             <!-- Dynamically Populated -->
         </div>
 
-        <!-- Sidebar Utilities Footer -->
-        <div class="sidebar-footer">
+        <!-- Sidebar Tools & Features Navigation -->
+        <div class="sidebar-footer-nav">
+            <div class="nav-section-title">الأدوات والميزات المتقدمة</div>
             <div class="sidebar-tools-grid">
-                <button class="sidebar-btn-util" onclick="app.openRepositoriesHubModal()" title="مستودعات ومشاريع GitHub">
-                    <i class="fa-brands fa-github" style="color: #34d399; font-size: 1rem;"></i>
+                <button class="tool-grid-btn" onclick="app.openRepositoriesHubModal()" title="مستودعات ومشاريع GitHub">
+                    <i class="fa-brands fa-github text-emerald"></i>
                     <span>المشاريع</span>
                 </button>
-                <button class="sidebar-btn-util" onclick="app.downloadProjectAsZip()" title="تحميل وتصدير المشروع كاملاً كملف ZIP">
-                    <i class="fa-solid fa-file-zipper" style="color: #fbbf24; font-size: 1rem;"></i>
+                <button class="tool-grid-btn" onclick="app.downloadProjectAsZip()" title="تحميل وتصدير المشروع كاملاً كملف ZIP">
+                    <i class="fa-solid fa-file-zipper text-amber"></i>
                     <span>تصدير ZIP</span>
                 </button>
-                <button class="sidebar-btn-util" onclick="app.openModelExplorerModal()" title="مستكشف نماذج الذكاء الاصطناعي">
-                    <i class="fa-solid fa-cube" style="color: #38bdf8; font-size: 1rem;"></i>
+                <button class="tool-grid-btn" onclick="app.openModelExplorerModal()" title="مستكشف نماذج الذكاء الاصطناعي">
+                    <i class="fa-solid fa-cube text-blue"></i>
                     <span>النماذج</span>
                 </button>
-                <button class="sidebar-btn-util" onclick="app.openTermuxHelperModal()" title="أوامر واختصارات Termux">
-                    <i class="fa-solid fa-terminal" style="color: #34d399; font-size: 1rem;"></i>
+                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة نموذجين جنباً إلى جنب">
+                    <i class="fa-solid fa-bolt text-amber"></i>
+                    <span>حلبة النماذج</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.toggleCodeStudio()" title="استوديو الأكواد المنقسم">
+                    <i class="fa-solid fa-columns text-blue"></i>
+                    <span>استوديو الكود</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openTermuxHelperModal()" title="أوامر واختصارات Termux">
+                    <i class="fa-solid fa-terminal text-emerald"></i>
                     <span>Termux</span>
                 </button>
-                <button class="sidebar-btn-util" onclick="app.openDiagnosticsModal()" title="فحص الأنظمة وتشخيص الأخطاء">
-                    <i class="fa-solid fa-stethoscope" style="color: #c084fc; font-size: 1rem;"></i>
+                <button class="tool-grid-btn" onclick="app.openBranchManagerModal()" title="إدارة الفروع و Pull Requests">
+                    <i class="fa-solid fa-code-branch text-blue"></i>
+                    <span>الفروع و PR</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openDiagnosticsModal()" title="فحص الأنظمة وتشخيص الأخطاء">
+                    <i class="fa-solid fa-stethoscope text-purple"></i>
                     <span>الفحص</span>
                 </button>
-                <button class="sidebar-btn-util" onclick="app.openSettingsModal()" title="الإعدادات والمفاتيح">
-                    <i class="fa-solid fa-gear" style="color: #8ab4f8; font-size: 1rem;"></i>
-                    <span>ضبط</span>
+                <button class="tool-grid-btn" onclick="app.openSettingsModal()" title="الإعدادات والمفاتيح">
+                    <i class="fa-solid fa-gear text-blue"></i>
+                    <span>الإعدادات</span>
                 </button>
             </div>
         </div>
     </aside>
 
-    <!-- Main Chat & Studio Viewport -->
-    <main class="chat-main-viewport">
-        <!-- Header -->
-        <header class="gemini-header">
-            <div class="gemini-header-left">
-                <button class="icon-btn" id="sidebar-toggle-btn" title="القائمة الجانبية" onclick="app.toggleSidebar()">
+    <!-- Main Viewport -->
+    <main class="main-viewport">
+        <!-- Top Navbar (Clean Single-Line, Zero Collisions) -->
+        <header class="top-navbar">
+            <div class="navbar-left">
+                <button class="nav-icon-btn" id="sidebar-toggle-btn" title="القائمة الجانبية" onclick="app.toggleSidebar()">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-
-                <!-- Active Model Selector Pill -->
-                <div class="model-selector-pill" id="navbar-model-pill" onclick="app.openModelExplorerModal()" title="انقر لتغيير النموذج">
-                    <div class="status-dot" id="system-status-dot"></div>
-                    <span class="truncate" id="active-model-display">google/gemma-4-31b-it:free</span>
-                    <i class="fa-solid fa-chevron-down" style="font-size: 0.65rem; color: var(--text-muted);"></i>
+                <div class="nav-brand" onclick="app.createNewSession(true)">
+                    <span class="nav-sparkle">✦</span>
+                    <span class="nav-brand-text">OX-Alpha</span>
                 </div>
-
-                <!-- Engineering Persona Preset Selector -->
-                <div class="persona-selector-pill" id="persona-pill" onclick="app.cyclePersona()" title="تبديل تخصص المهندس (Security / Perf / Tests / Architect)">
-                    <i class="fa-solid fa-shield-halved" id="persona-icon"></i>
-                    <span id="persona-label">مطور شامل</span>
-                </div>
-
-                <!-- Active GitHub Project Pill (Desktop/Tablet) -->
-                <div class="repo-selector-pill" id="header-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتبديل مشروع GitHub">
-                    <i class="fa-brands fa-github"></i>
-                    <span id="active-repo-name-text" class="truncate">daschai</span>
+                <!-- Active Model Dropdown Pill -->
+                <div class="nav-model-pill" onclick="app.openModelExplorerModal()" title="انقر لتغيير النموذج">
+                    <span class="live-dot"></span>
+                    <span id="active-model-display" class="truncate">google/gemma-4-31b-it:free</span>
+                    <i class="fa-solid fa-chevron-down pill-arrow"></i>
                 </div>
             </div>
 
-            <div class="gemini-header-right">
-                <!-- Toggle Split-Pane Code Studio -->
-                <button class="icon-btn" id="btn-toggle-studio" title="فتح استوديو الأكواد المنقسم (Split Code Studio)" onclick="app.toggleCodeStudio()">
-                    <i class="fa-solid fa-columns"></i>
+            <div class="navbar-right">
+                <!-- Persona Preset Pill -->
+                <div class="nav-persona-pill" onclick="app.cyclePersona()" title="تبديل تخصص المهندس (Security / Perf / Tests / Architect)">
+                    <i class="fa-solid fa-code" id="persona-icon"></i>
+                    <span id="persona-label">مطور شامل</span>
+                </div>
+
+                <!-- Dual Arena Button -->
+                <button class="nav-icon-btn" title="حلبة مقارنة نموذجين" onclick="app.openDualModelArena()">
+                    <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
                 </button>
 
-                <!-- Dual Model Arena -->
-                <button class="icon-btn" title="حلبة مقارنة نموذجين جنباً إلى جنب (Dual Model Arena)" onclick="app.openDualModelArena()">
-                    <i class="fa-solid fa-bolt text-warning" style="color: #fbbf24;"></i>
-                </button>
-
-                <!-- Direct Export Full Project as ZIP -->
-                <button class="icon-btn" title="تحميل وتصدير المشروع كاملاً كملف ZIP" onclick="app.downloadProjectAsZip()">
-                    <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
-                </button>
-
-                <button class="icon-btn" title="محادثة جديدة" onclick="app.createNewSession(true)">
+                <!-- New Thread Button -->
+                <button class="nav-icon-btn" title="محادثة جديدة" onclick="app.createNewSession(true)">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
 
-                <button class="icon-btn" id="stt-lang-btn" title="لغة الإملاء الصوتي (AR / FR / EN)" onclick="app.toggleSTTLang()">
-                    <span id="stt-lang-label" style="font-size: 0.72rem; font-weight: 800; color: #8ab4f8;">AR</span>
-                </button>
-
-                <button class="icon-btn" title="الإعدادات والمفاتيح" onclick="app.openSettingsModal()">
+                <!-- Settings Button -->
+                <button class="nav-icon-btn" title="الإعدادات" onclick="app.openSettingsModal()">
                     <i class="fa-solid fa-sliders"></i>
                 </button>
             </div>
         </header>
 
-        <!-- API Key Missing Warning Banner -->
-        <div id="api-key-banner" class="api-key-alert-bar" style="display: none;">
-            <div style="display: flex; align-items: center; gap: 8px; overflow: hidden;">
-                <i class="fa-solid fa-key" style="color: #fbbf24; flex-shrink: 0;"></i>
-                <span class="truncate">تنبيه: يلزم إدخال مفتاح OpenRouter مجاني (Free API Key) لتشغيل النماذج دون انقطاع.</span>
+        <!-- API Key Banner -->
+        <div id="api-key-banner" class="api-key-banner" style="display: none;">
+            <div class="banner-text">
+                <i class="fa-solid fa-key text-amber"></i>
+                <span class="truncate">يلزم إدخال مفتاح OpenRouter مجاني (Free API Key) لتشغيل النماذج دون انقطاع.</span>
             </div>
-            <div style="display: flex; gap: 6px; flex-shrink: 0;">
-                <a href="https://openrouter.ai/keys" target="_blank" class="api-key-alert-btn" style="text-decoration: none; background: rgba(255,255,255,0.15); color: #fff;">إنشاء مفتاح مجاني ↗</a>
-                <button class="api-key-alert-btn" onclick="app.openSettingsModal()">إدخال المفتاح</button>
+            <div class="banner-actions">
+                <a href="https://openrouter.ai/keys" target="_blank" class="banner-btn-link">إنشاء مفتاح ↗</a>
+                <button class="banner-btn-action" onclick="app.openSettingsModal()">إدخال المفتاح</button>
             </div>
         </div>
 
-        <!-- Workbench Content Split View (Chat Pane & Code Studio Pane) -->
-        <div class="workbench-content-split">
-            <!-- Left / Main: Chat Stream Pane -->
-            <div class="chat-stream-pane">
-                <!-- Messages Scroll Area -->
-                <div class="messages-scroll-area" id="chat-messages" onscroll="app.handleScrollEvent()">
+        <!-- Content Workspace (Chat Pane + Code Studio Split) -->
+        <div class="content-workspace" id="content-workspace">
+            <!-- Chat Pane -->
+            <div class="chat-pane" id="chat-pane">
+                <!-- Messages Scroll Area (Naturally scrolls above input dock!) -->
+                <div class="messages-scroll-wrapper" id="chat-messages" onscroll="app.handleScrollEvent()">
                     <div class="messages-container" id="chat-messages-container">
                         <!-- Dynamic Messages Or Welcome Hero -->
                     </div>
                 </div>
 
                 <!-- Floating Scroll-To-Bottom Pill -->
-                <div class="scroll-down-floating-pill" id="scroll-to-bottom-btn" onclick="app.scrollToBottom(true)">
+                <div class="scroll-to-bottom-pill" id="scroll-to-bottom-btn" onclick="app.scrollToBottom(true)">
                     <i class="fa-solid fa-arrow-down"></i>
                     <span>التمرير لآخر الرد</span>
                 </div>
 
-                <!-- Floating Prompt Input Dock -->
-                <div class="input-dock-wrapper">
-                    <!-- Quick Suggestion Prompts Carousel -->
-                    <div class="quick-prompts-carousel" id="quick-prompts-tray">
-                        <div class="prompt-chip-pill" onclick="app.sendQuickPrompt('قم بعمل مراجعة وفحص كامل لكافة ملفات المشروع واكتشاف أي ثغرات أمنية وأخطاء معمارية وتحسين الأداء')">
-                            <i class="fa-solid fa-shield-halved" style="color: #c084fc;"></i>
+                <!-- Bottom Input Dock (In-flow flex layout: NEVER overlaps messages!) -->
+                <div class="input-dock-footer">
+                    <!-- Quick Suggestions Carousel -->
+                    <div class="quick-suggestions-carousel" id="quick-prompts-tray">
+                        <div class="suggestion-chip" onclick="app.sendQuickPrompt('قم بعمل مراجعة وفحص كامل لكافة ملفات المشروع واكتشاف أي ثغرات أمنية وأخطاء معمارية وتحسين الأداء')">
+                            <i class="fa-solid fa-shield-halved text-purple"></i>
                             <span>فحص الأمان والهيكل المعماري</span>
                         </div>
-                        <div class="prompt-chip-pill" onclick="app.ingestCurrentGitHubRepo()">
-                            <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399;"></i>
+                        <div class="suggestion-chip" onclick="app.ingestCurrentGitHubRepo()">
+                            <i class="fa-solid fa-cloud-arrow-down text-emerald"></i>
                             <span>جلب كود مستودع GitHub</span>
                         </div>
-                        <div class="prompt-chip-pill" onclick="document.getElementById('universal-file-input').click()">
-                            <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
+                        <div class="suggestion-chip" onclick="document.getElementById('universal-file-input').click()">
+                            <i class="fa-solid fa-file-zipper text-amber"></i>
                             <span>رفع وفك ضغط مشروع ZIP</span>
                         </div>
-                        <div class="prompt-chip-pill" onclick="app.openDualModelArena()">
-                            <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i>
+                        <div class="suggestion-chip" onclick="app.openDualModelArena()">
+                            <i class="fa-solid fa-bolt text-amber"></i>
                             <span>حلبة مقارنة نموذجين</span>
                         </div>
-                        <div class="prompt-chip-pill" onclick="app.downloadProjectAsZip()">
-                            <i class="fa-solid fa-download" style="color: #38bdf8;"></i>
+                        <div class="suggestion-chip" onclick="app.downloadProjectAsZip()">
+                            <i class="fa-solid fa-download text-blue"></i>
                             <span>تصدير حزمة ZIP للمشروع</span>
-                        </div>
-                        <div class="prompt-chip-pill" onclick="app.sendQuickPrompt('اكتب ميزة برمجية جديدة للمشروع مع تحديد مسار الملف بوضوح لعمل Commit مباشر إلى GitHub')">
-                            <i class="fa-brands fa-github" style="color: #34d399;"></i>
-                            <span>كود جديد مع Direct Commit</span>
                         </div>
                     </div>
 
-                    <div class="input-dock-container">
-                        <!-- Attachment Preview Bar -->
-                        <div class="attachment-preview-tray" id="attachment-preview-bar">
-                            <div id="preview-thumb-box" style="width: 38px; height: 38px; border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #18191c; flex-shrink: 0;">
-                                <img id="attachment-img-tag" src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                                <i id="attachment-icon-tag" class="fa-solid fa-file text-info" style="font-size: 1.1rem; display: none;"></i>
-                            </div>
-                            <div style="flex: 1; min-width: 0;">
-                                <div id="attachment-file-name" class="truncate" style="font-size: 0.82rem; font-weight: 700; color: #fff;">project.zip</div>
-                                <div id="extraction-status-text" class="truncate" style="font-size: 0.72rem; color: #34d399;">جاري المعالجة...</div>
-                            </div>
-                            <button id="btn-browse-extracted-zip" class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem; display: none;" onclick="app.openZipInspectorModal()" title="تصفح ملفات المشروع المستخرج">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <span>تصفح الكود</span>
-                            </button>
-                            <button style="background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 6px;" onclick="app.removeAttachment()" title="إلغاء المرفق">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
+                    <!-- Attachment Preview Bar -->
+                    <div class="attachment-tray" id="attachment-preview-bar">
+                        <div class="attachment-icon-box">
+                            <img id="attachment-img-tag" src="" alt="Preview" style="display: none; width: 100%; height: 100%; object-fit: cover;">
+                            <i id="attachment-icon-tag" class="fa-solid fa-file text-blue" style="display: none;"></i>
                         </div>
+                        <div class="attachment-meta">
+                            <div id="attachment-file-name" class="truncate attachment-title">project.zip</div>
+                            <div id="extraction-status-text" class="truncate attachment-status">جاري المعالجة...</div>
+                        </div>
+                        <button id="btn-browse-extracted-zip" class="attachment-browse-btn" style="display: none;" onclick="app.openZipInspectorModal()">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>تصفح الكود</span>
+                        </button>
+                        <button class="attachment-remove-btn" onclick="app.removeAttachment()">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
 
-                        <!-- Gemini Input Capsule -->
-                        <div class="gemini-input-capsule">
-                            <textarea 
-                                class="gemini-textarea" 
-                                id="user-input" 
-                                placeholder="اسأل OX-Alpha Pro، أو ارفع ملفاتك ومشروعك ZIP، أو انقر أيقونة السحابة لجلب كود GitHub كاملاً..."
-                                rows="1"
-                            ></textarea>
+                    <!-- Gemini Input Card -->
+                    <div class="gemini-input-card">
+                        <textarea 
+                            class="gemini-input-field" 
+                            id="user-input" 
+                            placeholder="اسأل OX-Alpha Pro، أو ارفع ملفاتك ومشروعك ZIP، أو انقر أيقونة السحابة لجلب كود GitHub كاملاً..."
+                            rows="1"
+                        ></textarea>
 
-                            <div class="gemini-input-toolbar">
-                                <div class="input-left-buttons">
-                                    <!-- Autonomous Agent Mode Toggle -->
-                                    <button class="tool-dock-btn" id="btn-agent-mode" title="تفعيل وضع الوكيل الذاتي المستقل (Autonomous Agent ReAct Loop)" onclick="app.toggleAutonomousAgent()">
-                                        <i class="fa-solid fa-robot" style="color: #c084fc;"></i>
-                                    </button>
+                        <div class="gemini-input-actions">
+                            <div class="action-buttons-group">
+                                <!-- Agent Mode Toggle -->
+                                <button class="action-btn" id="btn-agent-mode" title="وضع الوكيل الذاتي المستقل (Autonomous Agent ReAct Loop)" onclick="app.toggleAutonomousAgent()">
+                                    <i class="fa-solid fa-robot" style="color: #c084fc;"></i>
+                                </button>
+                                <!-- Smart Router -->
+                                <button class="action-btn active" id="btn-smart-router" title="التوجيه الذكي التلقائي للنموذج" onclick="app.toggleSmartRouter()">
+                                    <i class="fa-solid fa-brain" style="color: #38bdf8;"></i>
+                                </button>
+                                <!-- Web Search -->
+                                <button class="action-btn" id="btn-web-search" title="البحث الحي في الويب" onclick="app.toggleWebSearch()">
+                                    <i class="fa-solid fa-globe"></i>
+                                </button>
+                                <!-- Ingest GitHub -->
+                                <button class="action-btn" id="btn-sync-github-repo" title="جلب ومزامنة كود مستودع GitHub بالكامل" onclick="app.ingestCurrentGitHubRepo()">
+                                    <i class="fa-solid fa-cloud-arrow-down text-emerald"></i>
+                                </button>
+                                <!-- Attach File / ZIP -->
+                                <button class="action-btn" id="btn-attach-file" title="إرفاق مشروع ZIP أو ملفات أو صور" onclick="document.getElementById('universal-file-input').click()">
+                                    <i class="fa-solid fa-paperclip"></i>
+                                </button>
+                                <input type="file" id="universal-file-input" accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
+                                <!-- Microphone STT -->
+                                <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN)" onclick="app.toggleRecording()">
+                                    <i class="fa-solid fa-microphone"></i>
+                                </button>
+                            </div>
 
-                                    <!-- Smart Router Toggle -->
-                                    <button class="tool-dock-btn active" id="btn-smart-router" title="التوجيه الذكي للنموذج المناسب تلقائياً حسب نوع المهمة" onclick="app.toggleSmartRouter()">
-                                        <i class="fa-solid fa-brain" style="color: #38bdf8;"></i>
-                                    </button>
-
-                                    <!-- 1-Click Ingest GitHub Repository Code into Chat Context -->
-                                    <button class="tool-dock-btn" id="btn-sync-github-repo" title="جلب ومزامنة كود مستودع GitHub بالكامل للمحادثة" onclick="app.ingestCurrentGitHubRepo()">
-                                        <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399;"></i>
-                                    </button>
-
-                                    <!-- Direct 1-Click Export Project as ZIP -->
-                                    <button class="tool-dock-btn" title="تحميل وتصدير المشروع كاملاً كملف ZIP" onclick="app.downloadProjectAsZip()">
-                                        <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
-                                    </button>
-
-                                    <!-- Web Search Toggle -->
-                                    <button class="tool-dock-btn" id="btn-web-search" title="البحث الحي في الويب" onclick="app.toggleWebSearch()">
-                                        <i class="fa-solid fa-globe"></i>
-                                    </button>
-
-                                    <!-- Universal File / ZIP Attach -->
-                                    <button class="tool-dock-btn" id="btn-attach-file" title="إرفاق مشروع ZIP أو PDF أو صورة أو كود" onclick="document.getElementById('universal-file-input').click()">
-                                        <i class="fa-solid fa-paperclip"></i>
-                                    </button>
-                                    <input type="file" id="universal-file-input" accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
-
-                                    <!-- Voice Dictation (STT) -->
-                                    <button class="tool-dock-btn" id="btn-mic" title="إملاء صوتي" onclick="app.toggleRecording()">
-                                        <i class="fa-solid fa-microphone"></i>
-                                    </button>
-
-                                    <!-- GitHub Current Project Workbench -->
-                                    <button class="tool-dock-btn" title="مستكشف ملفات المشروع الحالي" onclick="app.openGitHubWorkbench()">
-                                        <i class="fa-brands fa-github" style="color: #34d399;"></i>
-                                    </button>
-                                </div>
-
-                                <div style="display: flex; align-items: center; gap: 6px;">
-                                    <button class="btn-dispatch-stop" id="btn-stop" title="إيقاف التوليد" onclick="app.stopCurrentSessionStream()">
-                                        <i class="fa-solid fa-stop"></i>
-                                    </button>
-                                    <button class="btn-dispatch-send" id="btn-send" title="إرسال" onclick="app.sendUserMessage()">
-                                        <i class="fa-solid fa-arrow-up"></i>
-                                    </button>
-                                </div>
+                            <div class="send-button-wrapper">
+                                <button class="btn-stop-stream" id="btn-stop" title="إيقاف التوليد" onclick="app.stopCurrentSessionStream()">
+                                    <i class="fa-solid fa-stop"></i>
+                                </button>
+                                <button class="btn-send-message" id="btn-send" title="إرسال" onclick="app.sendUserMessage()">
+                                    <i class="fa-solid fa-arrow-up"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Right: Code Studio Pane (Split-Screen Workspace) -->
+            <!-- Code Studio Pane (Split-Pane on Desktop / Full on Mobile) -->
             <div class="code-studio-pane" id="code-studio-pane">
-                <div class="studio-tabs-bar" id="studio-tabs-container">
-                    <div style="display: flex; align-items: center; gap: 6px; overflow-x: auto;" id="studio-open-files-tabs">
-                        <div class="studio-tab-item active" onclick="app.switchStudioFile('main.ts')">
-                            <i class="fa-solid fa-file-code" style="color: #38bdf8;"></i>
-                            <span>src/App.tsx</span>
-                        </div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
-                        <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem;" onclick="app.runStudioCode()" title="تشغيل الكود الحي">
-                            <i class="fa-solid fa-play" style="color: #34d399;"></i>
-                            <span>تشغيل</span>
-                        </button>
-                        <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem;" onclick="app.openDiffViewerForActiveStudioFile()" title="عرض الفروقات Git Diff">
-                            <i class="fa-solid fa-code-compare" style="color: #fbbf24;"></i>
-                            <span>Diff</span>
-                        </button>
-                        <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.72rem;" onclick="app.commitStudioFile()" title="Commit مباشر لـ GitHub">
-                            <i class="fa-brands fa-github" style="color: #34d399;"></i>
-                            <span>Commit</span>
-                        </button>
-                        <button class="icon-btn" style="width: 28px; height: 28px; font-size: 0.75rem;" onclick="app.toggleCodeStudio(false)">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
+                <div class="studio-topbar">
+                    <div class="studio-tabs-row" id="studio-open-files-tabs"></div>
+                    <div class="studio-actions-row">
+                        <button class="studio-action-btn" onclick="app.runStudioCode()"><i class="fa-solid fa-play text-emerald"></i><span>تشغيل</span></button>
+                        <button class="studio-action-btn" onclick="app.openDiffViewerForActiveStudioFile()"><i class="fa-solid fa-code-compare text-amber"></i><span>Diff</span></button>
+                        <button class="studio-action-btn" onclick="app.commitStudioFile()"><i class="fa-brands fa-github text-emerald"></i><span>Commit</span></button>
+                        <button class="studio-close-btn" onclick="app.toggleCodeStudio(false)"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
-
-                <div class="studio-editor-area">
-                    <textarea class="studio-textarea-code" id="studio-editor-textarea" spellcheck="false" oninput="app.handleStudioCodeChange(this.value)">// استوديو الأكواد المنقسم (Code Studio)
-// سيظهر هنا أي كود ملف يتم توليده أو اختياره من مستودع GitHub أو مشروع ZIP.</textarea>
+                <div class="studio-editor-wrapper">
+                    <textarea class="studio-code-canvas" id="studio-editor-textarea" spellcheck="false" oninput="app.handleStudioCodeChange(this.value)"></textarea>
                 </div>
-
-                <!-- Studio Bottom Console / Output -->
-                <div class="terminal-box" id="studio-terminal" style="display: block; max-height: 140px; border-top: 1px solid var(--border-subtle);">
-                    ⚡ طرفية المخرجات جاهزة للتشغيل
-                </div>
+                <div class="studio-console" id="studio-terminal">⚡ طرفية المخرجات جاهزة للتشغيل</div>
             </div>
         </div>
     </main>
@@ -2441,39 +2366,39 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-brands fa-github" style="color: #34d399;"></i>
+                    <i class="fa-brands fa-github text-emerald"></i>
                     <span>مشاريع ومستودعات GitHub</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.75rem;" onclick="app.openBranchManagerModal()">
+                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.74rem;" onclick="app.openBranchManagerModal()">
                         <i class="fa-solid fa-code-branch"></i>
                         <span>الفروع و PR</span>
                     </button>
-                    <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.75rem;" onclick="app.fetchUserGitHubRepositories(true)">
+                    <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.74rem;" onclick="app.fetchUserGitHubRepositories(true)">
                         <i class="fa-solid fa-rotate" id="refresh-repos-icon"></i>
                         <span>تحديث</span>
                     </button>
-                    <button class="icon-btn" onclick="app.closeModals()">
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
             </div>
 
             <!-- GitHub Inline Auth Bar -->
-            <div style="padding: 10px 14px; background: #121314; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--border-subtle);">
-                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                    <div style="font-size: 0.8rem; color: var(--text-muted);">
+            <div style="padding: 8px 12px; background: #121314; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-subtle);">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">
                         <span>الحساب: </span>
-                        <strong style="color: #34d399;" id="current-github-owner-display">naderba69</strong>
+                        <strong class="text-emerald" id="current-github-owner-display">naderba69</strong>
                     </div>
-                    <button type="button" class="btn-new-thread" style="width: auto; padding: 5px 12px; font-size: 0.76rem;" onclick="app.triggerGitHubOAuthFlow()">
+                    <button type="button" class="btn-new-thread" style="width: auto; padding: 4px 10px; font-size: 0.74rem;" onclick="app.triggerGitHubOAuthFlow()">
                         <i class="fa-brands fa-github"></i>
-                        <span>اتصال فوري (GitHub OAuth)</span>
+                        <span>اتصال فوري (OAuth)</span>
                     </button>
                 </div>
                 <div style="display: flex; gap: 6px;">
-                    <input type="password" id="inline-github-token-input" class="form-input-box" style="font-size: 16px; padding: 7px 12px;" placeholder="أو أدخل رمز الوصول PAT: ghp_... / github_pat_...">
-                    <button class="btn-new-thread" style="width: auto; padding: 6px 14px; font-size: 0.76rem; white-space: nowrap;" onclick="app.saveInlineGitHubToken()">
+                    <input type="password" id="inline-github-token-input" class="form-input-box" style="font-size: 16px; padding: 6px 10px;" placeholder="رمز الوصول PAT: ghp_... / github_pat_...">
+                    <button class="btn-new-thread" style="width: auto; padding: 6px 12px; font-size: 0.74rem; white-space: nowrap;" onclick="app.saveInlineGitHubToken()">
                         <span>ربط</span>
                     </button>
                 </div>
@@ -2528,15 +2453,15 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-cube" style="color: #38bdf8;"></i>
-                    <span>مستكشف نماذج الذكاء الاصطناعي (OpenRouter Live 2026)</span>
+                    <i class="fa-solid fa-cube text-blue"></i>
+                    <span>مستكشف نماذج الذكاء الاصطناعي (OpenRouter Live)</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.75rem;" onclick="app.fetchOpenRouterModels(true)">
+                    <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.74rem;" onclick="app.fetchOpenRouterModels(true)">
                         <i class="fa-solid fa-rotate" id="refresh-models-icon"></i>
                         <span>تحديث حي</span>
                     </button>
-                    <button class="icon-btn" onclick="app.closeModals()">
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -2588,15 +2513,15 @@ html, body {
 
 <!-- 3. Dual Model Arena Modal -->
 <div class="modal-overlay-backdrop" id="arena-modal" onclick="if(event.target===this)app.closeModals()">
-    <div class="modal-card-box wide" style="height: 92vh; max-height: 92vh;">
+    <div class="modal-card-box wide">
         <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
+                    <i class="fa-solid fa-bolt text-amber"></i>
                     <span>حلبة مقارنة نموذجين جنباً إلى جنب (Dual Model Arena)</span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -2604,7 +2529,7 @@ html, body {
             <!-- Arena Input -->
             <div style="display: flex; gap: 8px;">
                 <input type="text" id="arena-prompt-input" class="form-input-box" placeholder="أدخل المسألة أو الكود للمقارنة المباشرة بين النموذجين...">
-                <button class="btn-new-thread" style="width: auto; padding: 8px 18px; white-space: nowrap;" onclick="app.executeArenaComparison()">
+                <button class="btn-new-thread" style="width: auto; padding: 7px 16px; white-space: nowrap;" onclick="app.executeArenaComparison()">
                     <i class="fa-solid fa-play"></i>
                     <span>بدء المقارنة</span>
                 </button>
@@ -2620,7 +2545,7 @@ html, body {
                         <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
                         <option value="deepseek/deepseek-r1">DeepSeek R1 (Thinking)</option>
                     </select>
-                    <span id="arena-gauge-a" style="font-size: 0.72rem; color: #34d399;">جاهز</span>
+                    <span id="arena-gauge-a" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
                 </div>
                 <div class="arena-body-scroll markdown-body" id="arena-output-a" dir="auto">
                     بانتظار بدء المقارنة...
@@ -2635,7 +2560,7 @@ html, body {
                         <option value="openrouter/free">OpenRouter Free Router</option>
                         <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B</option>
                     </select>
-                    <span id="arena-gauge-b" style="font-size: 0.72rem; color: #34d399;">جاهز</span>
+                    <span id="arena-gauge-b" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
                 </div>
                 <div class="arena-body-scroll markdown-body" id="arena-output-b" dir="auto">
                     بانتظار بدء المقارنة...
@@ -2658,10 +2583,10 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-code-compare" style="color: #fbbf24;"></i>
-                    <span>مقارنة الفروقات قبل الرفع (Git Diff): <span id="diff-file-path-title" style="color: #38bdf8;">src/App.tsx</span></span>
+                    <i class="fa-solid fa-code-compare text-amber"></i>
+                    <span>مقارنة الفروقات قبل الرفع (Git Diff): <span id="diff-file-path-title" class="text-blue">src/App.tsx</span></span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -2692,17 +2617,17 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-terminal" style="color: #34d399;"></i>
+                    <i class="fa-solid fa-terminal text-emerald"></i>
                     <span>أوامر Termux الجاهزة لنشر المشروع</span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
         </div>
 
         <div class="modal-body-scrollable">
-            <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 12px;">انقر على أي أمر لنسخه ولصقه مباشرة في تطبيق Termux على الهاتف:</p>
+            <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">انقر على أي أمر لنسخه ولصقه مباشرة في تطبيق Termux على الهاتف:</p>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
                 <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o /sdcard/Download/ox-alpha-workbench-pro.zip -d . && git init && git branch -M main && git add . && git commit -m \'feat: update\' && git remote add origin https://github.com/naderba69/daschai.git && git push -u origin main --force', this)">
@@ -2737,10 +2662,10 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-code-branch" style="color: #38bdf8;"></i>
+                    <i class="fa-solid fa-code-branch text-blue"></i>
                     <span>إدارة الفروع و Pull Requests</span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -2778,10 +2703,10 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-sliders" style="color: #8ab4f8;"></i>
+                    <i class="fa-solid fa-sliders text-blue"></i>
                     <span>إعدادات النظام والمفاتيح</span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -2814,24 +2739,24 @@ html, body {
                     <span style="font-size: 0.72rem; color: var(--text-dim);">يتم حفظ المفتاح بأمان في متصفحك (localStorage) فقط ولا يمر عبر خوادم وسيطة.</span>
                 </div>
 
-                <div class="form-group-item" style="margin-top: 12px;">
+                <div class="form-group-item" style="margin-top: 10px;">
                     <label class="form-label-title">النموذج الافتراضي</label>
                     <select id="setting-model-select" class="form-input-box" onchange="app.handleSettingsModelChange(this.value)">
                         <!-- Populated -->
                     </select>
                 </div>
 
-                <div class="form-group-item" id="custom-model-input-group" style="margin-top: 12px; display: none;">
+                <div class="form-group-item" id="custom-model-input-group" style="margin-top: 10px; display: none;">
                     <label class="form-label-title">معرف النموذج المخصص</label>
                     <input type="text" id="setting-custom-model" class="form-input-box" placeholder="مثال: google/gemma-4-31b-it:free">
                 </div>
 
-                <div class="form-group-item" style="margin-top: 12px;">
+                <div class="form-group-item" style="margin-top: 10px;">
                     <label class="form-label-title">موجه النظام (System Prompt)</label>
                     <textarea id="setting-system-prompt" class="form-input-box" rows="3" placeholder="أنت مهندس برمجيات ذكي وخبير في تحليل المشاريع البرمجية الضخمة..."></textarea>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
                     <div class="form-group-item">
                         <label class="form-label-title">درجة الإبداع (Temperature)</label>
                         <input type="number" id="setting-temperature" class="form-input-box" min="0" max="2" step="0.1" value="0.7">
@@ -2851,7 +2776,7 @@ html, body {
                     <span style="font-size: 0.72rem; color: #34d399;">مطلوب لتحديث وعمل Commit مباشر للملفات من الأداة إلى مستودعاتك.</span>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
                     <div class="form-group-item">
                         <label class="form-label-title">مالك الحساب (Owner / Username)</label>
                         <input type="text" id="setting-github-owner" class="form-input-box" value="naderba69">
@@ -2862,7 +2787,7 @@ html, body {
                     </div>
                 </div>
 
-                <div class="form-group-item" style="margin-top: 12px;">
+                <div class="form-group-item" style="margin-top: 10px;">
                     <label class="form-label-title">الفرع النشط (Branch)</label>
                     <input type="text" id="setting-github-branch" class="form-input-box" value="main">
                 </div>
@@ -2905,19 +2830,19 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-folder-tree" style="color: #34d399;"></i>
-                    <span>مستكشف ملفات المشروع: <span id="gh-modal-active-repo" style="color: #34d399;">daschai</span></span>
+                    <i class="fa-solid fa-folder-tree text-emerald"></i>
+                    <span>مستكشف ملفات المشروع: <span id="gh-modal-active-repo" class="text-emerald">daschai</span></span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn-new-thread" style="width: auto; padding: 5px 14px; font-size: 0.76rem;" onclick="app.ingestCurrentGitHubRepo()">
+                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.74rem;" onclick="app.ingestCurrentGitHubRepo()">
                         <i class="fa-solid fa-cloud-arrow-down"></i>
                         <span>جلب الكود كاملاً للمحادثة</span>
                     </button>
-                    <button class="sidebar-btn-util" style="padding: 5px 10px; font-size: 0.75rem;" onclick="app.refreshGitHubTree()">
+                    <button class="sidebar-btn-util" style="padding: 4px 10px; font-size: 0.74rem;" onclick="app.refreshGitHubTree()">
                         <i class="fa-solid fa-rotate"></i>
                         <span>تحديث</span>
                     </button>
-                    <button class="icon-btn" onclick="app.closeModals()">
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
@@ -2925,24 +2850,24 @@ html, body {
         </div>
 
         <div class="workbench-layout-container">
-            <div style="border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 12px; background: #18191c;" id="repo-file-tree">
+            <div style="border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 10px; background: #18191c;" id="repo-file-tree">
                 <div style="font-size: 0.78rem; color: var(--text-dim); text-align: center; padding: 20px;">جاري جلب بنية الملفات...</div>
             </div>
             <div style="display: flex; flex-direction: column; overflow: hidden; background: #121314;">
-                <div style="padding: 10px 14px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
-                    <span id="gh-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.8rem; color: #94a3b8; max-width: 60%;">اختر ملفاً من الشجرة للمعاينة</span>
+                <div style="padding: 8px 12px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
+                    <span id="gh-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.78rem; color: #94a3b8; max-width: 60%;">اختر ملفاً من الشجرة للمعاينة</span>
                     <div style="display: flex; gap: 6px;">
-                        <button class="sidebar-btn-util" style="padding: 3px 10px; font-size: 0.72rem;" onclick="app.openSelectedGitHubFileInStudio()">
-                            <i class="fa-solid fa-columns" style="color: #38bdf8;"></i>
+                        <button class="sidebar-btn-util" style="padding: 3px 8px; font-size: 0.72rem;" onclick="app.openSelectedGitHubFileInStudio()">
+                            <i class="fa-solid fa-columns text-blue"></i>
                             <span>فتح في الاستوديو</span>
                         </button>
-                        <button class="sidebar-btn-util" style="padding: 3px 10px; font-size: 0.72rem;" onclick="app.askAICodeReview()">
-                            <i class="fa-solid fa-wand-magic-sparkles" style="color: #c084fc;"></i>
+                        <button class="sidebar-btn-util" style="padding: 3px 8px; font-size: 0.72rem;" onclick="app.askAICodeReview()">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple"></i>
                             <span>مراجعة AI</span>
                         </button>
                     </div>
                 </div>
-                <pre style="flex: 1; margin: 0; padding: 14px; overflow: auto; font-family: var(--font-mono); font-size: 0.82rem; color: #f1f5f9; direction: ltr; text-align: left;"><code id="repo-file-viewer">// اختر ملفاً لمعاينته هنا</code></pre>
+                <pre style="flex: 1; margin: 0; padding: 12px; overflow: auto; font-family: var(--font-mono); font-size: 0.8rem; color: #f1f5f9; direction: ltr; text-align: left;"><code id="repo-file-viewer">// اختر ملفاً لمعاينته هنا</code></pre>
             </div>
         </div>
 
@@ -2961,28 +2886,28 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
+                    <i class="fa-solid fa-file-zipper text-amber"></i>
                     <span>مستكشف كود المشروع المستخرج (ZIP Project Inspector)</span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
         </div>
 
         <div class="workbench-layout-container">
-            <div style="border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 12px; background: #18191c;" id="zip-file-tree">
+            <div style="border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 10px; background: #18191c;" id="zip-file-tree">
                 <!-- Populated with extracted zip files -->
             </div>
             <div style="display: flex; flex-direction: column; overflow: hidden; background: #121314;">
-                <div style="padding: 10px 14px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
-                    <span id="zip-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.8rem; color: #94a3b8; max-width: 60%;">اختر ملفاً لمعاينة الكود</span>
-                    <button class="sidebar-btn-util" style="padding: 3px 10px; font-size: 0.72rem;" onclick="app.developSelectedZipFile()">
-                        <i class="fa-solid fa-code" style="color: #38bdf8;"></i>
+                <div style="padding: 8px 12px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
+                    <span id="zip-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.78rem; color: #94a3b8; max-width: 60%;">اختر ملفاً لمعاينة الكود</span>
+                    <button class="sidebar-btn-util" style="padding: 3px 8px; font-size: 0.72rem;" onclick="app.developSelectedZipFile()">
+                        <i class="fa-solid fa-code text-blue"></i>
                         <span>تطوير هذا الملف بالذكاء الاصطناعي</span>
                     </button>
                 </div>
-                <pre style="flex: 1; margin: 0; padding: 14px; overflow: auto; font-family: var(--font-mono); font-size: 0.82rem; color: #f1f5f9; direction: ltr; text-align: left;"><code id="zip-file-viewer">// حدد ملفاً من قائمة المشروع المستخرج على اليمين</code></pre>
+                <pre style="flex: 1; margin: 0; padding: 12px; overflow: auto; font-family: var(--font-mono); font-size: 0.8rem; color: #f1f5f9; direction: ltr; text-align: left;"><code id="zip-file-viewer">// حدد ملفاً من قائمة المشروع المستخرج على اليمين</code></pre>
             </div>
         </div>
 
@@ -3005,10 +2930,10 @@ html, body {
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
-                    <i class="fa-solid fa-stethoscope" style="color: #c084fc;"></i>
+                    <i class="fa-solid fa-stethoscope text-purple"></i>
                     <span>فحص الأنظمة وتشخيص الأخطاء</span>
                 </div>
-                <button class="icon-btn" onclick="app.closeModals()">
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -3018,54 +2943,54 @@ html, body {
             <div class="diag-grid-box">
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">اتصال OpenRouter API</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="diag-openrouter-details">فحص الاتصال والمفتاح</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">اتصال OpenRouter API</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);" id="diag-openrouter-details">فحص الاتصال والمفتاح</div>
                     </div>
-                    <div id="diag-openrouter-status"><span style="color: var(--text-dim); font-size: 0.8rem;">لم يفحص بعد</span></div>
+                    <div id="diag-openrouter-status"><span style="color: var(--text-dim); font-size: 0.78rem;">لم يفحص بعد</span></div>
                 </div>
 
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">اتصال ومزامنة مستودعات GitHub</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="diag-github-details">فحص الوصول وCommit ورفع الكود</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">اتصال ومزامنة مستودعات GitHub</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);" id="diag-github-details">فحص الوصول وCommit ورفع الكود</div>
                     </div>
-                    <div id="diag-github-status"><span style="color: var(--text-dim); font-size: 0.8rem;">لم يفحص بعد</span></div>
+                    <div id="diag-github-status"><span style="color: var(--text-dim); font-size: 0.78rem;">لم يفحص بعد</span></div>
                 </div>
 
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">محرك بايثون Wasm (Pyodide)</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تشغيل بايثون داخل المتصفح</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">محرك بايثون Wasm (Pyodide)</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);">تشغيل بايثون داخل المتصفح</div>
                     </div>
-                    <div id="diag-pyodide-status"><span style="color: var(--text-dim); font-size: 0.8rem;">جاهز</span></div>
+                    <div id="diag-pyodide-status"><span style="color: var(--text-dim); font-size: 0.78rem;">جاهز</span></div>
                 </div>
 
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">محرك فك وتصدير مشاريع ZIP (JSZip)</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">تصدير وتحميل المشروع كاملاً بضغطة زر</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">محرك فك وتصدير مشاريع ZIP (JSZip)</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);">تصدير وتحميل المشروع كاملاً بضغطة زر</div>
                     </div>
-                    <div id="diag-jszip-status"><span style="color: var(--success); font-size: 0.8rem;">جاهز 🟢</span></div>
+                    <div id="diag-jszip-status"><span style="color: var(--success); font-size: 0.78rem;">جاهز 🟢</span></div>
                 </div>
 
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">محرك النطق والتعرف الصوتي (Web Speech)</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);">دعم STT / TTS (AR, FR, EN)</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">محرك النطق والتعرف الصوتي (Web Speech)</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);">دعم STT / TTS (AR, FR, EN)</div>
                     </div>
-                    <div id="diag-speech-status"><span style="color: var(--text-dim); font-size: 0.8rem;">جاهز</span></div>
+                    <div id="diag-speech-status"><span style="color: var(--text-dim); font-size: 0.78rem;">جاهز</span></div>
                 </div>
 
                 <div class="diag-box-item">
                     <div>
-                        <div style="font-weight: 700; font-size: 0.88rem;">ذاكرة التخزين الآمنة (Safe Persistence)</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted);" id="diag-storage-details">حماية عدم فقدان المحادثات</div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">ذاكرة التخزين الآمنة (Safe Persistence)</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);" id="diag-storage-details">حماية عدم فقدان المحادثات</div>
                     </div>
-                    <div id="diag-storage-status"><span style="color: var(--success); font-size: 0.8rem;">سليمة 🟢</span></div>
+                    <div id="diag-storage-status"><span style="color: var(--success); font-size: 0.78rem;">سليمة 🟢</span></div>
                 </div>
             </div>
 
-            <div id="diag-summary-box" style="padding: 12px 16px; background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.25); border-radius: var(--radius-md); font-size: 0.82rem; color: #93c5fd; line-height: 1.6;">
+            <div id="diag-summary-box" style="padding: 10px 14px; background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.25); border-radius: var(--radius-md); font-size: 0.8rem; color: #93c5fd; line-height: 1.55;">
                 انقر على زر "بدء الفحص الشامل" للتحقق من كافة المكونات وحل أي مشاكل مزود تلقائياً.
             </div>
         </div>
