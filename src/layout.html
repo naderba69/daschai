@@ -157,8 +157,12 @@
                 <div class="input-dock-footer">
                     <!-- Quick Suggestions Carousel -->
                     <div class="quick-suggestions-carousel" id="quick-prompts-tray">
+                        <div class="suggestion-chip" onclick="app.sendQuickPrompt('قم بإنشاء محاكاة واختبارات برمجية شاملة تغطي 100% من الدوال والسيناريوهات المتطرفة')">
+                            <i class="fa-solid fa-vial text-purple"></i>
+                            <span>🧪 توليد اختبارات ومحاكاة كاملة</span>
+                        </div>
                         <div class="suggestion-chip" onclick="app.sendQuickPrompt('قم بعمل مراجعة وفحص كامل لكافة ملفات المشروع واكتشاف أي ثغرات أمنية وأخطاء معمارية وتحسين الأداء')">
-                            <i class="fa-solid fa-shield-halved text-purple"></i>
+                            <i class="fa-solid fa-shield-halved text-emerald"></i>
                             <span>فحص الأمان والهيكل المعماري</span>
                         </div>
                         <div class="suggestion-chip" onclick="app.ingestCurrentGitHubRepo()">
@@ -173,29 +177,17 @@
                             <i class="fa-solid fa-bolt text-amber"></i>
                             <span>حلبة مقارنة نموذجين</span>
                         </div>
-                        <div class="suggestion-chip" onclick="app.downloadProjectAsZip()">
-                            <i class="fa-solid fa-download text-blue"></i>
-                            <span>تصدير حزمة ZIP للمشروع</span>
-                        </div>
                     </div>
 
-                    <!-- Attachment Preview Bar -->
+                    <!-- Multi-File Attachment Preview Bar -->
                     <div class="attachment-tray" id="attachment-preview-bar">
-                        <div class="attachment-icon-box">
-                            <img id="attachment-img-tag" src="" alt="Preview" style="display: none; width: 100%; height: 100%; object-fit: cover;">
-                            <i id="attachment-icon-tag" class="fa-solid fa-file text-blue" style="display: none;"></i>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 0.74rem; font-weight: 700; color: #38bdf8;" id="attachment-summary-text">المرفقات</span>
+                            <button style="background: transparent; border: none; color: #ef4444; font-size: 0.72rem; cursor: pointer;" onclick="app.clearAllAttachments()">إلغاء الكل ✖</button>
                         </div>
-                        <div class="attachment-meta">
-                            <div id="attachment-file-name" class="truncate attachment-title">project.zip</div>
-                            <div id="extraction-status-text" class="truncate attachment-status">جاري المعالجة...</div>
+                        <div class="attachment-chips-list" id="attachment-chips-list">
+                            <!-- Populated with multiple files -->
                         </div>
-                        <button id="btn-browse-extracted-zip" class="attachment-browse-btn" style="display: none;" onclick="app.openZipInspectorModal()">
-                            <i class="fa-solid fa-folder-open"></i>
-                            <span>تصفح الكود</span>
-                        </button>
-                        <button class="attachment-remove-btn" onclick="app.removeAttachment()">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
                     </div>
 
                     <!-- Gemini Input Card -->
@@ -203,7 +195,7 @@
                         <textarea 
                             class="gemini-input-field" 
                             id="user-input" 
-                            placeholder="اسأل OX-Alpha Pro، أو ارفع ملفاتك ومشروعك ZIP، أو انقر أيقونة السحابة لجلب كود GitHub كاملاً..."
+                            placeholder="اسأل OX-Alpha Pro، أو ارفع ملفات متعددة / مشروع ZIP، أو انقر أيقونة السحابة لجلب كود GitHub..."
                             rows="1"
                         ></textarea>
 
@@ -225,11 +217,11 @@
                                 <button class="action-btn" id="btn-sync-github-repo" title="جلب ومزامنة كود مستودع GitHub بالكامل" onclick="app.ingestCurrentGitHubRepo()">
                                     <i class="fa-solid fa-cloud-arrow-down text-emerald"></i>
                                 </button>
-                                <!-- Attach File / ZIP -->
-                                <button class="action-btn" id="btn-attach-file" title="إرفاق مشروع ZIP أو ملفات أو صور" onclick="document.getElementById('universal-file-input').click()">
+                                <!-- Multi-File / ZIP Attach -->
+                                <button class="action-btn" id="btn-attach-file" title="إرفاق ملفات متعددة أو مشروع ZIP أو صور" onclick="document.getElementById('universal-file-input').click()">
                                     <i class="fa-solid fa-paperclip"></i>
                                 </button>
-                                <input type="file" id="universal-file-input" accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
+                                <input type="file" id="universal-file-input" multiple accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
                                 <!-- Microphone STT -->
                                 <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN)" onclick="app.toggleRecording()">
                                     <i class="fa-solid fa-microphone"></i>
@@ -237,6 +229,12 @@
                             </div>
 
                             <div class="send-button-wrapper">
+                                <!-- Enter Key Mode Toggle Pill -->
+                                <button class="enter-mode-btn" id="btn-enter-mode" onclick="app.toggleEnterMode()" title="تبديل سلوك مفتاح Enter">
+                                    <i class="fa-solid fa-keyboard"></i>
+                                    <span id="enter-mode-label">Enter للإرسال</span>
+                                </button>
+
                                 <button class="btn-stop-stream" id="btn-stop" title="إيقاف التوليد" onclick="app.stopCurrentSessionStream()">
                                     <i class="fa-solid fa-stop"></i>
                                 </button>
@@ -634,7 +632,7 @@
                     <span>البحث الحي</span>
                 </button>
                 <button class="modal-tab-button" onclick="app.switchSettingsTab('tab-voice', event)">
-                    <span>الصوت</span>
+                    <span>الصوت والمفاتيح</span>
                 </button>
             </div>
         </div>
@@ -717,6 +715,14 @@
             <!-- Tab Voice -->
             <div id="tab-voice" class="settings-tab-content" style="display: none;">
                 <div class="form-group-item">
+                    <label class="form-label-title">سلوك زر Enter</label>
+                    <select id="setting-enter-mode" class="form-input-box">
+                        <option value="send">Enter لإرسال الرسالة (Shift+Enter لسطر جديد)</option>
+                        <option value="newline">Enter لإنشاء سطر جديد (Ctrl+Enter للإرسال)</option>
+                    </select>
+                </div>
+
+                <div class="form-group-item" style="margin-top: 10px;">
                     <label class="form-label-title">سرعة النطق الصوتي (TTS Rate)</label>
                     <input type="range" id="setting-tts-rate" min="0.5" max="2" step="0.1" value="1" oninput="document.getElementById('tts-rate-label').innerText = this.value + 'x'">
                     <span id="tts-rate-label" style="font-size: 0.75rem; color: var(--text-muted);">1.0x</span>
@@ -898,7 +904,7 @@
                         <div style="font-weight: 700; font-size: 0.85rem;">ذاكرة التخزين الآمنة (Safe Persistence)</div>
                         <div style="font-size: 0.74rem; color: var(--text-muted);" id="diag-storage-details">حماية عدم فقدان المحادثات</div>
                     </div>
-                    <div id="diag-storage-status"><span style="color: var(--success); font-size: 0.78rem;">سليمة 🟢</span></div>
+                    <div id="diag-storage-status"><span style="color: var(--success); font-size: 0.8rem;">سليمة 🟢</span></div>
                 </div>
             </div>
 

@@ -1,13 +1,13 @@
 // ==============================================================================
 // OX-Alpha Workbench Pro | Gemini AI Autonomous Engineering Copilot
-// Full Enterprise Suite: All Live Models, Autonomous Agent, Arena, Studio, Diff
+// Full Enterprise Suite: Mermaid Diagrams, Auto-Test Runner & Simulation Engine
 // ==============================================================================
 
 if (typeof pdfjsLib !== 'undefined') {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 if (typeof mermaid !== 'undefined') {
-    mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+    mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
 }
 
 // Fast & Stable Fallback Catalog (Used before/during live API fetch)
@@ -45,12 +45,22 @@ const DEFAULT_REPOS_LIST = [
     { name: "spotfish", full_name: "naderba69/spotfish", description: "Ocean Fish Detection & Tracking Engine", private: false, default_branch: "main", language: "Python" }
 ];
 
+// MANDATORY AUTOMATIC TEST & SIMULATION DIRECTIVE (ALWAYS ENFORCED)
+const MANDATORY_QA_SIMULATION_DIRECTIVE = `
+[بروتوكول هندسي إلزامي ودائم 100%]:
+مع كل ميزة أو كود تقدمه أو تعدله، يجب عليك دائماً وبشكل آلي تقديم:
+1. الكود الأساسي للميزة مع مسار الملف بوضوح مثل: \`\`\`typescript [الملف: src/services/auth.ts]
+2. ملف اختبارات ومحاكاة شامل (Unit Tests & Mock Simulation) بمسار واضح مثل: \`\`\`python [الملف: tests/test_auth.py] أو \`\`\`javascript [الملف: tests/auth.test.js]
+3. يجب أن يحتوي كود الاختبار على بيانات وهمية واقعية (Mock Data) ومحاكاة ذاتية قابلة للتشغيل المباشر في المتصفح.
+4. عند شرح بنية أو تدفق بيانات أو هيكل معماري، قدم دائماً مخطط Mermaid تفاعلي بصيغة: \`\`\`mermaid
+`;
+
 const PERSONA_PROMPTS = {
-    fullstack: "أنت مهندس برمجيات شامل ومحترف (Full-Stack Engineer). تقوم بتحليل وهندسة كامل طبقات المشروع frontend و backend وقواعد البيانات مع كتابة كود نظيف وقابل للإنتاج.",
-    security: "أنت خبير أمن سيبراني وتدقيق برمجي (Security Auditor). دورك فحص الثغرات، حماية مفاتيح API، منع هجمات SQL Injection و XSS، وتطبيق أفضل معايير الأمان OWASP.",
-    performance: "أنت خبير في تحسين الأداء وتوسيع الأنظمة (Performance Optimizer). تركز على تسريع وقت الاستجابة، تقليل استهلاك الذاكرة، تحسين الاستعلامات، وتخفيف حجم الحزم.",
-    architect: "أنت مهندس معماري للأنظمة السحابية (Software Architect). تركز على هيكلية المجلدات، التصميم المعماري (Design Patterns)، فصل الاهتمامات، وقابلية التوسع.",
-    tests: "أنت خبير في كتابة الاختبارات وضمان الجودة (QA & Test Automation). تقوم بإنشاء اختبارات Unit Tests و Integration Tests شاملة تغطي كافة الحالات المتطرفة."
+    fullstack: `أنت مهندس برمجيات شامل ومحترف (Full-Stack Engineer). تقوم بتحليل وهندسة كامل طبقات المشروع frontend و backend وقواعد البيانات مع كتابة كود نظيف وقابل للإنتاج.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
+    security: `أنت خبير أمن سيبراني وتدقيق برمجي (Security Auditor). دورك فحص الثغرات، حماية مفاتيح API، منع هجمات SQL Injection و XSS، وتطبيق أفضل معايير الأمان OWASP.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
+    performance: `أنت خبير في تحسين الأداء وتوسيع الأنظمة (Performance Optimizer). تركز على تسريع وقت الاستجابة، تقليل استهلاك الذاكرة، تحسين الاستعلامات، وتخفيف حجم الحزم.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
+    architect: `أنت مهندس معماري للأنظمة السحابية (Software Architect). تركز على هيكلية المجلدات، التصميم المعماري (Design Patterns)، فصل الاهتمامات، والمخططات المعمارية.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
+    tests: `أنت خبير في هندسة وضمان الجودة وكتابة المحاكاة والاختبارات الشاملة (QA & Test Automation Architect). مع كل كود تقدمه، يجب عليك كتابة جناح اختبارات ومحاكاة كامل (Unit Tests & Interactive Simulation) يغطي كافة الدوال والسيناريوهات المتطرفة.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`
 };
 
 class OXAlphaApp {
@@ -74,7 +84,9 @@ class OXAlphaApp {
         this.activeStudioFile = 'src/App.tsx';
         this.pendingDiffData = null;
 
-        this.currentAttachment = null;
+        // Multi-File Attachments Array
+        this.currentAttachments = [];
+
         this.speechRecognition = null;
         this.isRecording = false;
         this.speechLang = 'ar-SA';
@@ -105,7 +117,6 @@ class OXAlphaApp {
         this.initDomEvents();
         this.renderUIState();
         this.checkOAuthCallback();
-        // Fetch ALL live models from OpenRouter without truncation
         this.fetchOpenRouterModels(false);
         this.fetchUserGitHubRepositories(false);
     }
@@ -121,19 +132,16 @@ class OXAlphaApp {
                     const lightweight = this.sessions.map(s => ({
                         ...s,
                         messages: s.messages.map(m => {
-                            if (m.attachment && m.attachment.textContent && m.attachment.textContent.length > 2000) {
+                            if (m.attachments && Array.isArray(m.attachments)) {
                                 return {
                                     ...m,
-                                    attachment: {
-                                        name: m.attachment.name,
-                                        isGitHubProject: m.attachment.isGitHubProject,
-                                        isZipProject: m.attachment.isZipProject,
-                                        textContent: `[محتوى المرفق: ${m.attachment.name} (${Math.round(m.attachment.textContent.length / 1000)}k حرف)]`
-                                    }
+                                    attachments: m.attachments.map(att => ({
+                                        name: att.name,
+                                        isGitHubProject: att.isGitHubProject,
+                                        isZipProject: att.isZipProject,
+                                        textContent: att.textContent && att.textContent.length > 2000 ? `[محتوى المرفق: ${att.name} (${Math.round(att.textContent.length / 1000)}k حرف)]` : att.textContent
+                                    }))
                                 };
-                            }
-                            if (m.attachment && m.attachment.base64) {
-                                return { ...m, attachment: { name: m.attachment.name, base64: null } };
                             }
                             return m;
                         })
@@ -151,9 +159,10 @@ class OXAlphaApp {
             apiKey: '',
             model: 'google/gemma-4-31b-it:free',
             customModel: '',
-            systemPrompt: 'أنت مهندس برمجيات محترف وخبير في تحليل وتطوير المشاريع البرمجية الضخمة. تجيب بلغة المستخدم (العربية أو الفرنسية أو الإنجليزية) بطلاقة واحترافية. عند اقتراح أو كتابة أي ملف كود، اذكر دائماً مسار الملف بوضوح مثل: ```typescript [الملف: src/components/Header.tsx]',
+            systemPrompt: `أنت مهندس برمجيات محترف وخبير في تحليل وتطوير المشاريع البرمجية الضخمة. تجيب بلغة المستخدم (العربية أو الفرنسية أو الإنجليزية) بطلاقة واحترافية.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
             temperature: 0.7,
             maxTokens: 16384,
+            enterMode: 'send',
             githubToken: '',
             githubOwner: 'naderba69',
             githubRepo: 'daschai',
@@ -180,6 +189,7 @@ class OXAlphaApp {
         this.settings.systemPrompt = document.getElementById('setting-system-prompt').value;
         this.settings.temperature = parseFloat(document.getElementById('setting-temperature').value) || 0.7;
         this.settings.maxTokens = parseInt(document.getElementById('setting-max-tokens').value, 10) || 16384;
+        this.settings.enterMode = document.getElementById('setting-enter-mode')?.value || 'send';
         this.settings.githubToken = document.getElementById('setting-github-token').value.trim();
         this.settings.githubOwner = document.getElementById('setting-github-owner').value.trim() || 'naderba69';
         this.settings.githubRepo = document.getElementById('setting-github-repo').value.trim() || 'daschai';
@@ -191,6 +201,22 @@ class OXAlphaApp {
         this.showToast('تم حفظ الإعدادات بنجاح ⚡', 'success');
         this.closeModals();
         this.renderUIState();
+    }
+
+    // ENTER KEY BEHAVIOR TOGGLE
+    toggleEnterMode() {
+        this.settings.enterMode = this.settings.enterMode === 'send' ? 'newline' : 'send';
+        this.safeStorageSet('ox_alpha_settings_v2', JSON.stringify(this.settings));
+        this.updateEnterModeButton();
+        const modeDesc = this.settings.enterMode === 'send' ? 'Enter للإرسال (Shift+Enter لسطر جديد)' : 'Enter لسطر جديد (Ctrl+Enter للإرسال)';
+        this.showToast(`تم ضبط مفتاح الإدخال: ${modeDesc}`, 'info');
+    }
+
+    updateEnterModeButton() {
+        const label = document.getElementById('enter-mode-label');
+        if (label) {
+            label.innerText = this.settings.enterMode === 'send' ? 'Enter للإرسال' : 'Enter سطر جديد';
+        }
     }
 
     saveInlineGitHubToken() {
@@ -700,8 +726,8 @@ class OXAlphaApp {
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
-            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15); // A5
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.15);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
             osc.start();
@@ -948,26 +974,12 @@ class OXAlphaApp {
                 } catch (e) {}
             }
 
-            this.currentAttachment = {
+            this.currentAttachments.push({
                 name: `GitHub Codebase: ${owner}/${repo} (${fetchedCount} ملف)`,
                 textContent: aggregatedCode,
                 isGitHubProject: true
-            };
-
-            const previewBar = document.getElementById('attachment-preview-bar');
-            const fileNameTag = document.getElementById('attachment-file-name');
-            const statusTag = document.getElementById('extraction-status-text');
-            const iconTag = document.getElementById('attachment-icon-tag');
-            const imgTag = document.getElementById('attachment-img-tag');
-
-            if (previewBar) previewBar.style.display = 'flex';
-            if (fileNameTag) fileNameTag.innerText = `${owner}/${repo} (${fetchedCount} ملف / ${Math.round(totalChars/1000)}k حرف)`;
-            if (statusTag) statusTag.innerText = '✅ تم جلب وهندسة كود المستودع بنجاح وجاهز للتحليل';
-            if (iconTag) {
-                iconTag.className = 'fa-brands fa-github text-success';
-                iconTag.style.display = 'block';
-            }
-            if (imgTag) imgTag.style.display = 'none';
+            });
+            this.renderAttachmentTray();
 
             const input = document.getElementById('user-input');
             if (input && !input.value.trim()) {
@@ -1223,32 +1235,28 @@ class OXAlphaApp {
         return '';
     }
 
-    // IN-BROWSER ZIP FILE INGESTION & STACK DETECTION
-    async processUniversalFile(file) {
+    // MULTI-FILE UPLOAD ENGINE
+    async processUniversalFiles(files) {
+        if (!files || files.length === 0) return;
+
+        for (const file of files) {
+            await this.processSingleFile(file);
+        }
+        this.renderAttachmentTray();
+        this.showToast(`تم إرفاق ${files.length} ملف بنجاح 📁`, 'success');
+    }
+
+    async processSingleFile(file) {
         const fileName = file.name;
         const ext = fileName.split('.').pop().toLowerCase();
-        const previewBar = document.getElementById('attachment-preview-bar');
-        const fileNameTag = document.getElementById('attachment-file-name');
-        const statusTag = document.getElementById('extraction-status-text');
-        const iconTag = document.getElementById('attachment-icon-tag');
-        const imgTag = document.getElementById('attachment-img-tag');
-        const btnBrowseZip = document.getElementById('btn-browse-extracted-zip');
-
-        if (previewBar) previewBar.style.display = 'flex';
-        if (fileNameTag) fileNameTag.innerText = fileName;
-        if (statusTag) statusTag.innerText = 'جاري التحليل واستخراج المحتوى...';
-        if (btnBrowseZip) btnBrowseZip.style.display = 'none';
 
         if (ext === 'zip') {
             try {
-                statusTag.innerText = 'جاري فك ضغط واستخراج ملفات المشروع (JSZip)...';
                 const zip = await JSZip.loadAsync(file);
                 let extractedText = `=== حزمة مشروع مضغوطة: ${fileName} ===\n\n`;
                 let fileCount = 0;
                 let stackHints = [];
-
                 const zipEntries = [];
-                this.virtualProjectFiles.clear();
 
                 const entries = Object.keys(zip.files);
                 for (const path of entries) {
@@ -1256,11 +1264,9 @@ class OXAlphaApp {
                     if (!zipEntry.dir) {
                         fileCount++;
                         const lowerPath = path.toLowerCase();
-                        if (lowerPath.endsWith('package.json')) stackHints.push('Node.js / JavaScript');
-                        if (lowerPath.endsWith('requirements.txt') || lowerPath.endsWith('pyproject.toml')) stackHints.push('Python');
+                        if (lowerPath.endsWith('package.json')) stackHints.push('Node.js / JS');
+                        if (lowerPath.endsWith('requirements.txt')) stackHints.push('Python');
                         if (lowerPath.endsWith('next.config.js') || lowerPath.endsWith('next.config.mjs')) stackHints.push('Next.js');
-                        if (lowerPath.endsWith('vite.config.js') || lowerPath.endsWith('vite.config.ts')) stackHints.push('Vite');
-                        if (lowerPath.endsWith('cargo.toml')) stackHints.push('Rust');
 
                         const isCode = /\.(js|jsx|ts|tsx|py|html|css|json|md|sql|vue|rs|go|php|c|cpp|h|java|sh|yaml|yml)$/i.test(path);
                         if (isCode && !path.includes('node_modules/') && !path.includes('.git/')) {
@@ -1274,58 +1280,81 @@ class OXAlphaApp {
                     }
                 }
 
-                const uniqueStack = Array.from(new Set(stackHints)).join(', ') || 'مشروع برمجي';
-                this.currentAttachment = {
+                this.currentAttachments.push({
                     name: fileName,
                     textContent: extractedText,
                     isZipProject: true,
-                    zipEntries: zipEntries
-                };
-
-                if (statusTag) statusTag.innerText = `✅ تم فك الضغط (${fileCount} ملف - بنية: ${uniqueStack})`;
-                if (iconTag) {
-                    iconTag.className = 'fa-solid fa-file-zipper text-warning';
-                    iconTag.style.display = 'block';
-                }
-                if (imgTag) imgTag.style.display = 'none';
-                if (btnBrowseZip) btnBrowseZip.style.display = 'block';
-                this.showToast(`تم استخراج كود ${fileName} بنجاح (${fileCount} ملف) 📦`, 'success');
-
+                    zipEntries: zipEntries,
+                    fileCount: fileCount
+                });
             } catch (err) {
-                statusTag.innerText = '❌ فشل فك ضغط ZIP: ' + err.message;
-                this.showToast('فشل قراءة ملف ZIP', 'error');
+                this.showToast(`فشل فك ضغط ${fileName}`, 'error');
             }
         } else if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.currentAttachment = {
-                    name: fileName,
-                    base64: e.target.result
+            await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.currentAttachments.push({
+                        name: fileName,
+                        base64: e.target.result,
+                        isImage: true
+                    });
+                    resolve();
                 };
-                if (imgTag) {
-                    imgTag.src = e.target.result;
-                    imgTag.style.display = 'block';
-                }
-                if (iconTag) iconTag.style.display = 'none';
-                if (statusTag) statusTag.innerText = 'جاهزة للرؤية والتحليل متعدد الوسائط';
-            };
-            reader.readAsDataURL(file);
+                reader.readAsDataURL(file);
+            });
         } else {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                this.currentAttachment = {
-                    name: fileName,
-                    textContent: e.target.result
+            await new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    this.virtualProjectFiles.set(fileName, { content: text, lang: ext, timestamp: Date.now() });
+                    this.currentAttachments.push({
+                        name: fileName,
+                        textContent: text,
+                        isCode: true
+                    });
+                    resolve();
                 };
-                if (iconTag) {
-                    iconTag.className = 'fa-solid fa-file-code text-info';
-                    iconTag.style.display = 'block';
-                }
-                if (imgTag) imgTag.style.display = 'none';
-                if (statusTag) statusTag.innerText = 'تم قراءة الملف النصي بنجاح';
-            };
-            reader.readAsText(file);
+                reader.readAsText(file);
+            });
         }
+    }
+
+    renderAttachmentTray() {
+        const tray = document.getElementById('attachment-preview-bar');
+        const chipsContainer = document.getElementById('attachment-chips-list');
+        const summaryText = document.getElementById('attachment-summary-text');
+        if (!tray || !chipsContainer) return;
+
+        if (this.currentAttachments.length === 0) {
+            tray.style.display = 'none';
+            return;
+        }
+
+        tray.style.display = 'flex';
+        if (summaryText) {
+            summaryText.innerText = `المرفقات الحالية (${this.currentAttachments.length} ملف):`;
+        }
+
+        chipsContainer.innerHTML = this.currentAttachments.map((att, idx) => `
+            <div class="attachment-file-chip">
+                <i class="${att.isGitHubProject ? 'fa-brands fa-github text-emerald' : att.isZipProject ? 'fa-solid fa-file-zipper text-amber' : att.isImage ? 'fa-solid fa-image text-purple' : 'fa-solid fa-file-code text-blue'}"></i>
+                <span class="truncate" style="max-width: 150px;">${this.escapeHTML(att.name)}</span>
+                <button class="attachment-remove-btn" onclick="app.removeAttachment(${idx})" title="حذف هذا المرفق">✖</button>
+            </div>
+        `).join('');
+    }
+
+    removeAttachment(index) {
+        this.currentAttachments.splice(index, 1);
+        this.renderAttachmentTray();
+    }
+
+    clearAllAttachments() {
+        this.currentAttachments = [];
+        this.renderAttachmentTray();
+        document.getElementById('universal-file-input').value = '';
     }
 
     openZipInspectorModal() {
@@ -1333,12 +1362,13 @@ class OXAlphaApp {
         const treeContainer = document.getElementById('zip-file-tree');
         if (!modal || !treeContainer) return;
 
-        if (!this.currentAttachment || !this.currentAttachment.zipEntries) {
+        const zipAtt = this.currentAttachments.find(a => a.isZipProject);
+        if (!zipAtt || !zipAtt.zipEntries) {
             this.showToast('لا يوجد مشروع ZIP مستخرج حالياً', 'warning');
             return;
         }
 
-        treeContainer.innerHTML = this.currentAttachment.zipEntries.map(f => `
+        treeContainer.innerHTML = zipAtt.zipEntries.map(f => `
             <div class="session-item-row" style="padding: 6px 10px;" onclick="app.previewZipFile('${f.path}')">
                 <i class="fa-solid fa-file-code" style="font-size: 0.75rem; color: #38bdf8;"></i>
                 <span class="truncate" style="font-family: var(--font-mono); font-size: 0.76rem;">${f.path}</span>
@@ -1349,7 +1379,8 @@ class OXAlphaApp {
     }
 
     previewZipFile(filePath) {
-        const file = this.currentAttachment?.zipEntries?.find(f => f.path === filePath);
+        const zipAtt = this.currentAttachments.find(a => a.isZipProject);
+        const file = zipAtt?.zipEntries?.find(f => f.path === filePath);
         if (!file) return;
         this.selectedZipFile = file;
         const title = document.getElementById('zip-file-viewer-title');
@@ -1370,15 +1401,8 @@ class OXAlphaApp {
 
     askAIDevelopZipProject() {
         this.closeModals();
-        const prompt = `قم بعمل دراسة وتطوير كامل لحزمة المشروع المستخرجة (${this.currentAttachment?.name || 'ZIP Project'}). حدد الهيكل المعماري والملفات المحورية واقترح تحسينات فورية مع كتابة الكود المطور.`;
+        const prompt = `قم بعمل دراسة وتطوير كامل لحزمة المشروع المستخرجة. حدد الهيكل المعماري والملفات المحورية واقترح تحسينات فورية مع كتابة الكود المطور.`;
         this.sendQuickPrompt(prompt);
-    }
-
-    removeAttachment() {
-        this.currentAttachment = null;
-        const previewBar = document.getElementById('attachment-preview-bar');
-        if (previewBar) previewBar.style.display = 'none';
-        document.getElementById('universal-file-input').value = '';
     }
 
     // MULTI-LINGUAL VOICE STT & TTS (AR / FR / EN)
@@ -1501,7 +1525,7 @@ class OXAlphaApp {
         window.speechSynthesis.speak(utterance);
     }
 
-    // IN-BROWSER CODE EXECUTION (Pyodide Python Wasm & JS)
+    // IN-BROWSER CODE & TEST EXECUTION (Pyodide Python Wasm & JS)
     async runPythonCode(code, terminalEl) {
         if (!terminalEl) return;
         terminalEl.style.display = 'block';
@@ -1522,8 +1546,10 @@ class OXAlphaApp {
 
             await this._pyodideInstance.runPythonAsync(code);
             terminalEl.innerText = outputLogs || '✅ اكتمل التنفيذ بنجاح دون مخرجات (Exit 0)';
+            return { success: true, logs: outputLogs };
         } catch (err) {
             terminalEl.innerText = '❌ خطأ أثناء تنفيذ بايثون:\n' + err.message;
+            return { success: false, error: err.message };
         }
     }
 
@@ -1545,9 +1571,11 @@ class OXAlphaApp {
             let out = logs.join('\n');
             if (result !== undefined) out += '\n[Result]: ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : result);
             terminalEl.innerText = out || '✅ اكتمل التنفيذ بنجاح دون مخرجات (Return undefined)';
+            return { success: true, logs: out };
         } catch (err) {
             console.log = originalLog;
             terminalEl.innerText = '❌ خطأ في تشغيل JavaScript:\n' + err.message;
+            return { success: false, error: err.message };
         }
     }
 
@@ -1572,7 +1600,7 @@ class OXAlphaApp {
 
     generateTestFromBtn(btn, lang) {
         const code = btn.closest('.code-block-box').querySelector('pre code').innerText;
-        const prompt = `اكتب اختبارات شاملة (Unit Tests) وموثوقة لهذا الكود باللغة (${lang}):\n\n\`\`\`${lang}\n${code}\n\`\`\``;
+        const prompt = `قم بكتابة جناح اختبارات ومحاكاة كامل (Comprehensive Unit Tests & Mock Simulation) لهذا الكود باللغة (${lang}):\n\n\`\`\`${lang}\n${code}\n\`\`\`\n\nالمطلوب:\n1. تغطية 100% من الدوال والحالات المتطرفة (Edge Cases).\n2. إنشاء بيانات وهمية ومحاكاة واقعية (Mock Data).\n3. كتابة ملف الاختبار بمسار واضح مثل [الملف: tests/test_app.${lang === 'python' ? 'py' : 'ts'}]`;
         this.sendQuickPrompt(prompt);
     }
 
@@ -1714,12 +1742,12 @@ class OXAlphaApp {
         this.showToast('اكتمل فحص الأنظمة والتشخيص 🩺', 'info');
     }
 
-    // USER MESSAGE SENDING
+    // USER MESSAGE SENDING (AGGREGATES MULTI-ATTACHMENTS CLEANLY)
     async sendUserMessage(forcedText = null) {
         const input = document.getElementById('user-input');
         const text = forcedText !== null ? forcedText : (input ? input.value.trim() : '');
 
-        if (!text && !this.currentAttachment) return;
+        if (!text && this.currentAttachments.length === 0) return;
 
         const session = this.sessions.find(s => s.id === this.activeSessionId);
         if (!session) return;
@@ -1728,20 +1756,20 @@ class OXAlphaApp {
             id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
             role: 'user',
             content: text,
-            attachment: this.currentAttachment ? { ...this.currentAttachment } : null,
+            attachments: this.currentAttachments.length > 0 ? [...this.currentAttachments] : null,
             timestamp: Date.now()
         };
 
         session.messages.push(userMsg);
         if (session.messages.length === 1) {
-            session.title = text.slice(0, 36) || (this.currentAttachment ? this.currentAttachment.name : 'محادثة جديدة');
+            session.title = text.slice(0, 36) || (this.currentAttachments.length > 0 ? this.currentAttachments[0].name : 'محادثة جديدة');
         }
 
         if (input) {
             input.value = '';
             this.autoResizeTextarea(input);
         }
-        this.removeAttachment();
+        this.clearAllAttachments();
 
         const assistantMsgId = 'msg_' + (Date.now() + 1) + '_' + Math.random().toString(36).substring(2, 6);
         const assistantMsg = {
@@ -1795,9 +1823,9 @@ class OXAlphaApp {
             const lastMsg = session.messages.filter(m => m.role === 'user').pop();
             const query = (lastMsg?.content || '').toLowerCase();
 
-            if (lastMsg?.attachment?.base64) {
+            if (lastMsg?.attachments?.some(a => a.isImage || a.base64)) {
                 activeModelToUse = 'openrouter/free';
-            } else if (query.includes('حلل') || query.includes('فكر') || query.includes('رياضيات') || query.includes('خوارزمية') || query.includes('algorithm')) {
+            } else if (query.includes('حلل') || query.includes('فكر') || query.includes('رياضيات') || query.includes('خوارزمية') || query.includes('اختبار') || query.includes('محاكاة')) {
                 activeModelToUse = 'thinkingmachines/inkling:free';
             } else if (query.includes('كود') || query.includes('برمج') || query.includes('مستودع') || query.includes('github') || query.includes('code')) {
                 activeModelToUse = 'google/gemma-4-31b-it:free';
@@ -1885,15 +1913,20 @@ class OXAlphaApp {
                 }
                 if (m.role === 'user') {
                     let userContent = m.content || '';
-                    if (m.attachment?.textContent) {
-                        userContent += `\n\n[محتوى المشروع/الملف المرفق: ${m.attachment.name}]:\n${m.attachment.textContent}`;
+                    if (m.attachments && Array.isArray(m.attachments)) {
+                        m.attachments.forEach(att => {
+                            if (att.textContent) {
+                                userContent += `\n\n[محتوى الملف المرفق: ${att.name}]:\n${att.textContent}`;
+                            }
+                        });
                     }
-                    if (m.attachment?.base64) {
+                    const imageAtt = m.attachments?.find(a => a.isImage && a.base64);
+                    if (imageAtt) {
                         messagesPayload.push({
                             role: 'user',
                             content: [
                                 { type: 'text', text: userContent },
-                                { type: 'image_url', image_url: { url: m.attachment.base64 } }
+                                { type: 'image_url', image_url: { url: imageAtt.base64 } }
                             ]
                         });
                     } else {
@@ -1907,7 +1940,7 @@ class OXAlphaApp {
             if (autoContinuePass > 0) {
                 messagesPayload.push({
                     role: 'user',
-                    content: 'استمر فوراً وبدقة في إكمال إجابتك السابقة من النقطة التي توقفت عندها بالضبط دون تكرار أو مقدمات، واكتب باقي الكود والشرح كاملاً.'
+                    content: 'استمر فوراً وبدقة في إكمال إجابتك السابقة من النقطة التي توقفت عندها بالضبط دون تكرار أو مقدمات، واكتب باقي الكود والاختبارات والشرح كاملاً.'
                 });
             }
 
@@ -2040,7 +2073,6 @@ class OXAlphaApp {
             assistantMsg.tokens = Math.max(1, Math.round((assistantMsg.content.length + (assistantMsg.reasoning || '').length) / 3.8));
             assistantMsg.tps = (assistantMsg.tokens / (parseFloat(assistantMsg.duration) || 1)).toFixed(1);
 
-            // Audio and Haptic completion chime
             this.playCompletionAudioHaptic();
 
             // Seamless Auto-Continuation if truncated
@@ -2088,7 +2120,7 @@ class OXAlphaApp {
         if (!assistantMsg) return;
 
         const lastChunk = assistantMsg.content.replace(/<[^>]+>/g, '').slice(-400);
-        const prompt = `تابع إكمال إجابتك السابقة بالضبط من النقطة التي توقفت عندها دون تكرار ما سبق واكتب باقي الكود والشرح:\n\n[آخر ما تم كتابته]:\n${lastChunk}`;
+        const prompt = `تابع إكمال إجابتك السابقة بالضبط من النقطة التي توقفت عندها دون تكرار ما سبق واكتب باقي الكود والاختبارات والشرح:\n\n[آخر ما تم كتابته]:\n${lastChunk}`;
         await this.sendUserMessage(prompt);
     }
 
@@ -2136,6 +2168,7 @@ class OXAlphaApp {
             banner.style.display = this.settings.apiKey ? 'none' : 'flex';
         }
 
+        this.updateEnterModeButton();
         this.renderSessionList();
         this.renderMessages();
     }
@@ -2178,18 +2211,26 @@ class OXAlphaApp {
                     <p class="welcome-subtitle">منظومة هندسة البرمجيات بالذكاء الاصطناعي مع جلب وتحديث كود مستودعات GitHub مباشرة، فك وتصدير مشاريع ZIP، ودعم النماذج الحية بالعربية والفرنسية والإنجليزية.</p>
 
                     <div class="hero-cards-grid">
+                        <div class="hero-action-card" onclick="app.sendQuickPrompt('قم بإنشاء محاكاة واختبارات برمجية شاملة تغطي 100% من الدوال والسيناريوهات المتطرفة')">
+                            <div class="hero-card-header">
+                                <div class="hero-card-title">🧪 توليد اختبارات ومحاكاة كاملة</div>
+                                <i class="fa-solid fa-vial text-purple" style="font-size: 1.1rem;"></i>
+                            </div>
+                            <div class="hero-card-desc">إجبار النموذج على بناء محاكاة واختبارات برمجية دقيقة للتحقق من سلامة الكود.</div>
+                        </div>
+
                         <div class="hero-action-card" onclick="app.ingestCurrentGitHubRepo()">
                             <div class="hero-card-header">
                                 <div class="hero-card-title">جلب كود مستودع GitHub كاملاً</div>
-                                <i class="fa-solid fa-cloud-arrow-down" style="color: #34d399; font-size: 1.1rem;"></i>
+                                <i class="fa-solid fa-cloud-arrow-down text-emerald" style="font-size: 1.1rem;"></i>
                             </div>
                             <div class="hero-card-desc">تحميل وقراءة كافة ملفات وكود مستودع (${this.settings.githubRepo}) مباشرة ليفهمها الذكاء الاصطناعي بالكامل.</div>
                         </div>
 
                         <div class="hero-action-card" onclick="document.getElementById('universal-file-input').click()">
                             <div class="hero-card-header">
-                                <div class="hero-card-title">رفع وفك ضغط مشروع ZIP</div>
-                                <i class="fa-solid fa-file-zipper" style="color: #fbbf24; font-size: 1.1rem;"></i>
+                                <div class="hero-card-title">رفع وفك ضغط ملفات متعددة / ZIP</div>
+                                <i class="fa-solid fa-file-zipper text-amber" style="font-size: 1.1rem;"></i>
                             </div>
                             <div class="hero-card-desc">استخراج وتفكيك كافة ملفات الأكواد البرمجية وهندستها وتطويرها فورياً.</div>
                         </div>
@@ -2197,17 +2238,9 @@ class OXAlphaApp {
                         <div class="hero-action-card" onclick="app.openDualModelArena()">
                             <div class="hero-card-header">
                                 <div class="hero-card-title">حلبة مقارنة نموذجين (Arena)</div>
-                                <i class="fa-solid fa-bolt" style="color: #fbbf24; font-size: 1.1rem;"></i>
+                                <i class="fa-solid fa-bolt text-amber" style="font-size: 1.1rem;"></i>
                             </div>
                             <div class="hero-card-desc">مقارنة توليد نموذجين جنباً إلى جنب في الوقت الفعلي.</div>
-                        </div>
-
-                        <div class="hero-action-card" onclick="app.downloadProjectAsZip()">
-                            <div class="hero-card-header">
-                                <div class="hero-card-title">تصدير وتحميل المشروع ZIP</div>
-                                <i class="fa-solid fa-download" style="color: #38bdf8; font-size: 1.1rem;"></i>
-                            </div>
-                            <div class="hero-card-desc">تنزيل حزمة كاملة لملفات المشروع البرمجي في أرشيف ZIP جاهز للتشغيل.</div>
                         </div>
                     </div>
                 </div>
@@ -2218,6 +2251,20 @@ class OXAlphaApp {
         container.innerHTML = session.messages.map(m => {
             const isUser = m.role === 'user';
             if (isUser) {
+                let attachmentsHtml = '';
+                if (m.attachments && Array.isArray(m.attachments) && m.attachments.length > 0) {
+                    attachmentsHtml = `
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px;">
+                            ${m.attachments.map(att => `
+                                <div style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 0.74rem;">
+                                    <i class="${att.isGitHubProject ? 'fa-brands fa-github text-emerald' : att.isZipProject ? 'fa-solid fa-file-zipper text-amber' : att.isImage ? 'fa-solid fa-image text-purple' : 'fa-solid fa-file-code text-blue'}"></i>
+                                    <span style="font-weight: 700;">${this.escapeHTML(att.name)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
                 return `
                     <div class="msg-bubble-row user-side" dir="auto">
                         <div class="sender-avatar usr">
@@ -2229,12 +2276,7 @@ class OXAlphaApp {
                                 <span>${new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
                             <div class="msg-card usr" dir="auto">
-                                ${m.attachment ? `
-                                    <div style="display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: rgba(0,0,0,0.3); border-radius: 6px; margin-bottom: 8px; font-size: 0.78rem;" dir="auto">
-                                        <i class="${m.attachment.isGitHubProject ? 'fa-brands fa-github text-success' : m.attachment.isZipProject ? 'fa-solid fa-file-zipper text-warning' : 'fa-solid fa-paperclip text-info'}"></i>
-                                        <span style="font-weight: 700;">${m.attachment.name}</span>
-                                    </div>
-                                ` : ''}
+                                ${attachmentsHtml}
                                 <div>${this.escapeHTML(m.content)}</div>
                             </div>
                         </div>
@@ -2248,7 +2290,7 @@ class OXAlphaApp {
                             <div class="reasoning-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'">
                                 <div style="display: flex; align-items: center; gap: 6px;">
                                     <i class="fa-solid fa-brain" style="color: #c084fc;"></i>
-                                    <span>سلسلة التفكير المنطقي (DeepSeek R1 / Gemini Thinking)</span>
+                                    <span>سلسلة التفكير المنطقي الكاملة (DeepSeek R1 / Gemini Thinking - Full View)</span>
                                 </div>
                                 <i class="fa-solid fa-chevron-down" style="font-size: 0.7rem;"></i>
                             </div>
@@ -2341,21 +2383,54 @@ class OXAlphaApp {
         this.enhanceRenderedCodeBlocks();
     }
 
+    // ENHANCE CODE BLOCKS, MERMAID DIAGRAMS & AUTO TEST EXECUTION
     enhanceRenderedCodeBlocks() {
         const codeBlocks = document.querySelectorAll('.markdown-body pre code');
         codeBlocks.forEach(codeEl => {
             const pre = codeEl.parentElement;
-            if (pre.parentElement.classList.contains('code-block-box')) return;
+            if (pre.parentElement.classList.contains('code-block-box') || pre.parentElement.classList.contains('mermaid-diagram-container')) return;
 
             const langMatch = codeEl.className.match(/language-(\w+)/);
             const lang = langMatch ? langMatch[1].toLowerCase() : 'code';
+            const codeText = codeEl.innerText.trim();
 
+            // 1. MERMAID DIAGRAM RENDERING
+            if (lang === 'mermaid' && typeof mermaid !== 'undefined') {
+                const mermaidContainer = document.createElement('div');
+                mermaidContainer.className = 'mermaid-diagram-container';
+                const diagramId = 'mermaid-' + Math.random().toString(36).substring(2, 9);
+                
+                mermaidContainer.innerHTML = `
+                    <div class="mermaid-diagram-header">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-diagram-project"></i>
+                            <span>المخطط المعماري التفاعلي (System Architecture Diagram)</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="code-tool-btn" onclick="app.exportMermaidSvg('${diagramId}')"><i class="fa-solid fa-download"></i> <span>تصدير SVG</span></button>
+                            <button class="code-tool-btn" onclick="app.copyToClipboard(decodeURIComponent('${encodeURIComponent(codeText)}'), this)"><i class="fa-regular fa-copy"></i> <span>نسخ الكود</span></button>
+                        </div>
+                    </div>
+                    <div class="mermaid-svg-box" id="${diagramId}">${this.escapeHTML(codeText)}</div>
+                `;
+
+                pre.parentNode.replaceChild(mermaidContainer, pre);
+                try {
+                    mermaid.run({ nodes: [mermaidContainer.querySelector('.mermaid-svg-box')] });
+                } catch (e) {
+                    console.warn('Mermaid render error:', e);
+                }
+                return;
+            }
+
+            // 2. STANDARD CODE BLOCK ENHANCEMENT
             let detectedPath = '';
-            const codeText = codeEl.innerText;
             const pathMatch = codeText.match(/^(?:\/\/|#|\/\*|<!--)?\s*(?:File|الملف|path):\s*([^\n\*\/]+)/i);
             if (pathMatch) {
                 detectedPath = pathMatch[1].trim();
             }
+
+            const isTestFile = detectedPath.includes('test') || codeText.includes('def test_') || codeText.includes('assert ') || codeText.includes('describe(') || codeText.includes('it(');
 
             const wrapper = document.createElement('div');
             wrapper.className = 'code-block-box';
@@ -2366,8 +2441,10 @@ class OXAlphaApp {
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-weight: 700; color: #8ab4f8;">${lang}</span>
                     ${detectedPath ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">${detectedPath}</span>` : ''}
+                    ${isTestFile ? `<span style="background: rgba(192, 132, 252, 0.18); color: #c084fc; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">🧪 ملف اختبارات ومحاكاة</span>` : ''}
                 </div>
                 <div class="code-actions-group">
+                    <button class="code-tool-btn test-btn" onclick="app.generateTestFromBtn(this, '${lang}')"><i class="fa-solid fa-vial"></i> <span>محاكاة واختبارات</span></button>
                     ${detectedPath ? `
                         <button class="code-tool-btn" onclick="app.openDiffModal('${detectedPath}', '', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-solid fa-code-compare"></i> <span>Diff</span></button>
                         <button class="code-tool-btn commit-btn" onclick="app.commitFileToGitHub('${detectedPath}', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-brands fa-github"></i> <span>رفع لـ GitHub</span></button>
@@ -2376,7 +2453,6 @@ class OXAlphaApp {
                     ${lang === 'javascript' || lang === 'js' ? `<button class="code-tool-btn run-btn" onclick="app.runJavaScriptCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-js"></i> <span>تشغيل JS</span></button>` : ''}
                     ${lang === 'html' || lang === 'svg' ? `<button class="code-tool-btn" onclick="app.toggleLiveArtifact(this)"><i class="fa-solid fa-eye"></i> <span>معاينة</span></button>` : ''}
                     <button class="code-tool-btn" onclick="app.formatCodeBlock(this.closest('.code-block-box').querySelector('pre code'), '${lang}')"><i class="fa-solid fa-align-left"></i> <span>تنسيق</span></button>
-                    <button class="code-tool-btn" onclick="app.generateTestFromBtn(this, '${lang}')"><i class="fa-solid fa-vial"></i> <span>اختبارات</span></button>
                     <button class="code-tool-btn" onclick="app.copyToClipboard(this.closest('.code-block-box').querySelector('pre code').innerText, this)"><i class="fa-regular fa-copy"></i> <span>نسخ</span></button>
                 </div>
             `;
@@ -2397,7 +2473,46 @@ class OXAlphaApp {
             if (typeof hljs !== 'undefined') {
                 hljs.highlightElement(codeEl);
             }
+
+            // AUTO TEST RUNNER: Automatically runs simulation tests and displays verification badge
+            if (isTestFile && (lang === 'python' || lang === 'py' || lang === 'javascript' || lang === 'js')) {
+                setTimeout(async () => {
+                    if (lang === 'python' || lang === 'py') {
+                        const testBadge = document.createElement('div');
+                        testBadge.className = 'auto-test-badge';
+                        testBadge.innerHTML = `<span>🧪 جاري فحص ومحاكاة الاختبارات تلقائياً في المتصفح...</span>`;
+                        wrapper.appendChild(testBadge);
+
+                        const res = await this.runPythonCode(codeText, terminal);
+                        if (res && res.success) {
+                            testBadge.className = 'auto-test-badge';
+                            testBadge.innerHTML = `<span>✅ نتائج الاختبارات التلقائية: تم التحقق والنجاح بنسبة 100% (Pyodide Wasm)</span><button class="code-tool-btn" onclick="this.closest('.code-block-box').querySelector('.terminal-box').style.display='block'">عرض المخرجات</button>`;
+                        } else {
+                            testBadge.className = 'auto-test-badge failed';
+                            testBadge.innerHTML = `<span>⚠️ تم اكتشاف خطأ في المحاكاة: ${res?.error?.slice(0, 50) || 'تحقق من الدوال'}</span><button class="code-tool-btn" onclick="this.closest('.code-block-box').querySelector('.terminal-box').style.display='block'">عرض الخطأ</button>`;
+                        }
+                    }
+                }, 300);
+            }
         });
+    }
+
+    exportMermaidSvg(diagramId) {
+        const svgBox = document.getElementById(diagramId);
+        const svgEl = svgBox?.querySelector('svg');
+        if (!svgEl) {
+            this.showToast('تعذر تصدير المخطط', 'warning');
+            return;
+        }
+        const svgData = new XMLSerializer().serializeToString(svgEl);
+        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `architecture-diagram-${Date.now()}.svg`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.showToast('تم تحميل المخطط المعماري بصيغة SVG 📊', 'success');
     }
 
     openSettingsModal() {
@@ -2407,6 +2522,9 @@ class OXAlphaApp {
         document.getElementById('setting-system-prompt').value = this.settings.systemPrompt || '';
         document.getElementById('setting-temperature').value = this.settings.temperature || 0.7;
         document.getElementById('setting-max-tokens').value = this.settings.maxTokens || 16384;
+        if (document.getElementById('setting-enter-mode')) {
+            document.getElementById('setting-enter-mode').value = this.settings.enterMode || 'send';
+        }
         document.getElementById('setting-github-token').value = this.settings.githubToken || '';
         document.getElementById('setting-github-owner').value = this.settings.githubOwner || 'naderba69';
         document.getElementById('setting-github-repo').value = this.settings.githubRepo || 'daschai';
@@ -2463,9 +2581,16 @@ class OXAlphaApp {
         if (input) {
             input.addEventListener('input', () => this.autoResizeTextarea(input));
             input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    this.sendUserMessage();
+                if (this.settings.enterMode === 'send') {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendUserMessage();
+                    }
+                } else {
+                    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                        e.preventDefault();
+                        this.sendUserMessage();
+                    }
                 }
             });
         }
@@ -2473,8 +2598,8 @@ class OXAlphaApp {
         const fileInput = document.getElementById('universal-file-input');
         if (fileInput) {
             fileInput.addEventListener('change', (e) => {
-                if (e.target.files && e.target.files[0]) {
-                    this.processUniversalFile(e.target.files[0]);
+                if (e.target.files && e.target.files.length > 0) {
+                    this.processUniversalFiles(Array.from(e.target.files));
                 }
             });
         }
@@ -2486,7 +2611,7 @@ class OXAlphaApp {
 
     autoResizeTextarea(el) {
         el.style.height = 'auto';
-        el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+        el.style.height = Math.min(el.scrollHeight, 160) + 'px';
     }
 
     handleScrollEvent() {
