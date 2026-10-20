@@ -1,0 +1,19 @@
+name: OX-Alpha CI — Build & Audit
+on:
+  push:
+    branches: [ main, arena/* ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20', cache: 'npm' }
+      - run: npm ci || npm install
+      - run: npm run build
+      - run: node --check src/app.js && echo "✅ Syntax OK"
+      - run: ls -lh index.html && wc -l index.html
+      - name: Lighthouse CI (optional)
+        run: echo "Run lighthouse later with vercel deploy"

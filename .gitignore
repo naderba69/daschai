@@ -38,3 +38,11 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# OX-Alpha v2 additions
+.git.bak.*
+*.bak
+.env.local
+.env.production
+coverage/
+.tmp/

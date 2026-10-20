@@ -6,20 +6,26 @@
     <aside class="sidebar" id="sidebar">
         <!-- Sidebar Header -->
         <div class="sidebar-header">
-            <div class="brand-row" onclick="app.createNewSession(true)">
-                <div class="gemini-sparkle-icon">✦</div>
-                <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="brand-row" onclick="app.createNewSession(true)" role="button" tabindex="0" aria-label="إنشاء محادثة جديدة">
+                    <div class="gemini-sparkle-icon" aria-hidden="true">✦</div>
+                    <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
+                </div>
+                <button class="nav-icon-btn" id="sidebar-close-btn" onclick="app.toggleSidebar(false)" aria-label="إغلاق القائمة" style="width:28px;height:28px; display:none;">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
             <button class="btn-new-thread" onclick="app.createNewSession(true)">
                 <i class="fa-solid fa-plus"></i>
                 <span>محادثة جديدة</span>
             </button>
-            <div class="sidebar-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتغيير مستودع GitHub">
+            <div class="sidebar-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتغيير مستودع GitHub" role="button" tabindex="0" aria-label="تغيير مستودع GitHub النشط">
                 <div class="repo-info-row">
-                    <i class="fa-brands fa-github text-emerald"></i>
+                    <i class="fa-brands fa-github text-emerald" aria-hidden="true"></i>
                     <span id="sidebar-active-repo-name" class="truncate">daschai</span>
+                    <span id="active-repo-name-text" style="display:none;">daschai</span>
                 </div>
-                <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem;"></i>
+                <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem;" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -27,7 +33,7 @@
         <div class="sidebar-search-container">
             <div class="sidebar-search-box">
                 <i class="fa-solid fa-magnifying-glass" style="color: var(--text-dim);"></i>
-                <input type="text" id="session-search-input" placeholder="بحث في المحادثات..." oninput="app.filterSessions(this.value)">
+                <input type="text" id="session-search-input" placeholder="بحث في المحادثات..." oninput="app.filterSessions(this.value)" aria-label="بحث في المحادثات">
             </div>
         </div>
 
@@ -85,8 +91,8 @@
         <!-- Top Navbar (Clean Single-Line, Zero Collisions) -->
         <header class="top-navbar">
             <div class="navbar-left">
-                <button class="nav-icon-btn" id="sidebar-toggle-btn" title="القائمة الجانبية" onclick="app.toggleSidebar()">
-                    <i class="fa-solid fa-bars"></i>
+                <button class="nav-icon-btn" id="sidebar-toggle-btn" title="القائمة الجانبية" onclick="app.toggleSidebar()" aria-label="فتح/إغلاق القائمة الجانبية" aria-expanded="false">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
                 <div class="nav-brand" onclick="app.createNewSession(true)">
                     <span class="nav-sparkle">✦</span>
@@ -95,7 +101,7 @@
                 <!-- Active Model Dropdown Pill -->
                 <div class="nav-model-pill" onclick="app.openModelExplorerModal()" title="انقر لتغيير النموذج">
                     <span class="live-dot"></span>
-                    <span id="active-model-display" class="truncate">google/gemma-4-31b-it:free</span>
+                    <span id="active-model-display" class="truncate">google/gemma-3-27b-it:free</span>
                     <i class="fa-solid fa-chevron-down pill-arrow"></i>
                 </div>
             </div>
@@ -190,13 +196,16 @@
                         </div>
                     </div>
 
-                    <!-- Gemini Input Card -->
+                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> بحث • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
+                <!-- Gemini Input Card -->
                     <div class="gemini-input-card">
                         <textarea 
                             class="gemini-input-field" 
                             id="user-input" 
                             placeholder="اسأل OX-Alpha Pro، أو ارفع ملفات متعددة / مشروع ZIP، أو انقر أيقونة السحابة لجلب كود GitHub..."
                             rows="1"
+                            aria-label="حقل إدخال الرسالة"
+                            aria-multiline="true"
                         ></textarea>
 
                         <div class="gemini-input-actions">
@@ -223,8 +232,9 @@
                                 </button>
                                 <input type="file" id="universal-file-input" multiple accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
                                 <!-- Microphone STT -->
-                                <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN)" onclick="app.toggleRecording()">
-                                    <i class="fa-solid fa-microphone"></i>
+                                <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN) — انقر مطولاً لتغيير اللغة" onclick="app.toggleRecording()" oncontextmenu="event.preventDefault(); app.toggleSTTLang();" aria-label="إملاء صوتي">
+                                    <i class="fa-solid fa-microphone" aria-hidden="true"></i>
+                                    <span id="stt-lang-label" style="font-size:0.6rem; font-weight:700; margin-right:2px;">AR</span>
                                 </button>
                             </div>
 
@@ -255,7 +265,7 @@
                         <button class="studio-action-btn" onclick="app.runStudioCode()"><i class="fa-solid fa-play text-emerald"></i><span>تشغيل</span></button>
                         <button class="studio-action-btn" onclick="app.openDiffViewerForActiveStudioFile()"><i class="fa-solid fa-code-compare text-amber"></i><span>Diff</span></button>
                         <button class="studio-action-btn" onclick="app.commitStudioFile()"><i class="fa-brands fa-github text-emerald"></i><span>Commit</span></button>
-                        <button class="studio-close-btn" onclick="app.toggleCodeStudio(false)"><i class="fa-solid fa-xmark"></i></button>
+                        <button class="studio-close-btn" id="btn-toggle-studio" onclick="app.toggleCodeStudio(false)" aria-label="إغلاق استوديو الأكواد"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                 </div>
                 <div class="studio-editor-wrapper">
@@ -450,10 +460,10 @@
             <!-- Column A -->
             <div class="arena-column-card">
                 <div class="arena-header-bar">
-                    <select id="arena-model-a" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;">
-                        <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B (مجاني)</option>
-                        <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
-                        <option value="deepseek/deepseek-r1">DeepSeek R1 (Thinking)</option>
+                    <select id="arena-model-a" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;" aria-label="اختيار النموذج الأول للمقارنة">
+                        <option value="google/gemma-3-27b-it:free">Google Gemma 3 27B (مجاني)</option>
+                        <option value="meta-llama/llama-3.3-70b-instruct:free">Meta Llama 3.3 70B (مجاني)</option>
+                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Thinking)</option>
                     </select>
                     <span id="arena-gauge-a" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
                 </div>
@@ -465,10 +475,10 @@
             <!-- Column B -->
             <div class="arena-column-card">
                 <div class="arena-header-bar">
-                    <select id="arena-model-b" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;">
-                        <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
+                    <select id="arena-model-b" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;" aria-label="اختيار النموذج الثاني للمقارنة">
+                        <option value="qwen/qwen3-coder:free">Qwen3 Coder (مجاني)</option>
                         <option value="openrouter/free">OpenRouter Free Router</option>
-                        <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B</option>
+                        <option value="google/gemma-3-12b-it:free">Google Gemma 3 12B</option>
                     </select>
                     <span id="arena-gauge-b" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
                 </div>
@@ -658,7 +668,7 @@
 
                 <div class="form-group-item" id="custom-model-input-group" style="margin-top: 10px; display: none;">
                     <label class="form-label-title">معرف النموذج المخصص</label>
-                    <input type="text" id="setting-custom-model" class="form-input-box" placeholder="مثال: google/gemma-4-31b-it:free">
+                    <input type="text" id="setting-custom-model" class="form-input-box" placeholder="مثال: google/gemma-3-27b-it:free">
                 </div>
 
                 <div class="form-group-item" style="margin-top: 10px;">
