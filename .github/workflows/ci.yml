@@ -10,10 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci || npm install
-      - run: npm run build
-      - run: node --check src/app.js && echo "✅ Syntax OK"
-      - run: ls -lh index.html && wc -l index.html
-      - name: Lighthouse CI (optional)
-        run: echo "Run lighthouse later with vercel deploy"
+        with: { node-version: '20' }
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Build
+        run: npm run build
+      - name: Syntax check
+        run: node --check src/app.js && echo "✅ Syntax OK"
+      - name: Artifact check
+        run: ls -lh index.html && wc -l index.html
