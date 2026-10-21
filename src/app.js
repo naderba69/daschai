@@ -567,98 +567,9 @@ class OXAlphaApp {
         if (modal) modal.classList.add('active');
     }
 
-    async createGitHubBranch() {
-        const branchName = document.getElementById('new-branch-name-input')?.value.trim();
-        const owner = this.settings.githubOwner || 'naderba69';
-        const repo = this.settings.githubRepo || 'daschai';
-        const baseBranch = this.settings.githubBranch || 'main';
-        const token = this.settings.githubToken?.trim();
-
-        if (!branchName) {
-            this.showToast('أدخل اسم الفرع الجديد', 'warning');
-            return;
-        }
-        if (!token) {
-            this.showToast('يلزم رمز GitHub PAT لإنشاء الفروع', 'warning');
-            return;
-        }
-
-        try {
-            this.showToast(`جاري إنشاء الفرع (${branchName})...`, 'info');
-            const refRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${baseBranch}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!refRes.ok) throw new Error('تعذر قراءة الـ SHA للفرع الأساسي');
-            const refData = await refRes.json();
-            const sha = refData.object.sha;
-
-            const createRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ref: `refs/heads/${branchName}`,
-                    sha: sha
-                })
-            });
-
-            if (!createRes.ok) throw new Error('فشل إنشاء الفرع');
-            this.settings.githubBranch = branchName;
-            this.saveSettings();
-            this.showToast(`✅ تم إنشاء الفرع (${branchName}) وتحديده كالفرع النشط!`, 'success');
-            this.closeModals();
-        } catch (err) {
-            this.showToast(`❌ فشل إنشاء الفرع: ${err.message}`, 'error');
-        }
-    }
-
-    async createPullRequest() {
-        const title = document.getElementById('pr-title-input')?.value.trim();
-        const body = document.getElementById('pr-body-input')?.value.trim();
-        const owner = this.settings.githubOwner || 'naderba69';
-        const repo = this.settings.githubRepo || 'daschai';
-        const head = this.settings.githubBranch || 'main';
-        const token = this.settings.githubToken?.trim();
-
-        if (!title) {
-            this.showToast('أدخل عنوان الـ Pull Request', 'warning');
-            return;
-        }
-        if (!token) {
-            this.showToast('يلزم رمز GitHub PAT لفتح PR', 'warning');
-            return;
-        }
-
-        try {
-            this.showToast('جاري فتح Pull Request على GitHub...', 'info');
-            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    title: title,
-                    body: body,
-                    head: head,
-                    base: 'main'
-                })
-            });
-
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.message || `HTTP ${res.status}`);
-            }
-
-            const data = await res.json();
-            this.showToast(`✅ تم فتح Pull Request #${data.number} بنجاح!`, 'success');
-            this.closeModals();
-        } catch (err) {
-            this.showToast(`❌ تعذر فتح PR: ${err.message}`, 'error');
-        }
-    }
+    // Branch creation & Pull Requests moved to the GitHub Hub (src/features/04-github.js).
+    // (The old createGitHubBranch() called saveSettings(), which re-read the settings form and
+    //  could wipe the OpenRouter key / GitHub token when the form had not been opened.)
 
     // TERMUX HELPER MODAL
     openTermuxHelperModal() {
@@ -937,6 +848,8 @@ class OXAlphaApp {
                         totalChars += truncatedText.length;
                         fetchedCount++;
                         this.virtualProjectFiles.set(file.path, { content: text, lang: file.path.split('.').pop(), timestamp: Date.now() });
+                        // Remember the blob SHA so later commits can detect remote changes (conflict-aware commit)
+                        if (this.recordGitHubBase) this.recordGitHubBase(file.path, text, file.sha, { owner, repo, branch });
                     }
                 }
                 // Progress feedback

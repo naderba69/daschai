@@ -70,7 +70,7 @@
                     <i class="fa-solid fa-terminal text-emerald"></i>
                     <span>Termux</span>
                 </button>
-                <button class="tool-grid-btn" onclick="app.openBranchManagerModal()" title="إدارة الفروع و Pull Requests">
+                <button class="tool-grid-btn" onclick="app.openGitHubHub('prs')" title="GitHub Hub: الفروع، PR، Actions، الإصدارات، النشر">
                     <i class="fa-solid fa-code-branch text-blue"></i>
                     <span>الفروع و PR</span>
                 </button>
@@ -218,7 +218,7 @@
                     </div>
 
                     <div class="token-estimate-row"><span id="token-estimate-chip" class="token-estimate-chip" onclick="app.openAIHub()" title="تقدير التوكنات والتكلفة قبل الإرسال — انقر لفتح مركز الذكاء"></span></div>
-                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
+                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Alt+G</kbd> GitHub Hub • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
                 <!-- Gemini Input Card -->
                     <div class="gemini-input-card">
                         <div class="slash-autocomplete" id="slash-autocomplete" role="listbox" aria-label="أوامر الشرطة المائلة"></div>
@@ -313,7 +313,7 @@
                     <span>مشاريع ومستودعات GitHub</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.74rem;" onclick="app.openBranchManagerModal()">
+                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.74rem;" onclick="app.openGitHubHub('prs')">
                         <i class="fa-solid fa-code-branch"></i>
                         <span>الفروع و PR</span>
                     </button>
@@ -548,29 +548,79 @@
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
                     <i class="fa-solid fa-code-compare text-amber"></i>
-                    <span>مقارنة الفروقات قبل الرفع (Git Diff): <span id="diff-file-path-title" class="text-blue">src/App.tsx</span></span>
+                    <span>مراجعة الفروقات قبل الرفع: <span id="diff-file-path-title" class="text-blue" dir="ltr">src/App.tsx</span></span>
                 </div>
-                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span id="diff-stats" class="diff-stats"></span>
+                    <button class="sidebar-btn-util" style="padding:4px 10px; font-size:0.72rem;" onclick="app.toggleDiffView()" title="تبديل العرض: موحد / جنباً إلى جنب"><i class="fa-solid fa-table-columns"></i><span id="diff-view-label">جنباً إلى جنب</span></button>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
+            <div id="diff-context-note" class="diff-context-note"></div>
         </div>
 
         <div class="modal-body-scrollable">
-            <div class="git-diff-container" id="git-diff-output-box">
-                <!-- Populated with colored diff lines -->
-            </div>
+            <div class="git-diff-container" id="git-diff-output-box"></div>
         </div>
 
-        <div class="modal-footer-bar">
-            <button class="btn-new-thread" style="width: auto; padding: 7px 18px; font-size: 0.8rem;" id="btn-diff-confirm-commit" onclick="app.confirmCommitFromDiff()">
-                <i class="fa-brands fa-github"></i>
-                <span>قبول ورفع Commit مباشر إلى GitHub</span>
-            </button>
-            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
-                <span>إغلاق</span>
-            </button>
+        <div class="modal-footer-bar diff-commit-footer">
+            <div class="diff-commit-row">
+                <input type="text" id="diff-commit-message" class="form-input-box" placeholder="رسالة الـ Commit (مثال: fix: handle empty input)" dir="auto">
+                <button class="sidebar-btn-util" style="padding:6px 10px; white-space:nowrap;" onclick="app.suggestCommitMessage()" title="اقتراح رسالة بالذكاء الاصطناعي"><i class="fa-solid fa-wand-magic-sparkles text-purple"></i><span>اقتراح</span></button>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-new-thread" style="width: auto; padding: 7px 18px; font-size: 0.8rem;" id="btn-diff-confirm-commit" onclick="app.confirmCommitFromDiff()">
+                    <i class="fa-brands fa-github"></i><span>Commit إلى <span id="diff-target-branch">main</span></span>
+                </button>
+                <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()"><span>إغلاق</span></button>
+            </div>
         </div>
+    </div>
+</div>
+
+<!-- Merge / conflict resolver (Sprint 3) -->
+<div class="modal-overlay-backdrop" id="merge-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-code-merge text-amber"></i>
+                    <span>حل التعارضات: <span id="merge-file-title" class="text-blue" dir="ltr"></span></span>
+                </div>
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="merge-summary" class="diff-context-note"></div>
+        </div>
+        <div class="modal-body-scrollable" id="merge-body"></div>
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding:7px 12px;" onclick="app.mergeChooseAll('ours')">كل نسختي</button>
+            <button class="sidebar-btn-util" style="padding:7px 12px;" onclick="app.mergeChooseAll('theirs')">كل نسخة GitHub</button>
+            <button class="btn-new-thread" style="width:auto; padding:7px 18px;" id="merge-continue-btn" onclick="app.finishMerge()"><i class="fa-solid fa-check"></i><span>متابعة إلى المراجعة والـ Commit</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- GitHub Hub (Sprint 3) -->
+<div class="modal-overlay-backdrop" id="gh-hub-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide gh-hub-box">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-brands fa-github text-emerald"></i>
+                    <span>GitHub Hub: <span id="gh-hub-repo" dir="ltr" class="text-emerald"></span></span>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span id="gh-hub-rate" class="gh-rate" title="حد طلبات GitHub API المتبقي"></span>
+                    <button class="sidebar-btn-util" style="padding:4px 10px; font-size:0.72rem;" onclick="app.closeModals(); app.openGitHubWorkbench()" title="مستكشف الملفات"><i class="fa-solid fa-folder-tree"></i><span>الملفات</span></button>
+                    <button class="sidebar-btn-util" style="padding:4px 10px; font-size:0.72rem;" onclick="app.refreshGitHubHub()" aria-label="تحديث"><i class="fa-solid fa-rotate" id="gh-hub-refresh-icon"></i></button>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="gh-tabs" id="gh-hub-tabs" role="tablist"></div>
+        </div>
+        <div class="modal-body-scrollable" id="gh-hub-body"></div>
     </div>
 </div>
 
@@ -620,46 +670,6 @@
 </div>
 
 <!-- 6. Branch & Pull Request Modal -->
-<div class="modal-overlay-backdrop" id="branch-modal" onclick="if(event.target===this)app.closeModals()">
-    <div class="modal-card-box">
-        <div class="mobile-sheet-drag-handle"></div>
-        <div class="modal-pinned-top">
-            <div class="modal-header-bar">
-                <div class="modal-title-heading">
-                    <i class="fa-solid fa-code-branch text-blue"></i>
-                    <span>إدارة الفروع و Pull Requests</span>
-                </div>
-                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="modal-body-scrollable">
-            <div class="form-group-item">
-                <label class="form-label-title">إنشاء فرع جديد (New Branch)</label>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="new-branch-name-input" class="form-input-box" placeholder="feat/new-feature">
-                    <button class="btn-new-thread" style="width: auto; padding: 6px 14px; white-space: nowrap;" onclick="app.createGitHubBranch()">إنشاء</button>
-                </div>
-            </div>
-
-            <div class="form-group-item" style="margin-top: 14px;">
-                <label class="form-label-title">فتح Pull Request رسمي على GitHub</label>
-                <input type="text" id="pr-title-input" class="form-input-box" placeholder="عنوان الـ Pull Request...">
-                <textarea id="pr-body-input" class="form-input-box" rows="3" style="margin-top: 6px;" placeholder="شرح التعديلات والميزات..."></textarea>
-                <button class="btn-new-thread" style="width: 100%; margin-top: 8px;" onclick="app.createPullRequest()">🚀 فتح Pull Request</button>
-            </div>
-        </div>
-
-        <div class="modal-footer-bar">
-            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
-                <span>إغلاق</span>
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- 7. Settings Modal -->
 <div class="modal-overlay-backdrop" id="settings-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box">
