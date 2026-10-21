@@ -17,6 +17,88 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["productivity", "developer_tools"],
-  "screenshots": []
+  "categories": [
+    "productivity",
+    "developer_tools"
+  ],
+  "screenshots": [],
+  "id": "/",
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "محادثة جديدة",
+      "short_name": "جديد",
+      "url": "/?action=new",
+      "description": "ابدأ محادثة جديدة"
+    },
+    {
+      "name": "المهام",
+      "short_name": "المهام",
+      "url": "/?action=tasks",
+      "description": "لوحة Kanban"
+    },
+    {
+      "name": "استوديو الكود",
+      "short_name": "الاستوديو",
+      "url": "/?action=studio"
+    },
+    {
+      "name": "السبورة البيضاء",
+      "short_name": "السبورة",
+      "url": "/?action=whiteboard"
+    },
+    {
+      "name": "مسح QR",
+      "short_name": "مسح",
+      "url": "/?action=scan"
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "text/plain": [
+          ".txt",
+          ".md",
+          ".log",
+          ".csv"
+        ],
+        "text/javascript": [
+          ".js",
+          ".mjs",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ],
+        "application/json": [
+          ".json"
+        ],
+        "text/html": [
+          ".html",
+          ".htm"
+        ],
+        "text/css": [
+          ".css"
+        ],
+        "text/x-python": [
+          ".py"
+        ],
+        "application/zip": [
+          ".zip"
+        ]
+      }
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  }
 }

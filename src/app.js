@@ -1800,6 +1800,8 @@ class OXAlphaApp {
                 systemText += `\n\nنتائج البحث الحي المرفقة بالويب:\n${webContext}`;
             }
 
+            // Hook: feature modules (e.g. conversation modes) can extend the system prompt per session
+            if (this.decorateSystemPrompt) systemText = this.decorateSystemPrompt(systemText, session);
             const messagesPayload = [{ role: 'system', content: systemText }];
             const latestUserMsg = session.messages.filter(m => m.role === 'user').pop();
             const latestUserQuery = latestUserMsg ? (latestUserMsg.content || '') : '';

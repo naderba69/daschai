@@ -6,6 +6,7 @@ console.log("──────────────────────�
 
 const startTime = Date.now();
 
+(async () => {
 try {
     const cssPath = path.join(__dirname, 'src/styles.css');
     const layoutPath = path.join(__dirname, 'src/layout.html');
@@ -27,11 +28,44 @@ try {
     const featureFiles = fs.existsSync(featuresDir)
         ? fs.readdirSync(featuresDir).filter(f => f.endsWith('.js')).sort()
         : [];
-    const featuresContent = featureFiles
-        .map(f => `\n/* ---- feature: ${f} ---- */\n` + fs.readFileSync(path.join(featuresDir, f), 'utf8'))
+    const featureSources = featureFiles.map(f => ({ name: f, src: fs.readFileSync(path.join(featuresDir, f), 'utf8') }));
+    const featuresContent = featureSources
+        .map(({ name, src }) => `\n/* ---- feature: ${name} ---- */\n` + src)
         .join('\n');
-    // A literal </script> inside JS (e.g. HTML file templates) would end the inline <script> tag early
-    const appJsContent = (coreJsContent + '\n' + featuresContent).replace(/<\/script/gi, '<\\/script');
+    const useMinify = process.argv.includes('--minify');
+    const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+
+    // Optional JS minification with terser (devDependency). Falls back to the readable bundle if unavailable.
+    let rawJs = coreJsContent + '\n' + featuresContent;
+    let jsMinified = false;
+    if (useMinify && !process.argv.includes('--no-terser')) {
+        try {
+            const { minify } = require('terser');
+            const out = await minify(rawJs, {
+                ecma: 2020,
+                compress: { passes: 2, drop_debugger: true, pure_getters: false },
+                mangle: { toplevel: false },
+                keep_classnames: true,
+                keep_fnames: false,
+                format: { comments: false, ascii_only: false }
+            });
+            if (out && out.code) { rawJs = out.code; jsMinified = true; }
+        } catch (e) {
+            console.warn(`⚠️  terser unavailable or failed (${e.message.split('\n')[0]}) — shipping unminified JS`);
+        }
+    }
+    // A literal </script> inside JS (e.g. HTML file templates) would end the inline <script> tag early.
+    // Must run AFTER minification (terser may rewrite the escaped form).
+    const appJsContent = rawJs.replace(/<\/script/gi, '<\\/script');
+
+    // Build info for the in-app health panel / changelog (#845, #864)
+    const kb = (s) => Buffer.byteLength(s, 'utf8');
+    const buildInfo = {
+        version: pkg.version,
+        builtAt: new Date().toISOString(),
+        minified: jsMinified,
+        modules: [{ name: 'app.js (core)', size: kb(coreJsContent) }, ...featureSources.map(({ name, src }) => ({ name, size: kb(src) })), { name: 'styles.css', size: kb(cssContent) }, { name: 'layout.html', size: kb(layoutContent) }]
+    };
 
     // Basic minification for CSS (remove comments, extra whitespace) — safe
     const minifyCSS = (css) => css
@@ -40,7 +74,6 @@ try {
         .replace(/\s*([{}:;,])\s*/g, '$1')
         .trim();
 
-    const useMinify = process.argv.includes('--minify');
     const finalCSS = useMinify ? minifyCSS(cssContent) : cssContent;
 
     const fullHtml = `<!DOCTYPE html>
@@ -74,7 +107,7 @@ try {
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <!-- CSP: allow required CDNs only -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org; worker-src blob:; frame-src blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://gist.githubusercontent.com https://discord.com https://discordapp.com https://hooks.slack.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org; worker-src blob:; frame-src blob:;">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
@@ -93,11 +126,10 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- Critical libraries (loaded sync) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js" defer></script>
+    <!-- JSZip and Mermaid are lazy-loaded on first use (src/features/09-platform.js) -->
 
     <!-- Heavy libraries — lazy loaded on demand (saves ~10MB initial) -->
     <script>
@@ -126,19 +158,13 @@ ${finalCSS}
 <body>
 ${layoutContent}
 
+    <script>window.OX_BUILD = ${JSON.stringify(buildInfo)};</script>
     <!-- Main Application Logic -->
     <script id="app-script">
 ${appJsContent}
     </script>
 
-    <!-- Service Worker registration (if present) -->
-    <script>
-        if('serviceWorker' in navigator){
-            window.addEventListener('load', ()=> {
-                navigator.serviceWorker.register('/sw.js').catch(()=>{});
-            });
-        }
-    </script>
+    <!-- Service Worker registration + update prompts live in src/features/09-platform.js -->
 </body>
 </html>
 `;
@@ -146,17 +172,20 @@ ${appJsContent}
     fs.writeFileSync(path.join(__dirname, 'index.html'), fullHtml, 'utf8');
 
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-    const sizeKB = (fullHtml.length / 1024).toFixed(1);
+    const sizeKB = (Buffer.byteLength(fullHtml, 'utf8') / 1024).toFixed(1);
     const lines = fullHtml.split('\n').length;
 
     console.log(`✅ Build complete in ${duration}s`);
     console.log(`   📦 index.html → ${sizeKB} KB / ${lines} lines`);
     console.log(`   🎨 CSS: ${(finalCSS.length/1024).toFixed(1)} KB ${useMinify ? '(minified)' : ''}`);
-    console.log(`   📜 JS: ${(appJsContent.length/1024).toFixed(1)} KB (core + ${featureFiles.length} feature module${featureFiles.length === 1 ? '' : 's'})`);
+    console.log(`   📜 JS: ${(kb(appJsContent)/1024).toFixed(1)} KB ${jsMinified ? '(terser) ' : ''}(core + ${featureFiles.length} feature module${featureFiles.length === 1 ? '' : 's'})`);
     console.log(`   🧩 Layout: ${(layoutContent.length/1024).toFixed(1)} KB`);
 
-    if (parseFloat(sizeKB) > 500) {
-        console.warn(`⚠️  Warning: bundle >500KB (${sizeKB}KB) — consider code splitting`);
+    // What actually travels over the network: Vercel serves index.html compressed (gzip/brotli)
+    const gzipKB = (require('zlib').gzipSync(fullHtml, { level: 9 }).length / 1024).toFixed(1);
+    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget 250 KB)`);
+    if (parseFloat(gzipKB) > 250) {
+        console.warn(`⚠️  Warning: compressed bundle >250KB (${gzipKB}KB) — consider code splitting`);
     }
 
 } catch (err) {
@@ -164,3 +193,4 @@ ${appJsContent}
     console.error(err.stack);
     process.exit(1);
 }
+})();
