@@ -58,7 +58,7 @@
                     <i class="fa-solid fa-cube text-blue"></i>
                     <span>النماذج</span>
                 </button>
-                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة نموذجين جنباً إلى جنب">
+                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة 2–4 نماذج بالتوازي">
                     <i class="fa-solid fa-bolt text-amber"></i>
                     <span>حلبة النماذج</span>
                 </button>
@@ -73,6 +73,14 @@
                 <button class="tool-grid-btn" onclick="app.openBranchManagerModal()" title="إدارة الفروع و Pull Requests">
                     <i class="fa-solid fa-code-branch text-blue"></i>
                     <span>الفروع و PR</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openAIHub()" title="الاستهلاك والتكلفة والموجّه الذكي">
+                    <i class="fa-solid fa-chart-line text-blue"></i>
+                    <span>الاستهلاك</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openCodeSearch()" title="البحث الذكي في كود المشروع">
+                    <i class="fa-solid fa-magnifying-glass-chart text-emerald"></i>
+                    <span>بحث الكود</span>
                 </button>
                 <button class="tool-grid-btn" onclick="app.openDiagnosticsModal()" title="فحص الأنظمة وتشخيص الأخطاء">
                     <i class="fa-solid fa-stethoscope text-purple"></i>
@@ -114,7 +122,7 @@
                 </div>
 
                 <!-- Dual Arena Button -->
-                <button class="nav-icon-btn" title="حلبة مقارنة نموذجين" onclick="app.openDualModelArena()">
+                <button class="nav-icon-btn" title="حلبة النماذج المتعددة (2–4)" onclick="app.openDualModelArena()">
                     <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
                 </button>
 
@@ -209,6 +217,7 @@
                         </div>
                     </div>
 
+                    <div class="token-estimate-row"><span id="token-estimate-chip" class="token-estimate-chip" onclick="app.openAIHub()" title="تقدير التوكنات والتكلفة قبل الإرسال — انقر لفتح مركز الذكاء"></span></div>
                     <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
                 <!-- Gemini Input Card -->
                     <div class="gemini-input-card">
@@ -447,66 +456,87 @@
 
 <!-- 3. Dual Model Arena Modal -->
 <div class="modal-overlay-backdrop" id="arena-modal" onclick="if(event.target===this)app.closeModals()">
-    <div class="modal-card-box wide">
+    <div class="modal-card-box wide arena-xl">
         <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
                     <i class="fa-solid fa-bolt text-amber"></i>
-                    <span>حلبة مقارنة نموذجين جنباً إلى جنب (Dual Model Arena)</span>
+                    <span>حلبة النماذج المتعددة (2–4 نماذج بالتوازي)</span>
                 </div>
-                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <select id="arena-count-select" class="form-input-box" style="width:auto; padding:4px 8px; font-size:0.76rem;" onchange="app.setArenaCount(this.value)" aria-label="عدد النماذج">
+                        <option value="2">نموذجان</option>
+                        <option value="3">3 نماذج</option>
+                        <option value="4">4 نماذج</option>
+                    </select>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="arena-prompt-row">
+                <textarea id="arena-prompt-input" class="form-input-box" rows="2" placeholder="أدخل المسألة أو الكود للمقارنة المباشرة... (Ctrl+Enter للتشغيل)"></textarea>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <button class="btn-new-thread" id="arena-run-btn" style="width: auto; padding: 7px 16px; white-space: nowrap;" onclick="app.executeArenaComparison()">
+                        <i class="fa-solid fa-play"></i><span>بدء المقارنة</span>
+                    </button>
+                    <button class="sidebar-btn-util" id="arena-stop-btn" style="padding: 6px 12px; display:none;" onclick="app.stopArena()">
+                        <i class="fa-solid fa-stop"></i><span>إيقاف</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="arena-split-view arena-grid" id="arena-grid" data-count="2"></div>
+        <div class="modal-footer-bar" style="justify-content:space-between;">
+            <div id="arena-leaderboard-mini" class="arena-leaderboard-mini"></div>
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()"><span>إغلاق</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Hub: usage analytics, router, RAG, storage (Sprint 2) -->
+<div class="modal-overlay-backdrop" id="ai-hub-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-chart-line text-blue"></i>
+                    <span>مركز الذكاء: الاستهلاك والتكلفة والموجّه</span>
+                </div>
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+        </div>
+        <div class="modal-body-scrollable" id="ai-hub-body"></div>
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding: 7px 14px;" onclick="app.exportUsageCSV()"><i class="fa-solid fa-file-csv"></i><span>تصدير CSV</span></button>
+            <button class="sidebar-btn-util" style="padding: 7px 14px;" onclick="app.clearUsageData()"><i class="fa-regular fa-trash-can"></i><span>مسح السجل</span></button>
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()"><span>إغلاق</span></button>
+        </div>
+    </div>
+</div>
 
-            <!-- Arena Input -->
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="arena-prompt-input" class="form-input-box" placeholder="أدخل المسألة أو الكود للمقارنة المباشرة بين النموذجين...">
-                <button class="btn-new-thread" style="width: auto; padding: 7px 16px; white-space: nowrap;" onclick="app.executeArenaComparison()">
-                    <i class="fa-solid fa-play"></i>
-                    <span>بدء المقارنة</span>
+<!-- Code Search (local RAG index) — Sprint 2 -->
+<div class="modal-overlay-backdrop" id="code-search-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-magnifying-glass-chart text-emerald"></i>
+                    <span>البحث الذكي في كود المشروع (فهرس محلي)</span>
+                </div>
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+            <input type="text" id="code-search-input" class="form-input-box" placeholder="مثال: authentication token refresh أو دالة رفع الملفات..." autocomplete="off">
+            <div id="code-search-meta" style="font-size:0.72rem; color:var(--text-dim); margin-top:6px;"></div>
         </div>
-
-        <div class="arena-split-view">
-            <!-- Column A -->
-            <div class="arena-column-card">
-                <div class="arena-header-bar">
-                    <select id="arena-model-a" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;" aria-label="اختيار النموذج الأول للمقارنة">
-                        <option value="google/gemma-3-27b-it:free">Google Gemma 3 27B (مجاني)</option>
-                        <option value="meta-llama/llama-3.3-70b-instruct:free">Meta Llama 3.3 70B (مجاني)</option>
-                        <option value="deepseek/deepseek-r1:free">DeepSeek R1 (Thinking)</option>
-                    </select>
-                    <span id="arena-gauge-a" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
-                </div>
-                <div class="arena-body-scroll markdown-body" id="arena-output-a" dir="auto">
-                    بانتظار بدء المقارنة...
-                </div>
-            </div>
-
-            <!-- Column B -->
-            <div class="arena-column-card">
-                <div class="arena-header-bar">
-                    <select id="arena-model-b" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;" aria-label="اختيار النموذج الثاني للمقارنة">
-                        <option value="qwen/qwen3-coder:free">Qwen3 Coder (مجاني)</option>
-                        <option value="openrouter/free">OpenRouter Free Router</option>
-                        <option value="google/gemma-3-12b-it:free">Google Gemma 3 12B</option>
-                    </select>
-                    <span id="arena-gauge-b" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
-                </div>
-                <div class="arena-body-scroll markdown-body" id="arena-output-b" dir="auto">
-                    بانتظار بدء المقارنة...
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-footer-bar">
-            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
-                <span>إغلاق</span>
-            </button>
-        </div>
+        <div class="modal-body-scrollable" id="code-search-results"></div>
     </div>
 </div>
 

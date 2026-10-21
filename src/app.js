@@ -277,10 +277,11 @@ class OXAlphaApp {
             this.sessions = [];
         }
         if (!Array.isArray(this.sessions) || this.sessions.length === 0) {
+            this.sessions = [];
             this.createNewSession(false);
-        } else {
-            this.activeSessionId = this.sessions[0].id;
         }
+        // Always have an active session (fresh installs previously stayed null → first message was dropped)
+        this.activeSessionId = this.sessions[0].id;
     }
 
     saveSessions() {
@@ -510,73 +511,7 @@ class OXAlphaApp {
         modal.classList.add('active');
     }
 
-    async executeArenaComparison() {
-        const promptInput = document.getElementById('arena-prompt-input');
-        const modelA = document.getElementById('arena-model-a')?.value || 'google/gemma-3-27b-it:free';
-        const modelB = document.getElementById('arena-model-b')?.value || 'meta-llama/llama-3.3-70b-instruct:free';
-        const outA = document.getElementById('arena-output-a');
-        const outB = document.getElementById('arena-output-b');
-        const gaugeA = document.getElementById('arena-gauge-a');
-        const gaugeB = document.getElementById('arena-gauge-b');
-
-        const promptText = promptInput?.value.trim();
-        if (!promptText) {
-            this.showToast('أدخل مسألة أو كود لبدء المقارنة', 'warning');
-            return;
-        }
-
-        const apiKey = this.settings.apiKey?.trim();
-        if (!apiKey) {
-            this.showToast('يلزم إدخال مفتاح OpenRouter في الإعدادات', 'warning');
-            this.openSettingsModal();
-            return;
-        }
-
-        if (outA) outA.innerHTML = '<span class="live-step-spinner"></span> جاري التوليد من النموذج الأول...';
-        if (outB) outB.innerHTML = '<span class="live-step-spinner"></span> جاري التوليد من النموذج الثاني...';
-        if (gaugeA) gaugeA.innerText = '⚡ جاري المعالجة...';
-        if (gaugeB) gaugeB.innerText = '⚡ جاري المعالجة...';
-
-        const runOne = async (model, outEl, gaugeEl) => {
-            const t0 = Date.now();
-            try {
-                const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`,
-                        'HTTP-Referer': window.location.origin || 'https://daschai.vercel.app'
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [{ role: 'user', content: promptText }],
-                        stream: false,
-                        max_tokens: 4096
-                    })
-                });
-
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                const text = data.choices?.[0]?.message?.content || 'لا يوجد رد';
-                const duration = ((Date.now() - t0) / 1000).toFixed(1);
-                const tokens = Math.round(text.length / 3.8);
-
-                outEl.innerHTML = DOMPurify.sanitize(marked.parse(text));
-                gaugeEl.innerHTML = `⏱️ ${duration}s | 📊 ${tokens} tokens`;
-            } catch (err) {
-                outEl.innerHTML = `❌ خطأ: ${err.message}`;
-                gaugeEl.innerText = 'فشل';
-            }
-        };
-
-        // Run both concurrently
-        await Promise.allSettled([
-            runOne(modelA, outA, gaugeA),
-            runOne(modelB, outB, gaugeB)
-        ]);
-
-        this.showToast('اكتملت المقارنة الحية بين النموذجين ⚡', 'success');
-    }
+    // Multi-model arena (2–4 models) lives in src/features/02-ai.js → executeArenaComparison()
 
     // INTERACTIVE GIT DIFF ENGINE
     openDiffViewerForActiveStudioFile() {
@@ -1123,6 +1058,7 @@ class OXAlphaApp {
                             is_reasoning: isReasoning,
                             is_vision: isVision,
                             is_cheap: isCheap,
+                            pricing: { prompt: parseFloat(m.pricing?.prompt || 0) || 0, completion: parseFloat(m.pricing?.completion || 0) || 0 },
                             description: m.description || `نموذج ذكاء اصطناعي من مزود ${m.id.split('/')[0] || 'AI'}`
                         };
                     });
@@ -1785,7 +1721,7 @@ class OXAlphaApp {
     }
 
     // USER MESSAGE SENDING (AGGREGATES MULTI-ATTACHMENTS CLEANLY)
-    async sendUserMessage(forcedText = null) {
+    async sendUserMessage(forcedText = null, options = {}) {
         const input = document.getElementById('user-input');
         const text = forcedText !== null ? forcedText : (input ? input.value.trim() : '');
 
@@ -1823,8 +1759,9 @@ class OXAlphaApp {
             status: 'streaming',
             startTime: Date.now(),
             timestamp: Date.now(),
-            model: this.settings.model
+            model: options.model || this.settings.model
         };
+        if (options.model) assistantMsg.forcedModel = options.model;
 
         session.messages.push(assistantMsg);
         session.updatedAt = Date.now();
@@ -1861,17 +1798,22 @@ class OXAlphaApp {
 
         // Smart Router: Auto-select best model based on prompt
         let activeModelToUse = this.settings.model || 'google/gemma-3-27b-it:free';
-        if (this.isSmartRouterActive && autoContinuePass === 0) {
+        if (assistantMsg.forcedModel) {
+            // Explicit per-message model (e.g. critic review) bypasses the router
+            activeModelToUse = assistantMsg.forcedModel;
+        } else if (this.isSmartRouterActive && autoContinuePass === 0 && retryIndex === 0) {
             const lastMsg = session.messages.filter(m => m.role === 'user').pop();
-            const query = (lastMsg?.content || '').toLowerCase();
-
-            if (lastMsg?.attachments?.some(a => a.isImage || a.base64)) {
-                activeModelToUse = 'openrouter/free';
-            } else if (query.includes('حلل') || query.includes('فكر') || query.includes('رياضيات') || query.includes('خوارزمية') || query.includes('اختبار') || query.includes('محاكاة')) {
-                activeModelToUse = 'thinkingmachines/inkling:free';
-            } else if (query.includes('كود') || query.includes('برمج') || query.includes('مستودع') || query.includes('github') || query.includes('code')) {
-                activeModelToUse = 'google/gemma-3-27b-it:free';
+            const routed = this.pickSmartModel(lastMsg, session, activeModelToUse);
+            if (routed && routed.model) {
+                activeModelToUse = routed.model;
+                assistantMsg.routedModel = routed.model;
+                if (routed.label) {
+                    assistantMsg.steps = assistantMsg.steps || [];
+                    assistantMsg.steps.push({ text: `🧭 الموجّه الذكي: ${routed.label} → ${routed.model}`, done: true });
+                }
             }
+        } else if (assistantMsg.routedModel) {
+            activeModelToUse = assistantMsg.routedModel;
         }
 
         const freeModelsList = this.availableModels.filter(m => m.is_free && !m.id.includes('ultra')).map(m => m.id);
@@ -1946,6 +1888,8 @@ class OXAlphaApp {
             }
 
             const messagesPayload = [{ role: 'system', content: systemText }];
+            const latestUserMsg = session.messages.filter(m => m.role === 'user').pop();
+            const latestUserQuery = latestUserMsg ? (latestUserMsg.content || '') : '';
 
             session.messages.forEach(m => {
                 if (m.id === assistantMsgId) {
@@ -1957,11 +1901,7 @@ class OXAlphaApp {
                 if (m.role === 'user') {
                     let userContent = m.content || '';
                     if (m.attachments && Array.isArray(m.attachments)) {
-                        m.attachments.forEach(att => {
-                            if (att.textContent) {
-                                userContent += `\n\n[محتوى الملف المرفق: ${att.name}]:\n${att.textContent}`;
-                            }
-                        });
+                        userContent += this.buildAttachmentContext(m, { query: latestUserQuery, assistantMsg, isLatest: m === latestUserMsg, autoContinuePass });
                     }
                     const imageAtt = m.attachments?.find(a => a.isImage && a.base64);
                     if (imageAtt) {
@@ -2000,8 +1940,12 @@ class OXAlphaApp {
                 model: currentModel,
                 messages: messagesPayload,
                 stream: true,
-                max_tokens: this.settings.maxTokens || 16384
+                max_tokens: this.settings.maxTokens || 16384,
+                usage: { include: true } // OpenRouter: return real token usage + cost in the final chunk
             };
+            const promptChars = messagesPayload.reduce((n, m) => n + (typeof m.content === 'string' ? m.content.length : JSON.stringify(m.content).length), 0);
+            const passStartedAt = Date.now();
+            let passUsage = null;
 
             if (!isReasoningModel) {
                 requestBody.temperature = this.settings.temperature || 0.7;
@@ -2067,6 +2011,7 @@ class OXAlphaApp {
 
                     try {
                         const parsed = JSON.parse(jsonStr);
+                        if (parsed.usage) passUsage = parsed.usage;
                         const choice = parsed.choices?.[0];
                         const delta = choice?.delta;
                         if (choice?.finish_reason) {
@@ -2116,6 +2061,16 @@ class OXAlphaApp {
             assistantMsg.tokens = Math.max(1, Math.round((assistantMsg.content.length + (assistantMsg.reasoning || '').length) / 3.8));
             assistantMsg.tps = (assistantMsg.tokens / (parseFloat(assistantMsg.duration) || 1)).toFixed(1);
 
+            try {
+                this.onStreamPassComplete({
+                    sessionId, messageId: assistantMsgId, model: currentModel, usage: passUsage,
+                    promptChars, completionChars: charCount, durationMs: Date.now() - passStartedAt, pass: autoContinuePass
+                });
+            } catch (hookErr) { console.warn('usage hook failed', hookErr); }
+            if (passUsage && passUsage.completion_tokens) {
+                assistantMsg.usage = passUsage;
+            }
+
             this.playCompletionAudioHaptic();
 
             // Seamless Auto-Continuation if truncated
@@ -2155,6 +2110,27 @@ class OXAlphaApp {
             this.renderUIState();
         }
     }
+
+    // Default smart router (overridden by src/features/02-ai.js when present)
+    pickSmartModel(lastMsg, session, currentModel) {
+        const query = (lastMsg?.content || '').toLowerCase();
+        if (lastMsg?.attachments?.some(a => a.isImage || a.base64)) return { model: 'google/gemma-3-27b-it:free', label: 'صورة' };
+        if (/حلل|فكر|رياضيات|خوارزمية|reason|math|algorithm/.test(query)) return { model: 'deepseek/deepseek-r1:free', label: 'تفكير' };
+        if (/كود|برمج|مستودع|github|code/.test(query)) return { model: 'qwen/qwen3-coder:free', label: 'برمجة' };
+        return { model: currentModel, label: '' };
+    }
+
+    // Default attachment context builder (overridden by RAG in src/features/02-ai.js)
+    buildAttachmentContext(message, ctx) {
+        let out = '';
+        (message.attachments || []).forEach(att => {
+            if (att.textContent) out += `\n\n[محتوى الملف المرفق: ${att.name}]:\n${att.textContent}`;
+        });
+        return out;
+    }
+
+    // Hook called after every successful streaming pass (usage analytics live in feature modules)
+    onStreamPassComplete(info) {}
 
     async continueGeneration(assistantMsgId) {
         const session = this.sessions.find(s => s.id === this.activeSessionId);

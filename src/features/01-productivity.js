@@ -1,13 +1,12 @@
 /* ==============================================================================
    OX-Alpha Workbench Pro — Sprint 1: Productivity Essentials
    Ideas implemented (THOUSAND_IDEAS.md):
-     #32  / #311  Slash Commands + Command Palette (Ctrl+K)
-     #301 / #302 / #303  Light/Dark/Auto + 10 theme presets
-     #305  UI zoom (Ctrl + = / - / 0)
-     #306  Zen / Focus mode (Alt+Z)
-     #314  Browser-like tabs for conversations
-     #152 / #160 / #186 / #210  Enhanced editor: line numbers, Tab indent,
-           auto-close brackets, comment toggle, JSON format, word wrap, status bar
+     #281  Command Palette (Ctrl+K)        #32   Slash commands
+     #271 / #272 / #337  Light/Dark/Auto + 10 theme presets incl. high contrast
+     #275  UI zoom (Ctrl + = / - / 0)      #276  Zen / Focus mode (Alt+Z)
+     #284  Browser-like tabs for conversations
+     #195  Editor font size + line numbers, Tab indent, auto-close brackets,
+           comment toggle, JSON format, word wrap, status bar
    This module extends OXAlphaApp.prototype without touching core logic.
    ============================================================================== */
 (function () {
@@ -266,13 +265,17 @@
         if (!q) return 1;
         const idx = text.indexOf(q);
         if (idx !== -1) return 1000 - idx;
-        let ti = 0, score = 0;
+        let ti = 0, score = 0, first = -1;
         for (const ch of q) {
+            if (ch === ' ') continue;
             const f = text.indexOf(ch, ti);
             if (f === -1) return 0;
+            if (first === -1) first = f;
             score += f === ti ? 5 : 1;
             ti = f + 1;
         }
+        // Reject scattered matches (letters spread across unrelated words)
+        if (first !== -1 && ti - first > q.length * 3 + 2) return 0;
         return score;
     };
 
