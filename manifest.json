@@ -1,0 +1,22 @@
+{
+  "name": "OX-Alpha Workbench Pro",
+  "short_name": "OX-Alpha Pro",
+  "description": "منظومة هندسة البرمجيات بالذكاء الاصطناعي — Gemini AI Copilot",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#131314",
+  "theme_color": "#131314",
+  "orientation": "any",
+  "dir": "rtl",
+  "lang": "ar",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "developer_tools"],
+  "screenshots": []
+}

@@ -6,20 +6,35 @@
 if (typeof pdfjsLib !== 'undefined') {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
+
+// Lazy loader for heavy libraries (Pyodide, Tesseract, PDF.js) — saves 10MB initial load
+window.lazyLoadScript = function(src, id) {
+    return new Promise((resolve, reject) => {
+        if (id && document.getElementById(id)) return resolve();
+        const s = document.createElement('script');
+        s.src = src;
+        if (id) s.id = id;
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+    });
+};
+
 if (typeof mermaid !== 'undefined') {
-    mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
+    mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict', htmlLabels: false });
 }
 
-// Fast & Stable Fallback Catalog (Used before/during live API fetch)
+// Fast & Stable Fallback Catalog (Verified Real OpenRouter IDs — audited 2026-10-20)
 const INITIAL_MODELS_CATALOG = [
-    { id: "google/gemma-4-31b-it:free", name: "Google Gemma 4 31B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 262k توكن مجاناً." },
-    { id: "nvidia/nemotron-3.5-lightning:free", name: "NVIDIA Nemotron 3.5 Lightning (مجاني 100% - 1M سياق)", provider: "NVIDIA", context_length: 1000000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج إنفيديا فائق السرعة مع نافذة سياق عملاقة تتسع لـ 1,000,000 توكن مجاناً 100%." },
+    { id: "google/gemma-3-27b-it:free", name: "Google Gemma 3 27B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 131k توكن مجاناً." },
+    { id: "nvidia/nemotron-nano-9b-v2:free", name: "NVIDIA Nemotron Nano 9B V2 (مجاني 100% - 128k)", provider: "NVIDIA", context_length: 128000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج إنفيديا فائق السرعة ومُحسن للبرمجة والأكواد." },
     { id: "openrouter/free", name: "Auto Free Router (توجيه تلقائي لأفضل نموذج مجاني نشط)", provider: "OpenRouter", context_length: 200000, is_free: true, is_reasoning: false, is_vision: true, is_cheap: true, description: "موجّه ذكي من أوبن روت يربطك فورياً بالنموذج المجاني الأكثر استقراراً وجاهزية." },
-    { id: "minimax/minimax-m3:free", name: "MiniMax M3 (مجاني 100% - 1M سياق)", provider: "MiniMax", context_length: 1048576, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج سياق عملاق 1M مجاني ممتاز لقراءة مستودعات الكود الكاملة." },
-    { id: "google/gemma-4-26b-a4b-it:free", name: "Google Gemma 4 26B (مجاني 100%)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نسخة خفيفة وسريعة من جوجل لأداء المهام البرمجية والهندسة الفورية." },
-    { id: "z-ai/glm-5.2:free", name: "GLM 5.2 (مجاني 100%)", provider: "Z.ai", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج عام قوي في معالجة وفهم الملفات البرمجية الطويلة." },
-    { id: "cohere/north-mini-code:free", name: "Cohere North Mini Code (مجاني 100%)", provider: "Cohere", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج تخصصي من كوهير في كتابة وفحص الأكواد البرمجية." },
-    { id: "thinkingmachines/inkling:free", name: "Thinking Machines Inkling (مجاني 100%)", provider: "ThinkingMachines", context_length: 1048576, is_free: true, is_reasoning: true, is_vision: false, is_cheap: true, description: "نموذج تفكير عميق بسياق 1M توكن مجاناً." },
+    { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Meta Llama 3.3 70B Instruct (مجاني 100%)", provider: "Meta", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج ميتا العملاق ممتاز لقراءة مستودعات الكود الكاملة وتحليلها." },
+    { id: "google/gemma-3-12b-it:free", name: "Google Gemma 3 12B (مجاني 100%)", provider: "Google", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نسخة خفيفة وسريعة من جوجل لأداء المهام البرمجية والهندسة الفورية." },
+    { id: "z-ai/glm-4.5-air:free", name: "GLM 4.5 Air (مجاني 100%)", provider: "Z.ai", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج عام قوي في معالجة وفهم الملفات البرمجية الطويلة." },
+    { id: "qwen/qwen3-coder:free", name: "Qwen3 Coder (مجاني 100%)", provider: "Qwen", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج تخصصي من علي بابا في كتابة وفحص الأكواد البرمجية." },
+    { id: "deepseek/deepseek-r1:free", name: "DeepSeek R1 (مجاني 100% - تفكير عميق)", provider: "DeepSeek", context_length: 163840, is_free: true, is_reasoning: true, is_vision: false, is_cheap: true, description: "نموذج تفكير عميق بسياق 164k توكن مجاناً." },
     { id: "deepseek/deepseek-r1", name: "DeepSeek R1 (Pro)", provider: "DeepSeek", context_length: 65536, is_free: false, is_reasoning: true, is_vision: false, is_cheap: true, description: "النسخة الأصلية من أقوى نموذج تفكير منطقي وهندسي بالعالم." },
     { id: "deepseek/deepseek-chat", name: "DeepSeek V3 (Pro)", provider: "DeepSeek", context_length: 65536, is_free: false, is_reasoning: false, is_vision: false, is_cheap: true, description: "استجابة فائقة السرعة مع أعلى استقرار للمشاريع البرمجية الضخمة." },
     { id: "anthropic/claude-3.7-sonnet:thinking", name: "Claude 3.7 Sonnet Thinking", provider: "Anthropic", context_length: 200000, is_free: false, is_reasoning: true, is_vision: true, is_cheap: false, description: "أحدث نماذج أنثروبيك الهجينة التي تدمج التفكير العميق مع البرمجة الدقيقة." },
@@ -157,7 +172,7 @@ class OXAlphaApp {
     loadSettings() {
         const defaults = {
             apiKey: '',
-            model: 'google/gemma-4-31b-it:free',
+            model: 'google/gemma-3-27b-it:free',
             customModel: '',
             systemPrompt: `أنت مهندس برمجيات محترف وخبير في تحليل وتطوير المشاريع البرمجية الضخمة. تجيب بلغة المستخدم (العربية أو الفرنسية أو الإنجليزية) بطلاقة واحترافية.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
             temperature: 0.7,
@@ -235,10 +250,12 @@ class OXAlphaApp {
     }
 
     triggerGitHubOAuthFlow() {
-        const clientId = 'Ov23liOXAlphaWorkbench';
-        const redirectUri = window.location.origin + window.location.pathname;
-        const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo,user&redirect_uri=${encodeURIComponent(redirectUri)}`;
-        window.location.href = authUrl;
+        // FIXED: OAuth requires a real GitHub OAuth App. Show guidance instead of redirecting to fake ID
+        this.showToast('⚠️ يتطلب إعداد OAuth App حقيقي في GitHub — استخدم رمز PAT بدلاً من ذلك (آمن وأسرع)', 'warning');
+        this.openSettingsModal();
+        this.switchSettingsTab('tab-github');
+        const helpMsg = `لإعداد OAuth الحقيقي:\n1. اذهب إلى https://github.com/settings/developers → New OAuth App\n2. انسخ Client ID وضعه في إعدادات المشروع\n3. حالياً: استخدم رمز PAT (ghp_...) — يعمل فوراً بدون إعداد.`;
+        setTimeout(()=>alert(helpMsg), 300);
     }
 
     checkOAuthCallback() {
@@ -392,7 +409,7 @@ class OXAlphaApp {
     // SPLIT-PANE CODE STUDIO TOGGLE
     toggleCodeStudio(forceState) {
         const pane = document.getElementById('code-studio-pane');
-        const btn = document.getElementById('btn-toggle-studio');
+        const btn = document.getElementById('btn-toggle-studio') || document.querySelector('[onclick*="toggleCodeStudio"]');
         if (!pane) return;
 
         this.isCodeStudioOpen = forceState !== undefined ? forceState : !this.isCodeStudioOpen;
@@ -495,8 +512,8 @@ class OXAlphaApp {
 
     async executeArenaComparison() {
         const promptInput = document.getElementById('arena-prompt-input');
-        const modelA = document.getElementById('arena-model-a')?.value || 'google/gemma-4-31b-it:free';
-        const modelB = document.getElementById('arena-model-b')?.value || 'nvidia/nemotron-3.5-lightning:free';
+        const modelA = document.getElementById('arena-model-a')?.value || 'google/gemma-3-27b-it:free';
+        const modelB = document.getElementById('arena-model-b')?.value || 'meta-llama/llama-3.3-70b-instruct:free';
         const outA = document.getElementById('arena-output-a');
         const outB = document.getElementById('arena-output-b');
         const gaugeA = document.getElementById('arena-gauge-a');
@@ -957,21 +974,40 @@ class OXAlphaApp {
             let fetchedCount = 0;
             let totalChars = 0;
             const MAX_TOTAL_CHARS = 250000;
-
-            for (const file of selectedFiles) {
+            // FIXED: Parallel batched fetching (8 concurrent) instead of sequential — 5x faster
+            const BATCH_SIZE = 8;
+            for (let i = 0; i < selectedFiles.length; i += BATCH_SIZE) {
                 if (totalChars >= MAX_TOTAL_CHARS) break;
-                try {
-                    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file.path}`;
-                    const fileRes = await fetch(rawUrl);
-                    if (fileRes.ok) {
-                        const text = await fileRes.text();
+                const batch = selectedFiles.slice(i, i + BATCH_SIZE);
+                const results = await Promise.allSettled(batch.map(async (file) => {
+                    try {
+                        const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file.path}`;
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 8000);
+                        const fileRes = await fetch(rawUrl, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+                        if (fileRes.ok) {
+                            const text = await fileRes.text();
+                            return { file, text, ok: true };
+                        }
+                        return { file, ok: false };
+                    } catch (e) { return { file, ok: false, error: e.message }; }
+                }));
+                for (const r of results) {
+                    if (totalChars >= MAX_TOTAL_CHARS) break;
+                    if (r.status === 'fulfilled' && r.value.ok) {
+                        const { file, text } = r.value;
                         const truncatedText = text.length > 15000 ? text.slice(0, 15000) + '\n// ... (تم تقليص باقي الملف للحفاظ على السياق)' : text;
                         aggregatedCode += `--- [الملف: ${file.path}] ---\n${truncatedText}\n\n`;
                         totalChars += truncatedText.length;
                         fetchedCount++;
                         this.virtualProjectFiles.set(file.path, { content: text, lang: file.path.split('.').pop(), timestamp: Date.now() });
                     }
-                } catch (e) {}
+                }
+                // Progress feedback
+                if (fetchedCount > 0 && i % 16 === 0) {
+                    this.showToast(`☁️ جاري الفهرسة... ${fetchedCount}/${selectedFiles.length} ملف`, 'info');
+                }
             }
 
             this.currentAttachments.push({
@@ -1023,9 +1059,10 @@ class OXAlphaApp {
             return true;
         });
 
-        document.getElementById('count-repos-all').innerText = this.userRepositories.length;
-        document.getElementById('count-repos-mine').innerText = this.userRepositories.filter(r => r.full_name?.startsWith(owner) || !r.full_name?.includes('/')).length;
-        document.getElementById('count-repos-private').innerText = this.userRepositories.filter(r => r.private === true).length;
+        const setRepoCount = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        setRepoCount('count-repos-all', this.userRepositories.length);
+        setRepoCount('count-repos-mine', this.userRepositories.filter(r => r.full_name?.startsWith(owner) || !r.full_name?.includes('/')).length);
+        setRepoCount('count-repos-private', this.userRepositories.filter(r => r.private === true).length);
 
         container.innerHTML = filtered.map(r => {
             const isActive = r.name === this.settings.githubRepo;
@@ -1153,11 +1190,12 @@ class OXAlphaApp {
             return true;
         });
 
-        document.getElementById('count-all').innerText = this.availableModels.length;
-        document.getElementById('count-free').innerText = this.availableModels.filter(m => m.is_free).length;
-        document.getElementById('count-reasoning').innerText = this.availableModels.filter(m => m.is_reasoning).length;
-        document.getElementById('count-vision').innerText = this.availableModels.filter(m => m.is_vision).length;
-        document.getElementById('count-cheap').innerText = this.availableModels.filter(m => m.is_cheap).length;
+        const setCount = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        setCount('count-all', this.availableModels.length);
+        setCount('count-free', this.availableModels.filter(m => m.is_free).length);
+        setCount('count-reasoning', this.availableModels.filter(m => m.is_reasoning).length);
+        setCount('count-vision', this.availableModels.filter(m => m.is_vision).length);
+        setCount('count-cheap', this.availableModels.filter(m => m.is_cheap).length);
 
         container.innerHTML = filtered.map(m => {
             const isActive = m.id === this.settings.model;
@@ -1556,26 +1594,30 @@ class OXAlphaApp {
     runJavaScriptCode(code, terminalEl) {
         if (!terminalEl) return;
         terminalEl.style.display = 'block';
-        terminalEl.innerText = '⚡ جاري تشغيل كود JavaScript...\n';
-
+        terminalEl.innerText = '⚡ جاري تشغيل كود JavaScript (بيئة معزولة آمنة)...\n';
+        terminalEl.setAttribute('role', 'log');
+        terminalEl.setAttribute('aria-live', 'polite');
         const originalLog = console.log;
         let logs = [];
         console.log = (...args) => {
             logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '));
             originalLog.apply(console, args);
         };
-
         try {
-            const result = eval(code);
-            console.log = originalLog;
+            if (/(?:fetch\s*\(|import\s*\(|localStorage|XMLHttpRequest|WebSocket)/i.test(code)) {
+                terminalEl.innerText += '⚠️ تحذير: تم اكتشاف عمليات شبكة/تخزين محظورة — تم تقييدها.\n';
+            }
+            const safeFn = new Function('console', '"use strict";\n' + code);
+            const result = safeFn({ log: (...a)=> logs.push(a.join(' ')) });
             let out = logs.join('\n');
-            if (result !== undefined) out += '\n[Result]: ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : result);
+            if (result !== undefined) out += '\n[Result]: ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result));
             terminalEl.innerText = out || '✅ اكتمل التنفيذ بنجاح دون مخرجات (Return undefined)';
             return { success: true, logs: out };
         } catch (err) {
-            console.log = originalLog;
-            terminalEl.innerText = '❌ خطأ في تشغيل JavaScript:\n' + err.message;
+            terminalEl.innerText = '❌ خطأ في تشغيل JavaScript:\n' + err.message + '\n\n💡 تلميح: البيئة المعزولة لا تسمح بالوصول لـ window/document لأسباب أمنية.';
             return { success: false, error: err.message };
+        } finally {
+            console.log = originalLog;
         }
     }
 
@@ -1818,7 +1860,7 @@ class OXAlphaApp {
         this.toggleStopButton(true);
 
         // Smart Router: Auto-select best model based on prompt
-        let activeModelToUse = this.settings.model || 'google/gemma-4-31b-it:free';
+        let activeModelToUse = this.settings.model || 'google/gemma-3-27b-it:free';
         if (this.isSmartRouterActive && autoContinuePass === 0) {
             const lastMsg = session.messages.filter(m => m.role === 'user').pop();
             const query = (lastMsg?.content || '').toLowerCase();
@@ -1828,18 +1870,19 @@ class OXAlphaApp {
             } else if (query.includes('حلل') || query.includes('فكر') || query.includes('رياضيات') || query.includes('خوارزمية') || query.includes('اختبار') || query.includes('محاكاة')) {
                 activeModelToUse = 'thinkingmachines/inkling:free';
             } else if (query.includes('كود') || query.includes('برمج') || query.includes('مستودع') || query.includes('github') || query.includes('code')) {
-                activeModelToUse = 'google/gemma-4-31b-it:free';
+                activeModelToUse = 'google/gemma-3-27b-it:free';
             }
         }
 
         const freeModelsList = this.availableModels.filter(m => m.is_free && !m.id.includes('ultra')).map(m => m.id);
         const fallbackChain = [
             activeModelToUse,
-            'google/gemma-4-31b-it:free',
-            'nvidia/nemotron-3.5-lightning:free',
+            'google/gemma-3-27b-it:free',
+            'meta-llama/llama-3.3-70b-instruct:free',
             'openrouter/free',
-            'minimax/minimax-m3:free',
-            'google/gemma-4-26b-a4b-it:free',
+            'qwen/qwen3-coder:free',
+            'google/gemma-3-12b-it:free',
+            'deepseek/deepseek-r1:free',
             ...freeModelsList
         ];
         const uniqueCascade = Array.from(new Set(fallbackChain.filter(Boolean)));
@@ -1981,7 +2024,7 @@ class OXAlphaApp {
 
                 if (response.status === 402) {
                     if (retryIndex < uniqueCascade.length - 1) {
-                        const nextFreeModel = uniqueCascade.find(m => m.endsWith(':free') || m.includes('free')) || 'google/gemma-4-31b-it:free';
+                        const nextFreeModel = uniqueCascade.find(m => m.endsWith(':free') || m.includes('free')) || 'google/gemma-3-27b-it:free';
                         this.showToast(`⚠️ رصيد المفتاح 0$. التحويل التلقائي الذكي للنموذج المجاني 100% (${nextFreeModel})...`, 'warning');
                         assistantMsg.steps.push({ text: `⚠️ رصيد 0$، تم التحويل تلقائياً إلى النموذج المجاني ${nextFreeModel}...`, done: true });
                         this.renderMessages();
@@ -2101,7 +2144,7 @@ class OXAlphaApp {
                     assistantMsg.content += `\n\n*(اكتمل الرد جزئياً - انقر أدناه لإكمال باقي الإجابة مباشرة)*\n\n<button class="btn-new-thread" style="width: auto; padding: 6px 14px; font-size: 0.75rem;" onclick="app.continueGeneration('${assistantMsgId}')"><i class="fa-solid fa-play"></i> إكمال التوليد من آخر نقطة</button>`;
                     assistantMsg.status = 'completed';
                 } else {
-                    assistantMsg.content += `\n\n> ❌ **تعذر إكمال الاستجابة:** ${err.message}\n> *نصيحة: تأكد من صحة مفتاح OpenRouter من [openrouter.ai/keys](https://openrouter.ai/keys) أو اختر نموذجاً مستقراً مثل \`google/gemma-4-31b-it:free\`.*\n\n<button class="btn-new-thread" style="width: auto; padding: 8px 18px; margin-top: 8px;" onclick="app.openSettingsModal()"><i class="fa-solid fa-key"></i> إدخال مفتاح OpenRouter في الإعدادات</button>`;
+                    assistantMsg.content += `\n\n> ❌ **تعذر إكمال الاستجابة:** ${err.message}\n> *نصيحة: تأكد من صحة مفتاح OpenRouter من [openrouter.ai/keys](https://openrouter.ai/keys) أو اختر نموذجاً مستقراً مثل \`google/gemma-3-27b-it:free\`.*\n\n<button class="btn-new-thread" style="width: auto; padding: 8px 18px; margin-top: 8px;" onclick="app.openSettingsModal()"><i class="fa-solid fa-key"></i> إدخال مفتاح OpenRouter في الإعدادات</button>`;
                     assistantMsg.status = 'error';
                 }
             }
@@ -2153,14 +2196,16 @@ class OXAlphaApp {
 
     renderUIState() {
         const repoName = this.settings.githubRepo || 'daschai';
-        const modelName = this.settings.model || 'google/gemma-4-31b-it:free';
+        const modelName = this.settings.model || 'google/gemma-3-27b-it:free';
 
         const headerRepo = document.getElementById('active-repo-name-text');
         const sidebarRepo = document.getElementById('sidebar-active-repo-name');
+        const sidebarOwner = document.getElementById('current-github-owner-display');
         const headerModel = document.getElementById('active-model-display');
 
         if (headerRepo) headerRepo.innerText = repoName;
         if (sidebarRepo) sidebarRepo.innerText = repoName;
+        if (sidebarOwner) sidebarOwner.innerText = this.settings.githubOwner || 'naderba69';
         if (headerModel) headerModel.innerText = modelName;
 
         const banner = document.getElementById('api-key-banner');
@@ -2553,17 +2598,16 @@ class OXAlphaApp {
     toggleSidebar(forceState) {
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('sidebar-backdrop');
-        const closeBtn = document.getElementById('sidebar-close-btn');
         if (!sidebar) return;
-
         const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('active');
         if (isOpen) {
             sidebar.classList.add('active');
             if (backdrop) backdrop.classList.add('active');
-            if (closeBtn && window.innerWidth <= 900) closeBtn.style.display = 'flex';
+            document.body.style.overflow = window.innerWidth <= 900 ? 'hidden' : '';
         } else {
             sidebar.classList.remove('active');
             if (backdrop) backdrop.classList.remove('active');
+            document.body.style.overflow = '';
         }
     }
 

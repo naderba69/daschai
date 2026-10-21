@@ -2119,3 +2119,89 @@ html, body {
         max-width: 90%;
     }
 }
+
+/* ===============================================================================
+   AUDIT FIXES v2 — Accessibility, Security Banner, Keyboard Shortcuts & Polish
+   (Added 2026-10-20 by Professional Full-Stack Audit)
+   =============================================================================== */
+
+/* Focus visible for keyboard navigation (WCAG 2.1 AA) */
+*:focus-visible {
+    outline: 2px solid var(--gemini-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Keyboard shortcut badge */
+kbd {
+    display: inline-block;
+    padding: 1px 6px;
+    background: #2a2c30;
+    border: 1px solid #3a3d45;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: #cbd5e1;
+    line-height: 1.4;
+}
+
+/* Security warning banner for PAT */
+.security-notice {
+    padding: 8px 12px;
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    color: #fbbf24;
+    line-height: 1.5;
+}
+
+/* Masked token display */
+.token-masked {
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+/* Improved code block horizontal scroll */
+.code-block-box pre::-webkit-scrollbar {
+    height: 6px;
+}
+.code-block-box pre::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.2);
+    border-radius: 9999px;
+}
+
+/* Toast high-contrast for a11y */
+.toast-msg-pill {
+    min-width: 240px;
+    max-width: 90vw;
+}
+
+/* Sidebar close button visible only on mobile when open */
+@media (min-width: 901px) {
+    #sidebar-close-btn { display: none !important; }
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast for diff lines */
+.diff-line.add { border-right: 3px solid #34d399; }
+.diff-line.del { border-right: 3px solid #ef4444; }
+.diff-line.info { border-right: 3px solid #94a3b8; }
+
+/* Improve attachment chip truncation */
+.attachment-file-chip .truncate { max-width: 180px; }
+
+/* Better scrollbar for workbench */
+.workbench-layout-container::-webkit-scrollbar,
+.modal-body-scrollable::-webkit-scrollbar {
+    width: 6px;
+}
