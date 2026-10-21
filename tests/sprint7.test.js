@@ -324,7 +324,7 @@ let W = null;
     ok(c1.title && c1.prompt && c1.id === '2026-06-10' && c1.title !== c2.title && app.CHALLENGES.length === 30, 'one of 30 daily challenges per day');
     ok(app.completeDailyChallenge(day0) === 1 && app.completeDailyChallenge(day0) === false && app.challengeDone(day0), 'complete today\'s challenge once');
     ok(app.completeDailyChallenge(day0 + 864e5) === 2 && app.completeDailyChallenge(day0 + 3 * 864e5) === 1, 'streak grows on consecutive days and resets after a gap');
-    ok(Object.keys(app.CHAT_MODES).length === 12 && ['learn', 'quiz', 'game', 'story'].every(k => app.CHAT_MODES[k] && app.CHAT_MODES[k].prompt), 'learn / quiz / game / story modes (#401, #403, #405, #406)');
+    ok(Object.keys(app.CHAT_MODES).length === 14 && ['learn', 'quiz', 'game', 'story'].every(k => app.CHAT_MODES[k] && app.CHAT_MODES[k].prompt), 'learn / quiz / game / story modes (#401, #403, #405, #406)');
     app.confetti({ count: 20 });
     ok(true, 'confetti runs without a real canvas');
 

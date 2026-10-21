@@ -1,7 +1,7 @@
 /* ==============================================================================
    OX-Alpha Workbench Pro — Sprint 2: AI Intelligence
    Ideas implemented (THOUSAND_IDEAS.md):
-     #2 / #3   Multi-model arena (2–4 models streamed in parallel) + voting
+     #2 / #3   Multi-model arena (2–8 models streamed in parallel, Mega Arena) + voting
      #6        Local RAG over attached codebases (BM25, no data leaves the browser)
      #8        Smart Router v2 (task classification + model scoring)
      #9        Token & cost estimate before sending
@@ -665,7 +665,8 @@
     };
 
     // ------------------------------------------------------------------ MULTI-MODEL ARENA
-    const ARENA_DEFAULTS = ['google/gemma-3-27b-it:free', 'qwen/qwen3-coder:free', 'meta-llama/llama-3.3-70b-instruct:free', 'deepseek/deepseek-r1:free'];
+    const ARENA_DEFAULTS = ['google/gemma-3-27b-it:free', 'qwen/qwen3-coder:free', 'meta-llama/llama-3.3-70b-instruct:free', 'deepseek/deepseek-r1:free',
+        'mistralai/mistral-small-3.2-24b-instruct:free', 'z-ai/glm-4.5-air:free', 'moonshotai/kimi-k2:free', 'openai/gpt-oss-20b:free']; // Mega Arena: up to 8 (#3)
     P.loadArenaVotes = function () {
         if (this._arenaVotesCache) return this._arenaVotesCache;
         try { this._arenaVotesCache = JSON.parse(localStorage.getItem(VOTES_KEY) || '{}') || {}; } catch (e) { this._arenaVotesCache = {}; }
@@ -679,11 +680,11 @@
     P.getArenaModels = function () {
         let saved = [];
         try { saved = JSON.parse(localStorage.getItem('ox_alpha_arena_models') || '[]'); } catch (e) {}
-        return [0, 1, 2, 3].map(i => saved[i] || ARENA_DEFAULTS[i]);
+        return [0, 1, 2, 3, 4, 5, 6, 7].map(i => saved[i] || ARENA_DEFAULTS[i]);
     };
 
     P.setArenaCount = function (n) {
-        this.arenaCount = Math.min(4, Math.max(2, parseInt(n, 10) || 2));
+        this.arenaCount = Math.min(8, Math.max(2, parseInt(n, 10) || 2));
         try { localStorage.setItem('ox_alpha_arena_count', String(this.arenaCount)); } catch (e) {}
         this.renderArenaGrid();
     };
@@ -965,7 +966,7 @@
             cmds.forEach((c, i) => { if (c.section === 'الذكاء الاصطناعي') at = i; });
             cmds.splice(at === -1 ? cmds.length : at + 1, 0, ...extra);
             const arena = cmds.find(c => c.label === 'حلبة مقارنة النماذج');
-            if (arena) arena.label = 'حلبة النماذج المتعددة (2–4)';
+            if (arena) arena.label = 'حلبة النماذج المتعددة (2–8)';
             return cmds;
         };
     }

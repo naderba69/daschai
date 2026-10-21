@@ -1,5 +1,5 @@
 {
-  "version": "2.7.0",
+  "version": "2.8.0",
   "chunks": {
     "shared": [
       "assets/studio/chunk-3GXLF557.mjs",
@@ -10,12 +10,14 @@
       "assets/studio/chunk-W7FP2L2O.mjs",
       "assets/studio/chunk-YSTU5W3L.mjs"
     ],
-    "index": "assets/studio/chunk-WKRINJQE.mjs",
-    "plugin": "assets/studio/chunk-IXAF3JNQ.mjs",
+    "index": "assets/studio/chunk-QQSSJWA7.mjs",
+    "plugin": "assets/studio/chunk-NOIDTLFC.mjs",
+    "vhdl": "assets/studio/chunk-RKHVENVW.mjs",
     "xquery": "assets/studio/chunk-ZXTDKG6H.mjs",
     "yacas": "assets/studio/chunk-BODTTMEA.mjs",
     "z80": "assets/studio/chunk-QRE5NXKM.mjs",
     "mscgen": "assets/studio/chunk-475LXHPG.mjs",
+    "troff": "assets/studio/chunk-V5EXOTII.mjs",
     "ttcn": "assets/studio/chunk-S7JDAC3G.mjs",
     "ttcn-cfg": "assets/studio/chunk-3W3RTY2T.mjs",
     "turtle": "assets/studio/chunk-QZRJNXVO.mjs",
@@ -23,7 +25,7 @@
     "vb": "assets/studio/chunk-6Z3MW4PW.mjs",
     "vbscript": "assets/studio/chunk-XFZ5ALVE.mjs",
     "velocity": "assets/studio/chunk-QMYHXN2L.mjs",
-    "vhdl": "assets/studio/chunk-RKHVENVW.mjs",
+    "swift": "assets/studio/chunk-SPP4CUCB.mjs",
     "stex": "assets/studio/chunk-C4HQ7DDR.mjs",
     "verilog": "assets/studio/chunk-2CQCMBXY.mjs",
     "tcl": "assets/studio/chunk-MWDRYWL5.mjs",
@@ -31,7 +33,7 @@
     "tiddlywiki": "assets/studio/chunk-A5YCUJGC.mjs",
     "tiki": "assets/studio/chunk-ZT2ANIII.mjs",
     "toml": "assets/studio/chunk-RE3VUY2I.mjs",
-    "troff": "assets/studio/chunk-V5EXOTII.mjs",
+    "scheme": "assets/studio/chunk-6TO7O7VQ.mjs",
     "shell": "assets/studio/chunk-KYSPUYEN.mjs",
     "sieve": "assets/studio/chunk-JHEZWFDW.mjs",
     "smalltalk": "assets/studio/chunk-TQQXDD5D.mjs",
@@ -39,7 +41,7 @@
     "sparql": "assets/studio/chunk-RDG26FIC.mjs",
     "spreadsheet": "assets/studio/chunk-QJGWO43J.mjs",
     "stylus": "assets/studio/chunk-UQ34P7C3.mjs",
-    "swift": "assets/studio/chunk-SPP4CUCB.mjs",
+    "protobuf": "assets/studio/chunk-BFXORVOH.mjs",
     "pug": "assets/studio/chunk-QFILEJD5.mjs",
     "puppet": "assets/studio/chunk-WZZIUZ6D.mjs",
     "q": "assets/studio/chunk-UBZ5GQX3.mjs",
@@ -47,7 +49,7 @@
     "rpm": "assets/studio/chunk-KTBIDCKE.mjs",
     "ruby": "assets/studio/chunk-7JYRMN27.mjs",
     "sas": "assets/studio/chunk-OGREGX7O.mjs",
-    "scheme": "assets/studio/chunk-6TO7O7VQ.mjs",
+    "ntriples": "assets/studio/chunk-XTCEW6PK.mjs",
     "octave": "assets/studio/chunk-Z65MAE55.mjs",
     "oz": "assets/studio/chunk-WHRVPLR6.mjs",
     "pascal": "assets/studio/chunk-3SOCMLKH.mjs",
@@ -55,7 +57,7 @@
     "pig": "assets/studio/chunk-JNMYMWXR.mjs",
     "powershell": "assets/studio/chunk-IZCDMYOI.mjs",
     "properties": "assets/studio/chunk-RKXAVADR.mjs",
-    "protobuf": "assets/studio/chunk-BFXORVOH.mjs",
+    "lua": "assets/studio/chunk-R6L73IFC.mjs",
     "mirc": "assets/studio/chunk-PWW7CQKE.mjs",
     "mathematica": "assets/studio/chunk-XLAMZGJG.mjs",
     "modelica": "assets/studio/chunk-QESPRFYX.mjs",
@@ -63,7 +65,7 @@
     "mbox": "assets/studio/chunk-QD5LI3RT.mjs",
     "nginx": "assets/studio/chunk-QLHVJJEA.mjs",
     "nsis": "assets/studio/chunk-MPXESQIG.mjs",
-    "ntriples": "assets/studio/chunk-XTCEW6PK.mjs",
+    "groovy": "assets/studio/chunk-O24P5CKT.mjs",
     "haskell": "assets/studio/chunk-N2LGHRKA.mjs",
     "haxe": "assets/studio/chunk-CYRV42ZP.mjs",
     "http": "assets/studio/chunk-KR7S2Z6B.mjs",
@@ -71,7 +73,7 @@
     "javascript": "assets/studio/chunk-OPAOXWQD.mjs",
     "julia": "assets/studio/chunk-T435D3SO.mjs",
     "livescript": "assets/studio/chunk-DGX7YB53.mjs",
-    "lua": "assets/studio/chunk-R6L73IFC.mjs",
+    "sql": "assets/studio/chunk-2HQ5DIXB.mjs",
     "factor": "assets/studio/chunk-NCTLKC67.mjs",
     "fcl": "assets/studio/chunk-VDE7ZTNX.mjs",
     "forth": "assets/studio/chunk-SS56QCHH.mjs",
@@ -79,7 +81,7 @@
     "mllike": "assets/studio/chunk-HQVP6QVX.mjs",
     "gas": "assets/studio/chunk-AGPPNSMD.mjs",
     "gherkin": "assets/studio/chunk-P33LBD7C.mjs",
-    "groovy": "assets/studio/chunk-O24P5CKT.mjs",
+    "dockerfile": "assets/studio/chunk-QPDJ4MX4.mjs",
     "dtd": "assets/studio/chunk-MS4PPT3W.mjs",
     "dylan": "assets/studio/chunk-RNRDQNDD.mjs",
     "ebnf": "assets/studio/chunk-XQYDJSD3.mjs",
@@ -87,7 +89,7 @@
     "eiffel": "assets/studio/chunk-A4TEIHPI.mjs",
     "elm": "assets/studio/chunk-I76MSFLK.mjs",
     "erlang": "assets/studio/chunk-Q4V7OCVI.mjs",
-    "sql": "assets/studio/chunk-2HQ5DIXB.mjs",
+    "cmake": "assets/studio/chunk-2CGB4RAD.mjs",
     "coffeescript": "assets/studio/chunk-FNJGL7YP.mjs",
     "commonlisp": "assets/studio/chunk-PXVV3EKZ.mjs",
     "cypher": "assets/studio/chunk-TBVJT36U.mjs",
@@ -95,7 +97,7 @@
     "crystal": "assets/studio/chunk-XVSTLPTA.mjs",
     "d": "assets/studio/chunk-AQQJARC3.mjs",
     "diff": "assets/studio/chunk-DL7IYSI7.mjs",
-    "dockerfile": "assets/studio/chunk-QPDJ4MX4.mjs",
+    "asciiarmor": "assets/studio/chunk-D2VREPKO.mjs",
     "asn1": "assets/studio/chunk-XBVBYVKS.mjs",
     "asterisk": "assets/studio/chunk-NW4OOYXD.mjs",
     "brainfuck": "assets/studio/chunk-RX334DHT.mjs",
@@ -103,23 +105,32 @@
     "clike": "assets/studio/chunk-YII6HKFT.mjs",
     "clojure": "assets/studio/chunk-YY5AKL5Q.mjs",
     "css": "assets/studio/chunk-I32TMXOS.mjs",
-    "cmake": "assets/studio/chunk-2CGB4RAD.mjs",
     "apl": "assets/studio/chunk-3WSB7GCT.mjs",
-    "asciiarmor": "assets/studio/chunk-D2VREPKO.mjs",
-    "studio": "assets/studio/studio-BT4W7664.mjs",
+    "studio": "assets/studio/studio-WAKTFHWD.mjs",
     "runner": "assets/studio/runner-F5I5S3M6.mjs",
-    "ui": "assets/studio/ui-2UP5BMVV.mjs"
+    "ui": "assets/studio/ui-2UP5BMVV.mjs",
+    "ai": "assets/studio/ai-BV4NTPYW.mjs"
   },
   "files": [
+    {
+      "name": "assets/studio/chunk-KLKDL6ZC.mjs",
+      "size": 11137,
+      "gzip": 4577
+    },
     {
       "name": "assets/studio/chunk-XG75UBDY.mjs",
       "size": 15803,
       "gzip": 5515
     },
     {
-      "name": "assets/studio/chunk-IXAF3JNQ.mjs",
+      "name": "assets/studio/chunk-NOIDTLFC.mjs",
       "size": 104900,
-      "gzip": 36782
+      "gzip": 36783
+    },
+    {
+      "name": "assets/studio/chunk-RKHVENVW.mjs",
+      "size": 3375,
+      "gzip": 1537
     },
     {
       "name": "assets/studio/chunk-ZXTDKG6H.mjs",
@@ -142,14 +153,14 @@
       "gzip": 1005
     },
     {
-      "name": "assets/studio/chunk-KDGOBIJ4.mjs",
+      "name": "assets/studio/chunk-4WO5S3XI.mjs",
       "size": 3446,
       "gzip": 1736
     },
     {
-      "name": "assets/studio/chunk-MUIBHPNY.mjs",
+      "name": "assets/studio/chunk-SFYAI4LJ.mjs",
       "size": 5109,
-      "gzip": 2420
+      "gzip": 2417
     },
     {
       "name": "assets/studio/chunk-J3VDPL4V.mjs",
@@ -157,9 +168,9 @@
       "gzip": 39156
     },
     {
-      "name": "assets/studio/chunk-KLKDL6ZC.mjs",
-      "size": 11137,
-      "gzip": 4577
+      "name": "assets/studio/chunk-V5EXOTII.mjs",
+      "size": 987,
+      "gzip": 464
     },
     {
       "name": "assets/studio/chunk-S7JDAC3G.mjs",
@@ -197,9 +208,9 @@
       "gzip": 1135
     },
     {
-      "name": "assets/studio/chunk-RKHVENVW.mjs",
-      "size": 3375,
-      "gzip": 1537
+      "name": "assets/studio/chunk-SPP4CUCB.mjs",
+      "size": 3982,
+      "gzip": 1806
     },
     {
       "name": "assets/studio/chunk-C4HQ7DDR.mjs",
@@ -237,9 +248,9 @@
       "gzip": 568
     },
     {
-      "name": "assets/studio/chunk-V5EXOTII.mjs",
-      "size": 987,
-      "gzip": 464
+      "name": "assets/studio/chunk-6TO7O7VQ.mjs",
+      "size": 6395,
+      "gzip": 2410
     },
     {
       "name": "assets/studio/chunk-KYSPUYEN.mjs",
@@ -277,9 +288,9 @@
       "gzip": 8627
     },
     {
-      "name": "assets/studio/chunk-SPP4CUCB.mjs",
-      "size": 3982,
-      "gzip": 1806
+      "name": "assets/studio/chunk-BFXORVOH.mjs",
+      "size": 891,
+      "gzip": 542
     },
     {
       "name": "assets/studio/chunk-QFILEJD5.mjs",
@@ -317,9 +328,9 @@
       "gzip": 4133
     },
     {
-      "name": "assets/studio/chunk-6TO7O7VQ.mjs",
-      "size": 6395,
-      "gzip": 2410
+      "name": "assets/studio/chunk-XTCEW6PK.mjs",
+      "size": 2129,
+      "gzip": 771
     },
     {
       "name": "assets/studio/chunk-Z65MAE55.mjs",
@@ -357,9 +368,9 @@
       "gzip": 372
     },
     {
-      "name": "assets/studio/chunk-BFXORVOH.mjs",
-      "size": 891,
-      "gzip": 542
+      "name": "assets/studio/chunk-R6L73IFC.mjs",
+      "size": 3434,
+      "gzip": 1460
     },
     {
       "name": "assets/studio/chunk-PWW7CQKE.mjs",
@@ -397,9 +408,9 @@
       "gzip": 3089
     },
     {
-      "name": "assets/studio/chunk-XTCEW6PK.mjs",
-      "size": 2129,
-      "gzip": 771
+      "name": "assets/studio/chunk-O24P5CKT.mjs",
+      "size": 4166,
+      "gzip": 1795
     },
     {
       "name": "assets/studio/chunk-N2LGHRKA.mjs",
@@ -442,9 +453,9 @@
       "gzip": 1665
     },
     {
-      "name": "assets/studio/chunk-R6L73IFC.mjs",
-      "size": 3434,
-      "gzip": 1460
+      "name": "assets/studio/chunk-2HQ5DIXB.mjs",
+      "size": 37095,
+      "gzip": 10966
     },
     {
       "name": "assets/studio/chunk-NCTLKC67.mjs",
@@ -482,9 +493,14 @@
       "gzip": 5121
     },
     {
-      "name": "assets/studio/chunk-O24P5CKT.mjs",
-      "size": 4166,
-      "gzip": 1795
+      "name": "assets/studio/chunk-QPDJ4MX4.mjs",
+      "size": 1967,
+      "gzip": 681
+    },
+    {
+      "name": "assets/studio/chunk-5HSZSCPM.mjs",
+      "size": 2292,
+      "gzip": 1098
     },
     {
       "name": "assets/studio/chunk-MS4PPT3W.mjs",
@@ -522,9 +538,9 @@
       "gzip": 2920
     },
     {
-      "name": "assets/studio/chunk-2HQ5DIXB.mjs",
-      "size": 37095,
-      "gzip": 10966
+      "name": "assets/studio/chunk-2CGB4RAD.mjs",
+      "size": 810,
+      "gzip": 487
     },
     {
       "name": "assets/studio/chunk-FNJGL7YP.mjs",
@@ -562,14 +578,9 @@
       "gzip": 263
     },
     {
-      "name": "assets/studio/chunk-QPDJ4MX4.mjs",
-      "size": 1967,
-      "gzip": 681
-    },
-    {
-      "name": "assets/studio/chunk-5HSZSCPM.mjs",
-      "size": 2292,
-      "gzip": 1098
+      "name": "assets/studio/chunk-D2VREPKO.mjs",
+      "size": 813,
+      "gzip": 433
     },
     {
       "name": "assets/studio/chunk-XBVBYVKS.mjs",
@@ -607,9 +618,9 @@
       "gzip": 8489
     },
     {
-      "name": "assets/studio/chunk-2CGB4RAD.mjs",
-      "size": 810,
-      "gzip": 487
+      "name": "assets/studio/chunk-KICFOFPH.mjs",
+      "size": 98334,
+      "gzip": 28562
     },
     {
       "name": "assets/studio/chunk-M5CWLU47.mjs",
@@ -647,14 +658,14 @@
       "gzip": 1250
     },
     {
-      "name": "assets/studio/chunk-D2VREPKO.mjs",
-      "size": 813,
-      "gzip": 433
+      "name": "assets/studio/chunk-WKRINJQE.mjs",
+      "size": 424,
+      "gzip": 246
     },
     {
-      "name": "assets/studio/chunk-EAOH73LA.mjs",
+      "name": "assets/studio/chunk-F765RXQU.mjs",
       "size": 330,
-      "gzip": 196
+      "gzip": 197
     },
     {
       "name": "assets/studio/chunk-QHSKIW7J.mjs",
@@ -662,9 +673,9 @@
       "gzip": 19333
     },
     {
-      "name": "assets/studio/chunk-KRJNOZDS.mjs",
+      "name": "assets/studio/chunk-YAKXATEE.mjs",
       "size": 20979,
-      "gzip": 9362
+      "gzip": 9364
     },
     {
       "name": "assets/studio/chunk-36T2QRNQ.mjs",
@@ -677,29 +688,29 @@
       "gzip": 7449
     },
     {
-      "name": "assets/studio/chunk-LM3263CB.mjs",
+      "name": "assets/studio/chunk-RG6NRH6J.mjs",
       "size": 22008,
       "gzip": 10159
     },
     {
-      "name": "assets/studio/chunk-ALESBBP2.mjs",
+      "name": "assets/studio/chunk-2NS5CGFE.mjs",
       "size": 45108,
       "gzip": 15606
     },
     {
-      "name": "assets/studio/chunk-546NZQHR.mjs",
-      "size": 98334,
-      "gzip": 28562
-    },
-    {
-      "name": "assets/studio/chunk-HOAQI6PL.mjs",
+      "name": "assets/studio/chunk-QIRXUGR4.mjs",
       "size": 28596,
       "gzip": 11647
     },
     {
-      "name": "assets/studio/studio-BT4W7664.mjs",
+      "name": "assets/studio/chunk-GHZXH7DL.mjs",
+      "size": 86853,
+      "gzip": 34435
+    },
+    {
+      "name": "assets/studio/studio-WAKTFHWD.mjs",
       "size": 132123,
-      "gzip": 43935
+      "gzip": 43932
     },
     {
       "name": "assets/studio/chunk-4L2T7PFF.mjs",
@@ -732,6 +743,11 @@
       "gzip": 23699
     },
     {
+      "name": "assets/studio/ai-BV4NTPYW.mjs",
+      "size": 183882,
+      "gzip": 66658
+    },
+    {
       "name": "assets/studio/chunk-4RA5YV2G.mjs",
       "size": 32362,
       "gzip": 13066
@@ -755,16 +771,6 @@
       "name": "assets/studio/chunk-QQSSJWA7.mjs",
       "size": 30849,
       "gzip": 12661
-    },
-    {
-      "name": "assets/studio/chunk-WKRINJQE.mjs",
-      "size": 424,
-      "gzip": 246
-    },
-    {
-      "name": "assets/studio/chunk-GHZXH7DL.mjs",
-      "size": 86853,
-      "gzip": 34435
     },
     {
       "name": "assets/studio/chunk-YSTU5W3L.mjs",

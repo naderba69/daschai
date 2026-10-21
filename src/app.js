@@ -511,7 +511,7 @@ class OXAlphaApp {
         modal.classList.add('active');
     }
 
-    // Multi-model arena (2–4 models) lives in src/features/02-ai.js → executeArenaComparison()
+    // Multi-model arena (2–8 models) lives in src/features/02-ai.js → executeArenaComparison()
 
     // INTERACTIVE GIT DIFF ENGINE
     openDiffViewerForActiveStudioFile() {
@@ -1802,7 +1802,7 @@ class OXAlphaApp {
 
             // Hook: feature modules (e.g. conversation modes) can extend the system prompt per session
             if (this.decorateSystemPrompt) systemText = this.decorateSystemPrompt(systemText, session);
-            const messagesPayload = [{ role: 'system', content: systemText }];
+            let messagesPayload = [{ role: 'system', content: systemText }];
             const latestUserMsg = session.messages.filter(m => m.role === 'user').pop();
             const latestUserQuery = latestUserMsg ? (latestUserMsg.content || '') : '';
 
@@ -1835,6 +1835,11 @@ class OXAlphaApp {
                     messagesPayload.push({ role: 'assistant', content: m.content || '' });
                 }
             });
+
+            // Hook: AI lab (summary replaces old turns, long-term memory, visible reasoning, team standards)
+            if (this.transformChatPayload) {
+                try { messagesPayload = (await this.transformChatPayload(messagesPayload, session, { autoContinuePass, assistantMsgId })) || messagesPayload; } catch (hookErr) { console.warn('payload hook failed', hookErr); }
+            }
 
             if (autoContinuePass > 0) {
                 messagesPayload.push({

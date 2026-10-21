@@ -58,7 +58,7 @@
                     <i class="fa-solid fa-cube text-blue"></i>
                     <span>النماذج</span>
                 </button>
-                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة 2–4 نماذج بالتوازي">
+                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة 2–8 نماذج بالتوازي">
                     <i class="fa-solid fa-bolt text-amber"></i>
                     <span>حلبة النماذج</span>
                 </button>
@@ -142,7 +142,7 @@
                 </div>
 
                 <!-- Dual Arena Button -->
-                <button class="nav-icon-btn" title="حلبة النماذج المتعددة (2–4)" onclick="app.openDualModelArena()">
+                <button class="nav-icon-btn" title="حلبة النماذج المتعددة (2–8)" onclick="app.openDualModelArena()">
                     <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
                 </button>
 
@@ -496,13 +496,15 @@
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
                     <i class="fa-solid fa-bolt text-amber"></i>
-                    <span>حلبة النماذج المتعددة (2–4 نماذج بالتوازي)</span>
+                    <span>حلبة النماذج المتعددة (2–8 نماذج بالتوازي)</span>
                 </div>
                 <div style="display:flex; gap:6px; align-items:center;">
                     <select id="arena-count-select" class="form-input-box" style="width:auto; padding:4px 8px; font-size:0.76rem;" onchange="app.setArenaCount(this.value)" aria-label="عدد النماذج">
                         <option value="2">نموذجان</option>
                         <option value="3">3 نماذج</option>
                         <option value="4">4 نماذج</option>
+                        <option value="6">6 نماذج</option>
+                        <option value="8">8 نماذج (Mega Arena)</option>
                     </select>
                     <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
                         <i class="fa-solid fa-xmark"></i>

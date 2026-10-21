@@ -4,7 +4,7 @@
 // • Editor/runner chunks (/assets/, content-hashed): cache-first; workers (/workers/): network-first
 // • APIs (OpenRouter, GitHub, webhooks…): never cached
 // • Updates wait for the user: the page shows "update available" and posts SKIP_WAITING (#861)
-const VERSION = 'v2.7';
+const VERSION = 'v2.8';
 const SHELL_CACHE = 'ox-alpha-shell-' + VERSION;
 const CDN_CACHE = 'ox-alpha-cdn-' + VERSION;
 const ASSET_CACHE = 'ox-alpha-assets-' + VERSION;
