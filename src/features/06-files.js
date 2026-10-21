@@ -989,6 +989,7 @@
                 { icon: 'fa-copy', label: 'نسخ المسار', run: () => this.copyText(path, 'تم نسخ المسار') },
                 { icon: 'fa-file-zipper', label: 'تحميل المجلد ZIP', run: () => this.downloadPathsAsZip([path], baseName(path)) },
                 { icon: 'fa-magnifying-glass', label: 'بحث داخل المجلد', run: () => this.openProjectTools('search', { include: path + '/**' }) },
+                { icon: 'fa-wand-magic-sparkles', label: 'تلخيص المجلد وتنظيمه', run: () => this.openFilesHub('smart', 'summary', { dir: path }) },
                 '-',
                 { icon: 'fa-trash', label: 'حذف المجلد', danger: true, kbd: 'Del', run: () => this.deleteProjectPaths([path]) }
             ], anchor);
@@ -1004,6 +1005,7 @@
             { icon: 'fa-clone', label: 'نسخة مكررة', kbd: 'Ctrl+D', run: () => { const c = this.duplicateProjectFile(path); if (c) this.showToast(`تم إنشاء ${this.escapeHTML(baseName(c))}`, 'success'); } },
             { icon: 'fa-copy', label: 'نسخ المسار', run: () => this.copyText(path, 'تم نسخ المسار') },
             { icon: 'fa-thumbtack', label: pinned ? 'إلغاء التثبيت' : 'تثبيت في المفضلة', run: () => { this.togglePinFile(path); this.renderStudioExplorer(); } },
+            { icon: 'fa-tags', label: 'خصائص: وسوم، قفل، مشاركة…', run: () => this.fmxFileProps(path) },
             '-',
             !binary && { icon: 'fa-clock-rotate-left', label: `سجل الإصدارات (${this.getFileVersions(path).length})`, run: () => this.openFileHistory(path) },
             !binary && { icon: 'fa-code-compare', label: 'مقارنة مع ملف آخر', run: () => this.openProjectTools('compare', { a: path }) },

@@ -2,7 +2,15 @@
    uploads & documents, converters, preview, image editor, recorder, media gallery, chat export. */
 require('fake-indexeddb/auto');
 const fs = require('fs');
+const path = require('path');
+const { pathToFileURL } = require('url');
 const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
+const ROOT = path.join(__dirname, '..');
+function exposeGlobals(w) {
+    const names = ['window', 'document', 'navigator', 'Node', 'Element', 'HTMLElement', 'MutationObserver', 'getComputedStyle', 'requestAnimationFrame', 'cancelAnimationFrame',
+        'KeyboardEvent', 'MouseEvent', 'Event', 'CustomEvent', 'localStorage', 'location', 'history', 'innerWidth', 'innerHeight', 'devicePixelRatio'];
+    for (const n of names) Object.defineProperty(globalThis, n, { value: w[n], configurable: true, writable: true });
+}
 
 const JSZIP_SRC = fs.readFileSync(require('path').join(__dirname, '..', 'node_modules/jszip/dist/jszip.min.js'), 'utf8');
 const YAML_SRC = fs.readFileSync(require('path').join(__dirname, '..', 'node_modules/js-yaml/dist/js-yaml.min.js'), 'utf8');
@@ -301,10 +309,15 @@ function browserStubs(w) {
     ok(downloads.pop().name === 'song.mp3', 'download from preview');
     ok(app.openFilePreview({ path: 'nope' }) === null, 'missing file → graceful');
 
-    section('Image editor');
+    section('Image editor (lazy media chunk)');
+    exposeGlobals(w);
+    const imported = [];
+    app.importModule = (url) => { imported.push(url); return import(pathToFileURL(path.join(ROOT, url)).href); };
+    ok(app.openImageEditor.__oxLazy === 'media' && app.openRecorder.__oxLazy === 'media', 'image editor + recorder are lazy stubs in the main bundle');
     app.currentAttachments.push({ name: 'photo.jpg', base64: 'data:image/jpeg;base64,/9j/AAAA', isImage: true, size: 200000, mime: 'image/jpeg' });
     const imgIdx = app.currentAttachments.length - 1;
     const ed = await app.openImageEditor({ attachment: imgIdx });
+    ok(imported.length === 1 && /media-/.test(imported[0]), 'media chunk loaded on first use');
     ok(ed && ed.width === 800 && ed.height === 600 && $('ie-canvas'), 'editor opens with natural size');
     app.imgEdSize('w', 400);
     ok(ed.width === 400 && ed.height === 300, 'resize keeps aspect ratio');
@@ -332,7 +345,7 @@ function browserStubs(w) {
     ok(n === 2 && app.currentAttachments.find(a => a.name === 'b.jpg'), 'batch convert all attached images');
 
     section('Recorder');
-    app.openRecorder('audio');
+    await app.openRecorder('audio');
     ok(d.querySelector('.rec-big'), 'recorder UI');
     ok(await app.startRecording() === true && app._rec.state === 'recording', 'recording starts');
     ok(app._rec.mime === 'audio/webm;codecs=opus', 'best supported mime picked');
@@ -346,7 +359,7 @@ function browserStubs(w) {
     await app.saveRecording('attach');
     ok(app.currentAttachments.length === nAtt + 1 && app.currentAttachments[nAtt].isMedia, 'recording attached');
     w.__denyMedia = true;
-    app.openRecorder('camera');
+    await app.openRecorder('camera');
     ok(await app.startRecording() === false && /رفض الإذن/.test($('toast-container').textContent), 'permission denied → friendly message');
     w.__denyMedia = false;
     app.closeModals();
@@ -394,7 +407,7 @@ function browserStubs(w) {
     const imgs = lastUser && Array.isArray(lastUser.content) ? lastUser.content.filter(c => c.type === 'image_url').map(c => c.image_url.url) : [];
     ok(imgs.length === 2 && imgs[1].endsWith('AAA2'), 'all attached images are sent to the model (was: only the first)');
     app.openMediaMenu($('btn-media-menu'));
-    ok(d.querySelectorAll('.fx-menu [data-mi]').length === 6, 'media menu next to attach button');
+    ok(d.querySelectorAll('.fx-menu [data-mi]').length === 7 && /استوديو الملفات والوسائط/.test(d.querySelector('.fx-menu').textContent), 'media menu next to attach button (+ Files & Media studio)');
     app.hideMenu();
 
     ok(errors.length === 0, 'no runtime errors' + (errors.length ? ': ' + errors.slice(0, 5).join(' | ') : ''));
