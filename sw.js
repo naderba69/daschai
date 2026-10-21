@@ -1,11 +1,14 @@
-// OX-Alpha Workbench Pro — Service Worker (v2.5)
+// OX-Alpha Workbench Pro — Service Worker (v2.6)
 // • App shell (index.html): network-first, falls back to cache when offline (#815)
 // • CDN libraries & fonts: stale-while-revalidate (#825)
+// • Editor/runner chunks (/assets/, content-hashed): cache-first; workers (/workers/): network-first
 // • APIs (OpenRouter, GitHub, webhooks…): never cached
 // • Updates wait for the user: the page shows "update available" and posts SKIP_WAITING (#861)
-const VERSION = 'v2.5';
+const VERSION = 'v2.6';
 const SHELL_CACHE = 'ox-alpha-shell-' + VERSION;
 const CDN_CACHE = 'ox-alpha-cdn-' + VERSION;
+const ASSET_CACHE = 'ox-alpha-assets-' + VERSION;
+const MAX_ASSET_ENTRIES = 200;
 const SHELL = ['/', '/index.html', '/manifest.json'];
 const CDN_HOSTS = ['cdnjs.cloudflare.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 const MAX_CDN_ENTRIES = 60;
@@ -18,7 +21,7 @@ self.addEventListener('install', (e) => {
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('ox-alpha') && k !== SHELL_CACHE && k !== CDN_CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k.startsWith('ox-alpha') && k !== SHELL_CACHE && k !== CDN_CACHE && k !== ASSET_CACHE).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -44,6 +47,17 @@ async function networkFirst(req) {
   }
 }
 
+async function cacheFirst(req) {
+  const cache = await caches.open(ASSET_CACHE);
+  const hit = await cache.match(req);
+  if (hit) return hit;
+  const res = await fetch(req);
+  const type = res.headers.get('content-type') || '';
+  // never cache an SPA fallback (index.html) served for a missing chunk
+  if (res.ok && !type.includes('text/html')) cache.put(req, res.clone()).then(() => trimCache(ASSET_CACHE, MAX_ASSET_ENTRIES));
+  return res;
+}
+
 async function staleWhileRevalidate(event) {
   const cache = await caches.open(CDN_CACHE);
   const cached = await cache.match(event.request);
@@ -66,7 +80,8 @@ self.addEventListener('fetch', (event) => {
   if (url.origin === self.location.origin) {
     if (req.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') { event.respondWith(networkFirst(req)); return; }
     if (url.pathname === '/sw.js') return;
-    if (url.pathname === '/CHANGELOG.md') { event.respondWith(networkFirst(req)); return; }
+    if (url.pathname === '/CHANGELOG.md' || url.pathname.startsWith('/workers/')) { event.respondWith(networkFirst(req)); return; }
+    if (url.pathname.startsWith('/assets/')) { event.respondWith(cacheFirst(req)); return; }
     event.respondWith(caches.match(req).then((r) => r || fetch(req)));
     return;
   }

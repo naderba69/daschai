@@ -1,0 +1,784 @@
+{
+  "version": "2.6.0",
+  "chunks": {
+    "shared": [
+      "assets/studio/chunk-3GXLF557.mjs",
+      "assets/studio/chunk-4L2T7PFF.mjs",
+      "assets/studio/chunk-B3FT5I3V.mjs",
+      "assets/studio/chunk-P5G4A52K.mjs",
+      "assets/studio/chunk-QX3KAJW2.mjs",
+      "assets/studio/chunk-W7FP2L2O.mjs",
+      "assets/studio/chunk-YSTU5W3L.mjs"
+    ],
+    "plugin": "assets/studio/chunk-LLCIUFZW.mjs",
+    "yacas": "assets/studio/chunk-BODTTMEA.mjs",
+    "z80": "assets/studio/chunk-QRE5NXKM.mjs",
+    "mscgen": "assets/studio/chunk-475LXHPG.mjs",
+    "index": "assets/studio/chunk-EAOH73LA.mjs",
+    "ttcn-cfg": "assets/studio/chunk-3W3RTY2T.mjs",
+    "turtle": "assets/studio/chunk-QZRJNXVO.mjs",
+    "webidl": "assets/studio/chunk-UW6GIRFC.mjs",
+    "vb": "assets/studio/chunk-6Z3MW4PW.mjs",
+    "vbscript": "assets/studio/chunk-XFZ5ALVE.mjs",
+    "velocity": "assets/studio/chunk-QMYHXN2L.mjs",
+    "vhdl": "assets/studio/chunk-RKHVENVW.mjs",
+    "xquery": "assets/studio/chunk-ZXTDKG6H.mjs",
+    "verilog": "assets/studio/chunk-2CQCMBXY.mjs",
+    "tcl": "assets/studio/chunk-MWDRYWL5.mjs",
+    "textile": "assets/studio/chunk-3ZPYHNT4.mjs",
+    "tiddlywiki": "assets/studio/chunk-A5YCUJGC.mjs",
+    "tiki": "assets/studio/chunk-ZT2ANIII.mjs",
+    "toml": "assets/studio/chunk-RE3VUY2I.mjs",
+    "troff": "assets/studio/chunk-V5EXOTII.mjs",
+    "ttcn": "assets/studio/chunk-S7JDAC3G.mjs",
+    "sieve": "assets/studio/chunk-JHEZWFDW.mjs",
+    "smalltalk": "assets/studio/chunk-TQQXDD5D.mjs",
+    "solr": "assets/studio/chunk-ALYWNKFO.mjs",
+    "sparql": "assets/studio/chunk-RDG26FIC.mjs",
+    "spreadsheet": "assets/studio/chunk-QJGWO43J.mjs",
+    "stylus": "assets/studio/chunk-UQ34P7C3.mjs",
+    "swift": "assets/studio/chunk-SPP4CUCB.mjs",
+    "stex": "assets/studio/chunk-C4HQ7DDR.mjs",
+    "puppet": "assets/studio/chunk-WZZIUZ6D.mjs",
+    "q": "assets/studio/chunk-UBZ5GQX3.mjs",
+    "r": "assets/studio/chunk-DTE4Z6AR.mjs",
+    "rpm": "assets/studio/chunk-KTBIDCKE.mjs",
+    "ruby": "assets/studio/chunk-7JYRMN27.mjs",
+    "sas": "assets/studio/chunk-OGREGX7O.mjs",
+    "scheme": "assets/studio/chunk-6TO7O7VQ.mjs",
+    "shell": "assets/studio/chunk-KYSPUYEN.mjs",
+    "oz": "assets/studio/chunk-WHRVPLR6.mjs",
+    "pascal": "assets/studio/chunk-3SOCMLKH.mjs",
+    "perl": "assets/studio/chunk-RG27F5MF.mjs",
+    "pig": "assets/studio/chunk-JNMYMWXR.mjs",
+    "powershell": "assets/studio/chunk-IZCDMYOI.mjs",
+    "properties": "assets/studio/chunk-RKXAVADR.mjs",
+    "protobuf": "assets/studio/chunk-BFXORVOH.mjs",
+    "pug": "assets/studio/chunk-QFILEJD5.mjs",
+    "mathematica": "assets/studio/chunk-XLAMZGJG.mjs",
+    "modelica": "assets/studio/chunk-QESPRFYX.mjs",
+    "mumps": "assets/studio/chunk-SJKZ5Y4J.mjs",
+    "mbox": "assets/studio/chunk-QD5LI3RT.mjs",
+    "nginx": "assets/studio/chunk-QLHVJJEA.mjs",
+    "nsis": "assets/studio/chunk-MPXESQIG.mjs",
+    "ntriples": "assets/studio/chunk-XTCEW6PK.mjs",
+    "octave": "assets/studio/chunk-Z65MAE55.mjs",
+    "haxe": "assets/studio/chunk-CYRV42ZP.mjs",
+    "http": "assets/studio/chunk-KR7S2Z6B.mjs",
+    "idl": "assets/studio/chunk-HCE4Y65G.mjs",
+    "javascript": "assets/studio/chunk-OPAOXWQD.mjs",
+    "julia": "assets/studio/chunk-T435D3SO.mjs",
+    "livescript": "assets/studio/chunk-DGX7YB53.mjs",
+    "lua": "assets/studio/chunk-R6L73IFC.mjs",
+    "mirc": "assets/studio/chunk-PWW7CQKE.mjs",
+    "fcl": "assets/studio/chunk-VDE7ZTNX.mjs",
+    "forth": "assets/studio/chunk-SS56QCHH.mjs",
+    "fortran": "assets/studio/chunk-N52TEFXX.mjs",
+    "mllike": "assets/studio/chunk-HQVP6QVX.mjs",
+    "gas": "assets/studio/chunk-AGPPNSMD.mjs",
+    "gherkin": "assets/studio/chunk-P33LBD7C.mjs",
+    "groovy": "assets/studio/chunk-O24P5CKT.mjs",
+    "haskell": "assets/studio/chunk-N2LGHRKA.mjs",
+    "dylan": "assets/studio/chunk-RNRDQNDD.mjs",
+    "ebnf": "assets/studio/chunk-XQYDJSD3.mjs",
+    "ecl": "assets/studio/chunk-JL3P7EOK.mjs",
+    "eiffel": "assets/studio/chunk-A4TEIHPI.mjs",
+    "elm": "assets/studio/chunk-I76MSFLK.mjs",
+    "erlang": "assets/studio/chunk-Q4V7OCVI.mjs",
+    "sql": "assets/studio/chunk-2HQ5DIXB.mjs",
+    "factor": "assets/studio/chunk-NCTLKC67.mjs",
+    "commonlisp": "assets/studio/chunk-PXVV3EKZ.mjs",
+    "cypher": "assets/studio/chunk-TBVJT36U.mjs",
+    "python": "assets/studio/chunk-NZCGTOP2.mjs",
+    "crystal": "assets/studio/chunk-XVSTLPTA.mjs",
+    "d": "assets/studio/chunk-AQQJARC3.mjs",
+    "diff": "assets/studio/chunk-DL7IYSI7.mjs",
+    "dockerfile": "assets/studio/chunk-QPDJ4MX4.mjs",
+    "dtd": "assets/studio/chunk-MS4PPT3W.mjs",
+    "asterisk": "assets/studio/chunk-NW4OOYXD.mjs",
+    "brainfuck": "assets/studio/chunk-RX334DHT.mjs",
+    "cobol": "assets/studio/chunk-VWTL4FYN.mjs",
+    "clike": "assets/studio/chunk-YII6HKFT.mjs",
+    "clojure": "assets/studio/chunk-YY5AKL5Q.mjs",
+    "css": "assets/studio/chunk-I32TMXOS.mjs",
+    "cmake": "assets/studio/chunk-2CGB4RAD.mjs",
+    "coffeescript": "assets/studio/chunk-FNJGL7YP.mjs",
+    "apl": "assets/studio/chunk-3WSB7GCT.mjs",
+    "asciiarmor": "assets/studio/chunk-D2VREPKO.mjs",
+    "asn1": "assets/studio/chunk-XBVBYVKS.mjs",
+    "studio": "assets/studio/studio-5BDCACHS.mjs",
+    "runner": "assets/studio/runner-F5I5S3M6.mjs"
+  },
+  "files": [
+    {
+      "name": "assets/studio/chunk-LLCIUFZW.mjs",
+      "size": 104900,
+      "gzip": 36782
+    },
+    {
+      "name": "assets/studio/chunk-BODTTMEA.mjs",
+      "size": 2181,
+      "gzip": 1114
+    },
+    {
+      "name": "assets/studio/chunk-QRE5NXKM.mjs",
+      "size": 1778,
+      "gzip": 836
+    },
+    {
+      "name": "assets/studio/chunk-475LXHPG.mjs",
+      "size": 3537,
+      "gzip": 1005
+    },
+    {
+      "name": "assets/studio/chunk-KDGOBIJ4.mjs",
+      "size": 3446,
+      "gzip": 1736
+    },
+    {
+      "name": "assets/studio/chunk-MUIBHPNY.mjs",
+      "size": 5109,
+      "gzip": 2420
+    },
+    {
+      "name": "assets/studio/chunk-J3VDPL4V.mjs",
+      "size": 122679,
+      "gzip": 39156
+    },
+    {
+      "name": "assets/studio/chunk-KLKDL6ZC.mjs",
+      "size": 11137,
+      "gzip": 4577
+    },
+    {
+      "name": "assets/studio/chunk-XG75UBDY.mjs",
+      "size": 15803,
+      "gzip": 5515
+    },
+    {
+      "name": "assets/studio/chunk-3W3RTY2T.mjs",
+      "size": 4138,
+      "gzip": 1764
+    },
+    {
+      "name": "assets/studio/chunk-QZRJNXVO.mjs",
+      "size": 2056,
+      "gzip": 934
+    },
+    {
+      "name": "assets/studio/chunk-UW6GIRFC.mjs",
+      "size": 2544,
+      "gzip": 1278
+    },
+    {
+      "name": "assets/studio/chunk-6Z3MW4PW.mjs",
+      "size": 3962,
+      "gzip": 1834
+    },
+    {
+      "name": "assets/studio/chunk-XFZ5ALVE.mjs",
+      "size": 5842,
+      "gzip": 2592
+    },
+    {
+      "name": "assets/studio/chunk-QMYHXN2L.mjs",
+      "size": 2698,
+      "gzip": 1135
+    },
+    {
+      "name": "assets/studio/chunk-RKHVENVW.mjs",
+      "size": 3375,
+      "gzip": 1537
+    },
+    {
+      "name": "assets/studio/chunk-ZXTDKG6H.mjs",
+      "size": 6651,
+      "gzip": 2585
+    },
+    {
+      "name": "assets/studio/chunk-2CQCMBXY.mjs",
+      "size": 8532,
+      "gzip": 3609
+    },
+    {
+      "name": "assets/studio/chunk-MWDRYWL5.mjs",
+      "size": 2383,
+      "gzip": 1251
+    },
+    {
+      "name": "assets/studio/chunk-3ZPYHNT4.mjs",
+      "size": 6824,
+      "gzip": 2459
+    },
+    {
+      "name": "assets/studio/chunk-A5YCUJGC.mjs",
+      "size": 2808,
+      "gzip": 1094
+    },
+    {
+      "name": "assets/studio/chunk-ZT2ANIII.mjs",
+      "size": 3276,
+      "gzip": 1285
+    },
+    {
+      "name": "assets/studio/chunk-RE3VUY2I.mjs",
+      "size": 1165,
+      "gzip": 568
+    },
+    {
+      "name": "assets/studio/chunk-V5EXOTII.mjs",
+      "size": 987,
+      "gzip": 464
+    },
+    {
+      "name": "assets/studio/chunk-S7JDAC3G.mjs",
+      "size": 4884,
+      "gzip": 2177
+    },
+    {
+      "name": "assets/studio/chunk-JHEZWFDW.mjs",
+      "size": 1645,
+      "gzip": 798
+    },
+    {
+      "name": "assets/studio/chunk-TQQXDD5D.mjs",
+      "size": 2030,
+      "gzip": 870
+    },
+    {
+      "name": "assets/studio/chunk-ALYWNKFO.mjs",
+      "size": 893,
+      "gzip": 481
+    },
+    {
+      "name": "assets/studio/chunk-RDG26FIC.mjs",
+      "size": 3572,
+      "gzip": 1649
+    },
+    {
+      "name": "assets/studio/chunk-QJGWO43J.mjs",
+      "size": 1165,
+      "gzip": 567
+    },
+    {
+      "name": "assets/studio/chunk-UQ34P7C3.mjs",
+      "size": 25828,
+      "gzip": 8627
+    },
+    {
+      "name": "assets/studio/chunk-SPP4CUCB.mjs",
+      "size": 3982,
+      "gzip": 1806
+    },
+    {
+      "name": "assets/studio/chunk-C4HQ7DDR.mjs",
+      "size": 3151,
+      "gzip": 1220
+    },
+    {
+      "name": "assets/studio/chunk-WZZIUZ6D.mjs",
+      "size": 2570,
+      "gzip": 1225
+    },
+    {
+      "name": "assets/studio/chunk-UBZ5GQX3.mjs",
+      "size": 4059,
+      "gzip": 1699
+    },
+    {
+      "name": "assets/studio/chunk-DTE4Z6AR.mjs",
+      "size": 2969,
+      "gzip": 1384
+    },
+    {
+      "name": "assets/studio/chunk-KTBIDCKE.mjs",
+      "size": 1635,
+      "gzip": 851
+    },
+    {
+      "name": "assets/studio/chunk-7JYRMN27.mjs",
+      "size": 5239,
+      "gzip": 2182
+    },
+    {
+      "name": "assets/studio/chunk-OGREGX7O.mjs",
+      "size": 9361,
+      "gzip": 4133
+    },
+    {
+      "name": "assets/studio/chunk-6TO7O7VQ.mjs",
+      "size": 6395,
+      "gzip": 2410
+    },
+    {
+      "name": "assets/studio/chunk-KYSPUYEN.mjs",
+      "size": 2598,
+      "gzip": 1240
+    },
+    {
+      "name": "assets/studio/chunk-WHRVPLR6.mjs",
+      "size": 2923,
+      "gzip": 1306
+    },
+    {
+      "name": "assets/studio/chunk-3SOCMLKH.mjs",
+      "size": 2328,
+      "gzip": 1219
+    },
+    {
+      "name": "assets/studio/chunk-RG27F5MF.mjs",
+      "size": 9780,
+      "gzip": 3476
+    },
+    {
+      "name": "assets/studio/chunk-JNMYMWXR.mjs",
+      "size": 2561,
+      "gzip": 1408
+    },
+    {
+      "name": "assets/studio/chunk-IZCDMYOI.mjs",
+      "size": 7796,
+      "gzip": 3355
+    },
+    {
+      "name": "assets/studio/chunk-RKXAVADR.mjs",
+      "size": 694,
+      "gzip": 372
+    },
+    {
+      "name": "assets/studio/chunk-BFXORVOH.mjs",
+      "size": 891,
+      "gzip": 542
+    },
+    {
+      "name": "assets/studio/chunk-QFILEJD5.mjs",
+      "size": 6695,
+      "gzip": 1952
+    },
+    {
+      "name": "assets/studio/chunk-XLAMZGJG.mjs",
+      "size": 1943,
+      "gzip": 843
+    },
+    {
+      "name": "assets/studio/chunk-QESPRFYX.mjs",
+      "size": 2815,
+      "gzip": 1308
+    },
+    {
+      "name": "assets/studio/chunk-SJKZ5Y4J.mjs",
+      "size": 2096,
+      "gzip": 1009
+    },
+    {
+      "name": "assets/studio/chunk-QD5LI3RT.mjs",
+      "size": 1424,
+      "gzip": 686
+    },
+    {
+      "name": "assets/studio/chunk-QLHVJJEA.mjs",
+      "size": 7368,
+      "gzip": 2746
+    },
+    {
+      "name": "assets/studio/chunk-MPXESQIG.mjs",
+      "size": 7086,
+      "gzip": 3089
+    },
+    {
+      "name": "assets/studio/chunk-XTCEW6PK.mjs",
+      "size": 2129,
+      "gzip": 771
+    },
+    {
+      "name": "assets/studio/chunk-Z65MAE55.mjs",
+      "size": 2333,
+      "gzip": 1119
+    },
+    {
+      "name": "assets/studio/chunk-CYRV42ZP.mjs",
+      "size": 7932,
+      "gzip": 2967
+    },
+    {
+      "name": "assets/studio/chunk-KR7S2Z6B.mjs",
+      "size": 875,
+      "gzip": 438
+    },
+    {
+      "name": "assets/studio/chunk-HCE4Y65G.mjs",
+      "size": 11661,
+      "gzip": 4545
+    },
+    {
+      "name": "assets/studio/chunk-OPAOXWQD.mjs",
+      "size": 134,
+      "gzip": 118
+    },
+    {
+      "name": "assets/studio/chunk-3GQ4B5MT.mjs",
+      "size": 17071,
+      "gzip": 5748
+    },
+    {
+      "name": "assets/studio/chunk-T435D3SO.mjs",
+      "size": 5412,
+      "gzip": 2164
+    },
+    {
+      "name": "assets/studio/chunk-DGX7YB53.mjs",
+      "size": 4111,
+      "gzip": 1665
+    },
+    {
+      "name": "assets/studio/chunk-R6L73IFC.mjs",
+      "size": 3434,
+      "gzip": 1460
+    },
+    {
+      "name": "assets/studio/chunk-PWW7CQKE.mjs",
+      "size": 5947,
+      "gzip": 2707
+    },
+    {
+      "name": "assets/studio/chunk-VDE7ZTNX.mjs",
+      "size": 2102,
+      "gzip": 973
+    },
+    {
+      "name": "assets/studio/chunk-SS56QCHH.mjs",
+      "size": 2571,
+      "gzip": 1351
+    },
+    {
+      "name": "assets/studio/chunk-N52TEFXX.mjs",
+      "size": 4679,
+      "gzip": 2031
+    },
+    {
+      "name": "assets/studio/chunk-HQVP6QVX.mjs",
+      "size": 4853,
+      "gzip": 1580
+    },
+    {
+      "name": "assets/studio/chunk-AGPPNSMD.mjs",
+      "size": 4594,
+      "gzip": 1293
+    },
+    {
+      "name": "assets/studio/chunk-P33LBD7C.mjs",
+      "size": 10186,
+      "gzip": 5121
+    },
+    {
+      "name": "assets/studio/chunk-O24P5CKT.mjs",
+      "size": 4166,
+      "gzip": 1795
+    },
+    {
+      "name": "assets/studio/chunk-N2LGHRKA.mjs",
+      "size": 4189,
+      "gzip": 1911
+    },
+    {
+      "name": "assets/studio/chunk-RNRDQNDD.mjs",
+      "size": 4080,
+      "gzip": 1681
+    },
+    {
+      "name": "assets/studio/chunk-XQYDJSD3.mjs",
+      "size": 2009,
+      "gzip": 834
+    },
+    {
+      "name": "assets/studio/chunk-JL3P7EOK.mjs",
+      "size": 5155,
+      "gzip": 2332
+    },
+    {
+      "name": "assets/studio/chunk-A4TEIHPI.mjs",
+      "size": 1839,
+      "gzip": 949
+    },
+    {
+      "name": "assets/studio/chunk-I76MSFLK.mjs",
+      "size": 1914,
+      "gzip": 847
+    },
+    {
+      "name": "assets/studio/chunk-Q4V7OCVI.mjs",
+      "size": 8122,
+      "gzip": 2920
+    },
+    {
+      "name": "assets/studio/chunk-2HQ5DIXB.mjs",
+      "size": 37095,
+      "gzip": 10966
+    },
+    {
+      "name": "assets/studio/chunk-NCTLKC67.mjs",
+      "size": 1694,
+      "gzip": 624
+    },
+    {
+      "name": "assets/studio/chunk-PXVV3EKZ.mjs",
+      "size": 2350,
+      "gzip": 1126
+    },
+    {
+      "name": "assets/studio/chunk-TBVJT36U.mjs",
+      "size": 3584,
+      "gzip": 1541
+    },
+    {
+      "name": "assets/studio/chunk-NZCGTOP2.mjs",
+      "size": 6498,
+      "gzip": 2752
+    },
+    {
+      "name": "assets/studio/chunk-XVSTLPTA.mjs",
+      "size": 5157,
+      "gzip": 2092
+    },
+    {
+      "name": "assets/studio/chunk-AQQJARC3.mjs",
+      "size": 3736,
+      "gzip": 1708
+    },
+    {
+      "name": "assets/studio/chunk-DL7IYSI7.mjs",
+      "size": 332,
+      "gzip": 263
+    },
+    {
+      "name": "assets/studio/chunk-QPDJ4MX4.mjs",
+      "size": 1967,
+      "gzip": 681
+    },
+    {
+      "name": "assets/studio/chunk-5HSZSCPM.mjs",
+      "size": 2292,
+      "gzip": 1098
+    },
+    {
+      "name": "assets/studio/chunk-MS4PPT3W.mjs",
+      "size": 2086,
+      "gzip": 900
+    },
+    {
+      "name": "assets/studio/chunk-NW4OOYXD.mjs",
+      "size": 4521,
+      "gzip": 1807
+    },
+    {
+      "name": "assets/studio/chunk-RX334DHT.mjs",
+      "size": 629,
+      "gzip": 349
+    },
+    {
+      "name": "assets/studio/chunk-VWTL4FYN.mjs",
+      "size": 6259,
+      "gzip": 3009
+    },
+    {
+      "name": "assets/studio/chunk-YII6HKFT.mjs",
+      "size": 22333,
+      "gzip": 7892
+    },
+    {
+      "name": "assets/studio/chunk-YY5AKL5Q.mjs",
+      "size": 10842,
+      "gzip": 4021
+    },
+    {
+      "name": "assets/studio/chunk-I32TMXOS.mjs",
+      "size": 27153,
+      "gzip": 8489
+    },
+    {
+      "name": "assets/studio/chunk-2CGB4RAD.mjs",
+      "size": 810,
+      "gzip": 487
+    },
+    {
+      "name": "assets/studio/chunk-FNJGL7YP.mjs",
+      "size": 3895,
+      "gzip": 1715
+    },
+    {
+      "name": "assets/studio/chunk-2QCMVW3T.mjs",
+      "size": 83744,
+      "gzip": 30329
+    },
+    {
+      "name": "assets/studio/chunk-25FMXGHW.mjs",
+      "size": 23069,
+      "gzip": 10386
+    },
+    {
+      "name": "assets/studio/chunk-T72HVRU2.mjs",
+      "size": 2669,
+      "gzip": 1521
+    },
+    {
+      "name": "assets/studio/chunk-3HMTOO2C.mjs",
+      "size": 14698,
+      "gzip": 5959
+    },
+    {
+      "name": "assets/studio/chunk-SWFAHM4B.mjs",
+      "size": 12743,
+      "gzip": 5625
+    },
+    {
+      "name": "assets/studio/chunk-3WSB7GCT.mjs",
+      "size": 2324,
+      "gzip": 1250
+    },
+    {
+      "name": "assets/studio/chunk-D2VREPKO.mjs",
+      "size": 813,
+      "gzip": 433
+    },
+    {
+      "name": "assets/studio/chunk-XBVBYVKS.mjs",
+      "size": 4016,
+      "gzip": 1986
+    },
+    {
+      "name": "assets/studio/chunk-QHSKIW7J.mjs",
+      "size": 47796,
+      "gzip": 19333
+    },
+    {
+      "name": "assets/studio/chunk-KRJNOZDS.mjs",
+      "size": 20979,
+      "gzip": 9362
+    },
+    {
+      "name": "assets/studio/chunk-36T2QRNQ.mjs",
+      "size": 2460,
+      "gzip": 1518
+    },
+    {
+      "name": "assets/studio/chunk-VFO3WGJN.mjs",
+      "size": 16322,
+      "gzip": 7449
+    },
+    {
+      "name": "assets/studio/chunk-LM3263CB.mjs",
+      "size": 22008,
+      "gzip": 10159
+    },
+    {
+      "name": "assets/studio/chunk-ALESBBP2.mjs",
+      "size": 45108,
+      "gzip": 15606
+    },
+    {
+      "name": "assets/studio/chunk-546NZQHR.mjs",
+      "size": 98334,
+      "gzip": 28562
+    },
+    {
+      "name": "assets/studio/chunk-M5CWLU47.mjs",
+      "size": 45170,
+      "gzip": 19171
+    },
+    {
+      "name": "assets/studio/studio-5BDCACHS.mjs",
+      "size": 132123,
+      "gzip": 43935
+    },
+    {
+      "name": "assets/studio/chunk-W7FP2L2O.mjs",
+      "size": 20352,
+      "gzip": 6877
+    },
+    {
+      "name": "assets/studio/chunk-QX3KAJW2.mjs",
+      "size": 23815,
+      "gzip": 8125
+    },
+    {
+      "name": "assets/studio/chunk-4L2T7PFF.mjs",
+      "size": 15618,
+      "gzip": 6096
+    },
+    {
+      "name": "assets/studio/runner-F5I5S3M6.mjs",
+      "size": 259799,
+      "gzip": 66432
+    },
+    {
+      "name": "assets/studio/chunk-B3FT5I3V.mjs",
+      "size": 41977,
+      "gzip": 16054
+    },
+    {
+      "name": "assets/studio/chunk-4RA5YV2G.mjs",
+      "size": 32362,
+      "gzip": 13066
+    },
+    {
+      "name": "assets/studio/chunk-27657K5H.mjs",
+      "size": 103954,
+      "gzip": 34329
+    },
+    {
+      "name": "assets/studio/chunk-OOAPTJ42.mjs",
+      "size": 220,
+      "gzip": 159
+    },
+    {
+      "name": "assets/studio/chunk-QQSSJWA7.mjs",
+      "size": 30849,
+      "gzip": 12661
+    },
+    {
+      "name": "assets/studio/chunk-WKRINJQE.mjs",
+      "size": 424,
+      "gzip": 246
+    },
+    {
+      "name": "assets/studio/chunk-EAOH73LA.mjs",
+      "size": 330,
+      "gzip": 196
+    },
+    {
+      "name": "assets/studio/chunk-HOAQI6PL.mjs",
+      "size": 28596,
+      "gzip": 11647
+    },
+    {
+      "name": "assets/studio/chunk-KR7S2USB.mjs",
+      "size": 28198,
+      "gzip": 12805
+    },
+    {
+      "name": "assets/studio/chunk-GHZXH7DL.mjs",
+      "size": 86853,
+      "gzip": 34435
+    },
+    {
+      "name": "assets/studio/chunk-YSTU5W3L.mjs",
+      "size": 36764,
+      "gzip": 13160
+    },
+    {
+      "name": "assets/studio/chunk-4AXDEU5H.mjs",
+      "size": 26999,
+      "gzip": 8904
+    },
+    {
+      "name": "assets/studio/chunk-P5G4A52K.mjs",
+      "size": 319677,
+      "gzip": 104318
+    },
+    {
+      "name": "assets/studio/chunk-3GXLF557.mjs",
+      "size": 605,
+      "gzip": 365
+    }
+  ]
+}

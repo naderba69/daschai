@@ -58,13 +58,49 @@ try {
     // Must run AFTER minification (terser may rewrite the escaped form).
     const appJsContent = rawJs.replace(/<\/script/gi, '<\\/script');
 
+    // Studio chunks (Sprint 6): CodeMirror editor + code runner as lazily-imported ES modules.
+    // Content-hashed file names → safe to cache forever (vercel.json marks /assets/ immutable).
+    let chunks = null;
+    const chunkFiles = [];
+    const studioEntry = path.join(__dirname, 'src/studio/studio.js');
+    if (fs.existsSync(studioEntry)) {
+        const esbuild = require('esbuild');
+        const outdir = path.join(__dirname, 'assets/studio');
+        fs.rmSync(outdir, { recursive: true, force: true });
+        const result = await esbuild.build({
+            absWorkingDir: __dirname,
+            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js' },
+            bundle: true, splitting: true, format: 'esm', target: ['es2020'],
+            outdir: 'assets/studio', outExtension: { '.js': '.mjs' },
+            entryNames: '[name]-[hash]', chunkNames: 'chunk-[hash]',
+            minify: useMinify, legalComments: 'none', charset: 'utf8', metafile: true, logLevel: 'warning'
+        });
+        const outputs = result.metafile.outputs;
+        chunks = { shared: [] };
+        const staticDeps = (file, seen = new Set()) => {
+            for (const imp of (outputs[file] && outputs[file].imports) || []) {
+                if (imp.kind !== 'import-statement' || seen.has(imp.path)) continue;
+                seen.add(imp.path);
+                staticDeps(imp.path, seen);
+            }
+            return seen;
+        };
+        for (const [file, meta] of Object.entries(outputs)) {
+            if (meta.entryPoint) chunks[path.basename(meta.entryPoint, '.js')] = file;
+            chunkFiles.push({ name: file, size: meta.bytes, gzip: require('zlib').gzipSync(fs.readFileSync(path.join(__dirname, file)), { level: 9 }).length });
+        }
+        chunks.shared = Array.from(staticDeps(chunks.studio)).sort();
+        fs.writeFileSync(path.join(outdir, 'manifest.json'), JSON.stringify({ version: pkg.version, chunks, files: chunkFiles }, null, 2) + '\n');
+    }
+
     // Build info for the in-app health panel / changelog (#845, #864)
     const kb = (s) => Buffer.byteLength(s, 'utf8');
     const buildInfo = {
         version: pkg.version,
         builtAt: new Date().toISOString(),
         minified: jsMinified,
-        modules: [{ name: 'app.js (core)', size: kb(coreJsContent) }, ...featureSources.map(({ name, src }) => ({ name, size: kb(src) })), { name: 'styles.css', size: kb(cssContent) }, { name: 'layout.html', size: kb(layoutContent) }]
+        chunks,
+        modules: [{ name: 'app.js (core)', size: kb(coreJsContent) }, ...featureSources.map(({ name, src }) => ({ name, size: kb(src) })), { name: 'styles.css', size: kb(cssContent) }, { name: 'layout.html', size: kb(layoutContent) }, ...chunkFiles.map(f => ({ name: f.name, size: f.size, lazy: true }))]
     };
 
     // Basic minification for CSS (remove comments, extra whitespace) — safe
@@ -107,7 +143,7 @@ try {
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <!-- CSP: allow required CDNs only -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://gist.githubusercontent.com https://discord.com https://discordapp.com https://hooks.slack.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org; worker-src blob:; frame-src blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://gist.githubusercontent.com https://discord.com https://discordapp.com https://hooks.slack.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org; worker-src 'self' blob:; frame-src blob:;">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
@@ -136,7 +172,7 @@ try {
         window._lazyLibs = {
             tesseract: 'https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js',
             pdfjs: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js',
-            pyodide: 'https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js'
+            pyodide: 'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js'
         };
         window.loadLazyLib = function(name){
             return new Promise((res, rej)=>{
@@ -180,6 +216,12 @@ ${appJsContent}
     console.log(`   🎨 CSS: ${(finalCSS.length/1024).toFixed(1)} KB ${useMinify ? '(minified)' : ''}`);
     console.log(`   📜 JS: ${(kb(appJsContent)/1024).toFixed(1)} KB ${jsMinified ? '(terser) ' : ''}(core + ${featureFiles.length} feature module${featureFiles.length === 1 ? '' : 's'})`);
     console.log(`   🧩 Layout: ${(layoutContent.length/1024).toFixed(1)} KB`);
+    if (chunks) {
+        const sum = (arr, k) => arr.reduce((n, f) => n + f[k], 0);
+        const studioSet = [chunks.studio, ...chunks.shared];
+        const studioFiles = chunkFiles.filter(f => studioSet.includes(f.name));
+        console.log(`   🧠 Studio chunks: ${chunkFiles.length} files, editor first load ${(sum(studioFiles, 'size') / 1024).toFixed(1)} KB (${(sum(studioFiles, 'gzip') / 1024).toFixed(1)} KB gzip) — lazy, not in index.html`);
+    }
 
     // What actually travels over the network: Vercel serves index.html compressed (gzip/brotli)
     const gzipKB = (require('zlib').gzipSync(fullHtml, { level: 9 }).length / 1024).toFixed(1);

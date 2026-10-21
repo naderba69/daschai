@@ -72,9 +72,11 @@
     const entrySize = (f) => (f ? (f.size != null ? f.size : byteLen(f.content || '')) : 0);
 
     // ------------------------------------------------------------------ DIALOG (replaces prompt/confirm)
-    P.showDialog = function ({ title, body = '', fields = [], buttons = [{ label: 'موافق', value: 'ok', primary: true }, { label: 'إلغاء', value: null }] }) {
+    P.showDialog = function ({ title, body = '', fields = [], buttons = [{ label: 'موافق', value: 'ok', primary: true }, { label: 'إلغاء', value: null }], wide = false }) {
         const modal = document.getElementById('ox-dialog');
         if (!modal) return Promise.resolve(null);
+        const box = modal.querySelector('.ox-dialog-box');
+        if (box) box.classList.toggle('wide', !!wide);
         if (this._dialogResolve) this.resolveDialog(null);
         this._dialogButtons = buttons;
         this._dialogFields = fields;
@@ -234,7 +236,7 @@
     // ------------------------------------------------------------------ PERSISTENCE (auto-backup)
     P.scheduleProjectSave = function (renderExplorer = true) {
         clearTimeout(this._projectSaveTimer);
-        this._projectSaveTimer = setTimeout(() => this.saveProjectNow(), 1200);
+        this._projectSaveTimer = setTimeout(() => this.saveProjectNow(), 1000);
         if (!renderExplorer || this._explorerRenderQueued) return;
         this._explorerRenderQueued = true;
         setTimeout(() => { this._explorerRenderQueued = false; this.renderStudioExplorer(); }, 60);
