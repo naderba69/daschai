@@ -118,6 +118,16 @@
                     <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
                 </button>
 
+                <!-- Theme Toggle -->
+                <button class="theme-toggle-btn" id="theme-toggle-btn" title="تبديل المظهر (فاتح/داكن)" onclick="app.toggleTheme()" aria-label="تبديل المظهر">
+                    <i class="fa-solid fa-moon" id="theme-toggle-icon"></i>
+                </button>
+
+                <!-- Command Palette Trigger -->
+                <button class="nav-icon-btn" title="لوحة الأوامر (Ctrl+K)" onclick="app.openCommandPalette()" aria-label="لوحة الأوامر">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+
                 <!-- New Thread Button -->
                 <button class="nav-icon-btn" title="محادثة جديدة" onclick="app.createNewSession(true)">
                     <i class="fa-solid fa-pen-to-square"></i>
@@ -129,6 +139,9 @@
                 </button>
             </div>
         </header>
+
+        <!-- Browser-like Session Tabs (Sprint 1) -->
+        <div class="top-tabs-bar" id="top-tabs-bar" role="tablist" aria-label="المحادثات المفتوحة"></div>
 
         <!-- API Key Banner -->
         <div id="api-key-banner" class="api-key-banner" style="display: none;">
@@ -196,13 +209,14 @@
                         </div>
                     </div>
 
-                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> بحث • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
+                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
                 <!-- Gemini Input Card -->
                     <div class="gemini-input-card">
+                        <div class="slash-autocomplete" id="slash-autocomplete" role="listbox" aria-label="أوامر الشرطة المائلة"></div>
                         <textarea 
                             class="gemini-input-field" 
                             id="user-input" 
-                            placeholder="اسأل OX-Alpha Pro، أو ارفع ملفات متعددة / مشروع ZIP، أو انقر أيقونة السحابة لجلب كود GitHub..."
+                            placeholder="اسأل OX-Alpha Pro… اكتب / للأوامر السريعة، أو Ctrl+K للوحة الأوامر"
                             rows="1"
                             aria-label="حقل إدخال الرسالة"
                             aria-multiline="true"
@@ -931,6 +945,24 @@
             <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
                 <span>إغلاق</span>
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Command Palette (Ctrl+K) — Sprint 1 -->
+<div class="cmd-palette-overlay" id="cmd-palette-overlay" onclick="if(event.target===this) app.closeCommandPalette()" role="dialog" aria-modal="true" aria-label="لوحة الأوامر">
+    <div class="cmd-palette-box">
+        <div class="cmd-palette-input-wrap">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" class="cmd-palette-input" id="cmd-palette-input" placeholder="ابحث عن أمر، محادثة، نموذج أو ثيم..." autocomplete="off" aria-label="بحث في الأوامر">
+            <kbd>Esc</kbd>
+        </div>
+        <div class="cmd-palette-list" id="cmd-palette-list" role="listbox"></div>
+        <div class="cmd-palette-footer">
+            <span><kbd>↑</kbd> <kbd>↓</kbd> تنقل</span>
+            <span><kbd>Enter</kbd> تنفيذ</span>
+            <span><kbd>Esc</kbd> إغلاق</span>
+            <span style="margin-right:auto;"><kbd>&gt;</kbd> أوامر فقط • <kbd>#</kbd> محادثات • <kbd>@</kbd> نماذج</span>
         </div>
     </div>
 </div>

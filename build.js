@@ -20,7 +20,17 @@ try {
 
     const cssContent = fs.readFileSync(cssPath, 'utf8');
     const layoutContent = fs.readFileSync(layoutPath, 'utf8');
-    const appJsContent = fs.readFileSync(appJsPath, 'utf8');
+    const coreJsContent = fs.readFileSync(appJsPath, 'utf8');
+
+    // Feature modules (src/features/*.js) — loaded in filename order after the core app
+    const featuresDir = path.join(__dirname, 'src/features');
+    const featureFiles = fs.existsSync(featuresDir)
+        ? fs.readdirSync(featuresDir).filter(f => f.endsWith('.js')).sort()
+        : [];
+    const featuresContent = featureFiles
+        .map(f => `\n/* ---- feature: ${f} ---- */\n` + fs.readFileSync(path.join(featuresDir, f), 'utf8'))
+        .join('\n');
+    const appJsContent = coreJsContent + '\n' + featuresContent;
 
     // Basic minification for CSS (remove comments, extra whitespace) — safe
     const minifyCSS = (css) => css
@@ -141,7 +151,7 @@ ${appJsContent}
     console.log(`✅ Build complete in ${duration}s`);
     console.log(`   📦 index.html → ${sizeKB} KB / ${lines} lines`);
     console.log(`   🎨 CSS: ${(finalCSS.length/1024).toFixed(1)} KB ${useMinify ? '(minified)' : ''}`);
-    console.log(`   📜 JS: ${(appJsContent.length/1024).toFixed(1)} KB`);
+    console.log(`   📜 JS: ${(appJsContent.length/1024).toFixed(1)} KB (core + ${featureFiles.length} feature module${featureFiles.length === 1 ? '' : 's'})`);
     console.log(`   🧩 Layout: ${(layoutContent.length/1024).toFixed(1)} KB`);
 
     if (parseFloat(sizeKB) > 500) {

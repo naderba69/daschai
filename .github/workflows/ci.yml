@@ -17,6 +17,8 @@ jobs:
       - name: Build
         run: npm run build
       - name: Syntax check
-        run: node --check src/app.js && echo "✅ Syntax OK"
+        run: npm run audit
+      - name: Smoke tests (jsdom)
+        run: npm test
       - name: Artifact check
         run: ls -lh index.html && wc -l index.html
