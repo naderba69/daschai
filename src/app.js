@@ -7,6 +7,65 @@ if (typeof pdfjsLib !== 'undefined') {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
 
+// LZW (UTF-8 bytes → 15-bit chars, localStorage-safe) for big conversation stores — Sprint 12 #812/#872.
+// Format: "\u0001LZ" + 2 chars code count + packed codes. Used only above a size threshold; plain JSON stays readable.
+const OXLZ = {
+    MARK: '\u0001LZ',
+    bits: (n) => (n < 256 ? 8 : 32 - Math.clz32(n)),
+    pack(str) {
+        const b = new TextEncoder().encode(String(str)), out = [], dict = new Map();
+        let acc = 0, nb = 0, k = 0, codes = 0, cur = -1;
+        const emit = (code) => {
+            acc = (acc << OXLZ.bits(255 + k)) | code; nb += OXLZ.bits(255 + k); codes++;
+            while (nb >= 15) { nb -= 15; out.push(String.fromCharCode(((acc >>> nb) & 0x7fff) + 32)); }
+            acc &= (1 << nb) - 1;
+        };
+        for (let i = 0; i < b.length; i++) {
+            const c = b[i];
+            if (cur < 0) { cur = c; continue; }
+            const hit = dict.get(cur * 256 + c);
+            if (hit !== undefined) { cur = hit; continue; }
+            emit(cur);
+            dict.set(cur * 256 + c, 256 + k);
+            if (++k === 65280) { dict.clear(); k = 0; }
+            cur = c;
+        }
+        if (cur >= 0) emit(cur);
+        if (nb) out.push(String.fromCharCode(((acc << (15 - nb)) & 0x7fff) + 32));
+        return OXLZ.MARK + String.fromCharCode((codes >>> 15) + 32, (codes & 0x7fff) + 32) + out.join('');
+    },
+    unpack(s) {
+        s = String(s);
+        if (!s.startsWith(OXLZ.MARK)) return s;
+        const codes = ((s.charCodeAt(3) - 32) << 15) | (s.charCodeAt(4) - 32);
+        const pre = new Int32Array(65536), suf = new Uint8Array(65536), len = new Int32Array(65536), first = new Uint8Array(65536);
+        for (let i = 0; i < 256; i++) { suf[i] = i; len[i] = 1; first[i] = i; pre[i] = -1; }
+        let out = new Uint8Array(Math.max(1024, s.length * 3)), o = 0, pos = 5, acc = 0, nb = 0, k = 0, prev = -1;
+        const write = (code) => {
+            const n = len[code];
+            if (o + n > out.length) { const g = new Uint8Array(Math.max(out.length * 2, o + n)); g.set(out); out = g; }
+            for (let i = o + n - 1, c = code; i >= o; i--) { out[i] = suf[c]; c = pre[c]; }
+            o += n;
+        };
+        for (let r = 0; r < codes; r++) {
+            const w = OXLZ.bits(255 + k);
+            while (nb < w) { acc = ((acc << 15) | (s.charCodeAt(pos++) - 32)) >>> 0; nb += 15; }
+            nb -= w;
+            const code = (acc >>> nb) & ((1 << w) - 1);
+            acc &= (1 << nb) - 1;
+            if (k > 0) {
+                const nc = 255 + k; // entry the encoder added after the previous code
+                pre[nc] = prev; len[nc] = len[prev] + 1; first[nc] = first[prev];
+                suf[nc] = code === nc ? first[prev] : first[code];
+            }
+            write(code);
+            prev = code;
+            if (++k === 65280) { k = 0; prev = -1; }
+        }
+        return new TextDecoder().decode(out.subarray(0, o));
+    }
+};
+
 // Lazy loader for heavy libraries (Pyodide, Tesseract, PDF.js) — saves 10MB initial load
 window.lazyLoadScript = function(src, id) {
     return new Promise((resolve, reject) => {
@@ -161,7 +220,7 @@ class OXAlphaApp {
                             return m;
                         })
                     }));
-                    localStorage.setItem(key, JSON.stringify(lightweight));
+                    localStorage.setItem(key, OXLZ.pack(JSON.stringify(lightweight)));
                 }
             } catch (e2) {
                 console.error('Failed to store optimized sessions:', e2);
@@ -271,7 +330,7 @@ class OXAlphaApp {
         try {
             const saved = localStorage.getItem('ox_alpha_sessions_v2');
             if (saved) {
-                this.sessions = JSON.parse(saved);
+                this.sessions = JSON.parse(OXLZ.unpack(saved));
             }
         } catch (e) {
             this.sessions = [];
@@ -285,7 +344,19 @@ class OXAlphaApp {
     }
 
     saveSessions() {
-        this.safeStorageSet('ox_alpha_sessions_v2', JSON.stringify(this.sessions));
+        this.safeStorageSet('ox_alpha_sessions_v2', this.packStore(JSON.stringify(this.sessions)));
+    }
+
+    lzPack(s) { return OXLZ.pack(s); }
+    lzUnpack(s) { return OXLZ.unpack(s); }
+
+    /** Compress big stores before saving (#812, #872): 'auto' (>256KB) | 'always' | 'off'. */
+    packStore(json) {
+        const mode = (this.settings && this.settings.storeCompress) || 'auto';
+        if (mode === 'off' || (mode === 'auto' && json.length < 262144)) { this._lzStats = { raw: json.length, packed: json.length, ms: 0 }; return json; }
+        const t = Date.now(), out = OXLZ.pack(json);
+        this._lzStats = { raw: json.length, packed: out.length, ms: Date.now() - t };
+        return out.length < json.length ? out : json;
     }
 
     createNewSession(shouldSwitch = true) {
@@ -1792,7 +1863,7 @@ class OXAlphaApp {
             this.renderMessages();
 
             let personaPrompt = PERSONA_PROMPTS[this.activePersona] || PERSONA_PROMPTS.fullstack;
-            let systemText = `${personaPrompt}\n${this.settings.systemPrompt || ''}`;
+            let systemText = `${personaPrompt}\n${this.settings.systemPrompt || ''}${this._kidsPrompt || ''}`;
             if (this.settings.githubRepo) {
                 systemText += `\nالمشروع النشط الحالي في GitHub هو: ${this.settings.githubOwner || 'naderba69'}/${this.settings.githubRepo}.`;
             }

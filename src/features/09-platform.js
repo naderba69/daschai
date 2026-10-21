@@ -115,7 +115,10 @@
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, c.width, c.height);
         ctx.drawImage(img, 0, 0, c.width, c.height);
-        const out = c.toDataURL('image/jpeg', quality);
+        // WebP when the browser can encode it (~25-35% smaller than JPEG, #823); JPEG otherwise
+        const fmt = (this.settings && this.settings.imgFormat) || 'webp';
+        let out = fmt === 'webp' ? c.toDataURL('image/webp', quality) : '';
+        if (!/^data:image\/webp/.test(out)) out = c.toDataURL('image/jpeg', quality);
         return out && out.length < dataUrl.length ? out : dataUrl;
     };
     const _origSingle = P.processSingleFile;
@@ -379,7 +382,13 @@
             whiteboard: () => this.openWhiteboard && this.openWhiteboard(),
             studio: () => this.toggleCodeStudio(true),
             scan: () => this.openScanner(),
-            voice: () => this.toggleRecording && this.toggleRecording()
+            voice: () => this.toggleRecording && this.toggleRecording(),
+            // Assistant / Siri / widget deep links (#966): ?action=search&q=… • ?action=ask&q=… (prefill only, never auto-send)
+            search: () => this.openGlobalSearch && this.openGlobalSearch(q.get('q') || ''),
+            ask: () => { const i = document.getElementById('user-input'); if (i) { i.value = q.get('q') || ''; i.dispatchEvent(new Event('input')); i.focus(); } },
+            agent: () => this.startVoiceAgent && this.startVoiceAgent(),
+            drive: () => this.openPerfHub && this.openPerfHub('modes', 'driving'),
+            perf: () => this.openPerfHub && this.openPerfHub(q.get('tab') || undefined)
         };
         if (map[action]) setTimeout(() => map[action](), 300);
         return { kind: 'action', action };
@@ -397,10 +406,7 @@
     // ------------------------------------------------------------------ SERVICE WORKER + UPDATES (#815, #861, #863, #864)
     P.registerServiceWorker = function () {
         if (!('serviceWorker' in navigator) || location.protocol === 'file:') return null;
-        const promptUpdate = (worker) => {
-            this._waitingWorker = worker;
-            this.showActionToast('✨ يتوفر إصدار جديد من OX-Alpha', 'تحديث الآن', () => this.applyUpdate(), 'info');
-        };
+        const promptUpdate = (worker) => { this._waitingWorker = worker; this.onUpdateReady(worker); };
         navigator.serviceWorker.register('/sw.js').then((reg) => {
             if (reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
             reg.addEventListener('updatefound', () => {
@@ -414,6 +420,8 @@
         navigator.serviceWorker.addEventListener('controllerchange', () => { if (this._updateRequested && !reloading) { reloading = true; location.reload(); } });
         return true;
     };
+    /** Policy hook (Sprint 12 overrides it: silent / deferred updates). */
+    P.onUpdateReady = function () { this.showActionToast('✨ يتوفر إصدار جديد من OX-Alpha', 'تحديث الآن', () => this.applyUpdate(), 'info'); };
     P.applyUpdate = function () {
         this._updateRequested = true;
         if (this._waitingWorker) this._waitingWorker.postMessage({ type: 'SKIP_WAITING' });

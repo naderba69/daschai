@@ -88,7 +88,7 @@
             if (f.type === 'select') return `<div class="ox-field">${label}<select id="${id}" class="form-input-box">${(f.options || []).map(o => `<option value="${esc(o.value)}" ${o.value === f.value ? 'selected' : ''}>${esc(o.label)}</option>`).join('')}</select></div>`;
             if (f.type === 'textarea') return `<div class="ox-field">${label}<textarea id="${id}" class="form-input-box" rows="${f.rows || 4}" placeholder="${esc(f.placeholder || '')}" dir="${f.dir || 'auto'}">${esc(f.value || '')}</textarea></div>`;
             if (f.type === 'checkbox') return `<label class="gh-check ox-field"><input type="checkbox" id="${id}" ${f.value ? 'checked' : ''}> ${esc(f.label)}</label>`;
-            return `<div class="ox-field">${label}<input id="${id}" class="form-input-box" value="${esc(f.value || '')}" placeholder="${esc(f.placeholder || '')}" dir="${f.dir || 'auto'}" autocomplete="off"></div>`;
+            return `<div class="ox-field">${label}<input id="${id}" ${f.type === 'password' ? 'type="password" inputmode="numeric"' : ''} class="form-input-box" value="${esc(f.value || '')}" placeholder="${esc(f.placeholder || '')}" dir="${f.dir || 'auto'}" autocomplete="off"></div>`;
         }).join('') + '<div id="ox-dialog-error" class="ox-dialog-error"></div>';
         document.getElementById('ox-dialog-buttons').innerHTML = buttons.map((b, i) => `<button class="${b.primary ? 'btn-new-thread' : 'sidebar-btn-util'} gh-btn ${b.danger ? 'danger' : ''}" onclick="app.resolveDialog(${i})">${esc(b.label)}</button>`).join('');
         modal.classList.add('active');

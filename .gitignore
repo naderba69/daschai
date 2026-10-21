@@ -46,3 +46,13 @@ Thumbs.db
 .env.production
 coverage/
 .tmp/
+
+# Sprint 12: precompressed build copies (node build.js --precompress)
+*.html.gz
+*.html.br
+*.mjs.gz
+*.mjs.br
+*.json.gz
+*.json.br
+sw.js.gz
+sw.js.br

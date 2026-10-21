@@ -69,7 +69,7 @@ try {
         fs.rmSync(outdir, { recursive: true, force: true });
         const result = await esbuild.build({
             absWorkingDir: __dirname,
-            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js' },
+            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js', perf: 'src/perf/perf.js' },
             bundle: true, splitting: true, format: 'esm', target: ['es2020'],
             outdir: 'assets/studio', outExtension: { '.js': '.mjs' },
             entryNames: '[name]-[hash]', chunkNames: 'chunk-[hash]',
@@ -96,9 +96,12 @@ try {
             }
             return seen;
         };
+        const NAMED = new Set(['studio', 'runner', 'ui', 'ai', 'github', 'media', 'team', 'perf']);
         for (const [file, meta] of Object.entries(outputs)) {
-            if (meta.entryPoint) chunks[path.basename(meta.entryPoint, '.js')] = file;
-            chunkFiles.push({ name: file, size: meta.bytes, gzip: require('zlib').gzipSync(fs.readFileSync(path.join(__dirname, file)), { level: 9 }).length });
+            // Only the named entry points go into OX_BUILD (dynamic-import chunks such as CodeMirror languages are reached via imports)
+            if (meta.entryPoint && NAMED.has(path.basename(meta.entryPoint, '.js')) && /src\/(studio|ui|ai|github|media|team|perf)\//.test(meta.entryPoint)) chunks[path.basename(meta.entryPoint, '.js')] = file;
+            const buf = fs.readFileSync(path.join(__dirname, file));
+            chunkFiles.push({ name: file, size: meta.bytes, gzip: require('zlib').gzipSync(buf, { level: 9 }).length, br: require('zlib').brotliCompressSync(buf).length });
         }
         chunks.shared = Array.from(staticDeps(chunks.studio)).sort();
         fs.writeFileSync(path.join(outdir, 'manifest.json'), JSON.stringify({ version: pkg.version, chunks, files: chunkFiles }, null, 2) + '\n');
@@ -106,12 +109,16 @@ try {
 
     // Build info for the in-app health panel / changelog (#845, #864)
     const kb = (s) => Buffer.byteLength(s, 'utf8');
+    // App icons (PNG) for Android/iOS installs + TWA (#941, #942) — generated once, committed
+    try { require('./tools/icons.js').ensureIcons(__dirname); } catch (e) { console.warn('⚠️  icons:', e.message); }
+    // Only entry chunks travel in index.html; the full per-file list lives in assets/studio/manifest.json (#821)
+    const entryFiles = chunks ? new Set(Object.entries(chunks).filter(([k]) => k !== 'shared').map(([, v]) => v)) : new Set();
     const buildInfo = {
         version: pkg.version,
         builtAt: new Date().toISOString(),
         minified: jsMinified,
         chunks,
-        modules: [{ name: 'app.js (core)', size: kb(coreJsContent) }, ...featureSources.map(({ name, src }) => ({ name, size: kb(src) })), { name: 'styles.css', size: kb(cssContent) }, { name: 'layout.html', size: kb(layoutContent) }, ...chunkFiles.map(f => ({ name: f.name, size: f.size, lazy: true }))]
+        modules: [{ name: 'app.js (core)', size: kb(coreJsContent) }, ...featureSources.map(({ name, src }) => ({ name, size: kb(src) })), { name: 'styles.css', size: kb(cssContent) }, { name: 'layout.html', size: kb(layoutContent) }, ...chunkFiles.filter(f => entryFiles.has(f.name)).map(f => ({ name: f.name, size: f.size, lazy: true }))]
     };
 
     // Basic minification for CSS (remove comments, extra whitespace) — safe
@@ -159,7 +166,9 @@ try {
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+    <meta name="mobile-web-app-capable" content="yes">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -218,6 +227,31 @@ ${appJsContent}
 
     fs.writeFileSync(path.join(__dirname, 'index.html'), fullHtml, 'utf8');
 
+    // version.json — read by the service worker for delta updates (#866), rollback (#865) and update channels (#869)
+    const zlib = require('zlib');
+    const hash8 = (buf) => ({ h: require('crypto').createHash('sha256').update(buf).digest('hex').slice(0, 12), gz: zlib.gzipSync(buf, { level: 6 }).length });
+    const channel = process.env.OX_CHANNEL || pkg.oxChannel || (/-(alpha|beta|rc)/i.test(pkg.version) ? 'beta' : 'stable');
+    const vfiles = {};
+    for (const f of ['index.html', 'sw.js', 'manifest.json']) if (fs.existsSync(path.join(__dirname, f))) vfiles['/' + f] = hash8(fs.readFileSync(path.join(__dirname, f)));
+    for (const f of chunkFiles) vfiles['/' + f.name] = hash8(fs.readFileSync(path.join(__dirname, f.name)));
+    for (const dir of ['workers', 'icons', 'widgets']) {
+        const d = path.join(__dirname, dir);
+        if (fs.existsSync(d)) for (const f of fs.readdirSync(d).sort()) vfiles[`/${dir}/${f}`] = hash8(fs.readFileSync(path.join(d, f)));
+    }
+    const versionJson = { version: pkg.version, channel, builtAt: buildInfo.builtAt, entries: chunks ? Object.fromEntries(Object.entries(chunks).filter(([k]) => k !== 'shared').map(([k, v]) => ['/' + v, k])) : {}, files: vfiles };
+    fs.writeFileSync(path.join(__dirname, 'version.json'), JSON.stringify(versionJson, null, 1) + '\n');
+
+    // Precompressed copies for static hosts (Termux / nginx gzip_static / brotli_static) — #824. Not committed (.gitignore).
+    if (process.argv.includes('--precompress')) {
+        const targets = ['index.html', 'sw.js', 'manifest.json', 'version.json', ...chunkFiles.map(f => f.name)];
+        for (const f of targets) {
+            const abs = path.join(__dirname, f), buf = fs.readFileSync(abs);
+            fs.writeFileSync(abs + '.gz', zlib.gzipSync(buf, { level: 9 }));
+            fs.writeFileSync(abs + '.br', zlib.brotliCompressSync(buf, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 11 } }));
+        }
+        console.log(`   🗜️  precompressed ${targets.length} files (.gz + .br)`);
+    }
+
     const duration = ((Date.now() - startTime) / 1000).toFixed(2);
     const sizeKB = (Buffer.byteLength(fullHtml, 'utf8') / 1024).toFixed(1);
     const lines = fullHtml.split('\n').length;
@@ -236,7 +270,8 @@ ${appJsContent}
 
     // What actually travels over the network: Vercel serves index.html compressed (gzip/brotli)
     const gzipKB = (require('zlib').gzipSync(fullHtml, { level: 9 }).length / 1024).toFixed(1);
-    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget 250 KB)`);
+    const brKB = (require('zlib').brotliCompressSync(fullHtml, { params: { [require('zlib').constants.BROTLI_PARAM_QUALITY]: 11 } }).length / 1024).toFixed(1);
+    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget 250 KB) • brotli: ${brKB} KB`);
     if (parseFloat(gzipKB) > 250) {
         console.warn(`⚠️  Warning: compressed bundle >250KB (${gzipKB}KB) — consider code splitting`);
     }

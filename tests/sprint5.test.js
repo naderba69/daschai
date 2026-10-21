@@ -367,7 +367,7 @@ let W = null;
     ok(router.modelFetches === 0, 'data saver skips the automatic model list refresh (#856)');
     const big = 'data:image/png;base64,' + 'B'.repeat(400000);
     const small = await app.compressImageDataUrl(big);
-    ok(small.startsWith('data:image/jpeg') && small.length < big.length, 'large images re-encoded as 1280px JPEG (#855)');
+    ok(/^data:image\/(jpeg|webp)/.test(small) && small.length < big.length, 'large images re-encoded as 1280px WebP/JPEG (#855, #823)');
     app.settings.dataSaver = 'off';
     w.localStorage.removeItem('ox_alpha_datausage_v1'); app._dataUsage = {};
     await w.fetch('https://api.github.com/gists/ffffffff');
