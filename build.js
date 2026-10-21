@@ -69,7 +69,7 @@ try {
         fs.rmSync(outdir, { recursive: true, force: true });
         const result = await esbuild.build({
             absWorkingDir: __dirname,
-            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js' },
+            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js' },
             bundle: true, splitting: true, format: 'esm', target: ['es2020'],
             outdir: 'assets/studio', outExtension: { '.js': '.mjs' },
             entryNames: '[name]-[hash]', chunkNames: 'chunk-[hash]',
