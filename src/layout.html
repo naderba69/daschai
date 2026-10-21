@@ -253,7 +253,12 @@
                                 <button class="action-btn" id="btn-attach-file" title="إرفاق ملفات متعددة أو مشروع ZIP أو صور" onclick="document.getElementById('universal-file-input').click()">
                                     <i class="fa-solid fa-paperclip"></i>
                                 </button>
-                                <input type="file" id="universal-file-input" multiple accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
+                                <input type="file" id="universal-file-input" multiple accept=".zip,application/zip,application/x-zip-compressed,.pdf,.docx,.xlsx,.xls,.pptx,image/*,audio/*,video/*,.txt,.md,.json,.yaml,.yml,.toml,.xml,.svg,.py,.js,.jsx,.ts,.tsx,.html,.css,.scss,.csv,.tsv,.vue,.svelte,.rs,.go,.php,.java,.kt,.swift,.rb,.c,.cpp,.h,.cs,.sql,.sh,.env,.ini,.ttf,.otf,.woff,.woff2,.geojson,.ipynb" style="display: none;">
+                                <!-- Sprint 4: media & files menu -->
+                                <button class="action-btn" id="btn-media-menu" title="المزيد: رفع مجلد، تسجيل صوت/شاشة/كاميرا، معرض الوسائط، تصدير" aria-label="قائمة الوسائط" aria-haspopup="menu" onclick="app.openMediaMenu(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <input type="file" id="folder-file-input" webkitdirectory directory multiple style="display: none;">
                                 <!-- Microphone STT -->
                                 <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN) — انقر مطولاً لتغيير اللغة" onclick="app.toggleRecording()" oncontextmenu="event.preventDefault(); app.toggleSTTLang();" aria-label="إملاء صوتي">
                                     <i class="fa-solid fa-microphone" aria-hidden="true"></i>
@@ -285,6 +290,8 @@
                 <div class="studio-topbar">
                     <div class="studio-tabs-row" id="studio-open-files-tabs"></div>
                     <div class="studio-actions-row">
+                        <button class="studio-action-btn" id="btn-studio-explorer" onclick="app.toggleStudioExplorer()" title="مستكشف الملفات (Ctrl+B)"><i class="fa-solid fa-folder-tree text-blue"></i><span>الملفات</span></button>
+                        <button class="studio-action-btn" onclick="app.openFileHistory()" title="سجل إصدارات الملف"><i class="fa-solid fa-clock-rotate-left text-purple"></i><span>السجل</span></button>
                         <button class="studio-action-btn" onclick="app.runStudioCode()"><i class="fa-solid fa-play text-emerald"></i><span>تشغيل</span></button>
                         <button class="studio-action-btn" onclick="app.openDiffViewerForActiveStudioFile()"><i class="fa-solid fa-code-compare text-amber"></i><span>Diff</span></button>
                         <button class="studio-action-btn" onclick="app.commitStudioFile()"><i class="fa-brands fa-github text-emerald"></i><span>Commit</span></button>
@@ -292,6 +299,7 @@
                     </div>
                 </div>
                 <div class="studio-editor-wrapper">
+                    <aside class="studio-explorer" id="studio-explorer" aria-label="مستكشف ملفات المشروع"></aside>
                     <textarea class="studio-code-canvas" id="studio-editor-textarea" spellcheck="false" oninput="app.handleStudioCodeChange(this.value)"></textarea>
                 </div>
                 <div class="studio-console" id="studio-terminal">⚡ طرفية المخرجات جاهزة للتشغيل</div>
@@ -622,6 +630,46 @@
         </div>
         <div class="modal-body-scrollable" id="gh-hub-body"></div>
     </div>
+</div>
+
+<!-- Sprint 4: generic wide panel (file tools, preview, image editor, recorder, gallery) -->
+<div class="modal-overlay-backdrop" id="ox-panel-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide ox-panel-box">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading" style="min-width:0">
+                    <i class="fa-solid fa-folder-open text-blue" id="ox-panel-icon"></i>
+                    <span id="ox-panel-title" class="truncate"></span>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
+                    <div id="ox-panel-actions" class="ox-panel-actions"></div>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div id="ox-panel-tabs" class="gh-tabs"></div>
+        </div>
+        <div class="modal-body-scrollable" id="ox-panel-body"></div>
+        <div class="modal-footer-bar" id="ox-panel-footer" style="display:none"></div>
+    </div>
+</div>
+
+<!-- Sprint 4: small dialog (replaces prompt()/confirm(), stacks above other modals) -->
+<div class="modal-overlay-backdrop ox-dialog-backdrop" id="ox-dialog" onclick="if(event.target===this)app.resolveDialog(null)">
+    <div class="modal-card-box ox-dialog-box" role="dialog" aria-modal="true" aria-labelledby="ox-dialog-title">
+        <div class="modal-header-bar"><div class="modal-title-heading"><span id="ox-dialog-title"></span></div></div>
+        <div id="ox-dialog-body" class="ox-dialog-body"></div>
+        <div class="modal-footer-bar" id="ox-dialog-buttons"></div>
+    </div>
+</div>
+
+<!-- Sprint 4: drag & drop overlay + upload progress -->
+<div id="drop-overlay" class="drop-overlay" aria-hidden="true">
+    <div class="drop-overlay-inner"><i class="fa-solid fa-cloud-arrow-up"></i><b>أفلت الملفات أو المجلدات هنا</b><span>ملفات، مجلدات كاملة، ZIP، PDF، Word، Excel، صور، صوت وفيديو</span></div>
+</div>
+<div id="upload-progress" class="upload-progress" role="status" aria-live="polite" style="display:none">
+    <div class="upload-progress-row"><span id="upload-progress-label"></span><button class="upload-progress-cancel" onclick="app.cancelUpload()" aria-label="إلغاء الرفع"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="upload-progress-track"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
 </div>
 
 <!-- 5. Termux Quick Command Helper Modal -->

@@ -30,7 +30,8 @@ try {
     const featuresContent = featureFiles
         .map(f => `\n/* ---- feature: ${f} ---- */\n` + fs.readFileSync(path.join(featuresDir, f), 'utf8'))
         .join('\n');
-    const appJsContent = coreJsContent + '\n' + featuresContent;
+    // A literal </script> inside JS (e.g. HTML file templates) would end the inline <script> tag early
+    const appJsContent = (coreJsContent + '\n' + featuresContent).replace(/<\/script/gi, '<\\/script');
 
     // Basic minification for CSS (remove comments, extra whitespace) — safe
     const minifyCSS = (css) => css
@@ -73,7 +74,7 @@ try {
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <!-- CSP: allow required CDNs only -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org; worker-src blob:; frame-src blob:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org; worker-src blob:; frame-src blob:;">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">

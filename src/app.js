@@ -1816,13 +1816,14 @@ class OXAlphaApp {
                     if (m.attachments && Array.isArray(m.attachments)) {
                         userContent += this.buildAttachmentContext(m, { query: latestUserQuery, assistantMsg, isLatest: m === latestUserMsg, autoContinuePass });
                     }
-                    const imageAtt = m.attachments?.find(a => a.isImage && a.base64);
-                    if (imageAtt) {
+                    // Send every attached image (previously only the first one reached the model)
+                    const imageAtts = (m.attachments || []).filter(a => a.isImage && a.base64).slice(0, 8);
+                    if (imageAtts.length) {
                         messagesPayload.push({
                             role: 'user',
                             content: [
                                 { type: 'text', text: userContent },
-                                { type: 'image_url', image_url: { url: imageAtt.base64 } }
+                                ...imageAtts.map(a => ({ type: 'image_url', image_url: { url: a.base64 } }))
                             ]
                         });
                     } else {

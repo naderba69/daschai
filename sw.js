@@ -1,5 +1,5 @@
 // Minimal Service Worker for offline shell caching (OX-Alpha Pro v2)
-const CACHE = 'ox-alpha-v2.3';
+const CACHE = 'ox-alpha-v2.4';
 const SHELL = ['/', '/index.html', '/manifest.json'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(()=> self.skipWaiting()));
