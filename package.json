@@ -1,6 +1,6 @@
 {
   "name": "ox-alpha-workbench-pro",
-  "version": "2.6.0",
+  "version": "2.7.0",
   "description": "منظومة هندسة البرمجيات بالذكاء الاصطناعي — Gemini AI Autonomous Engineering Copilot",
   "type": "commonjs",
   "private": true,
@@ -29,7 +29,7 @@
     "audit": "node --check src/app.js && for f in src/features/*.js workers/*.js sw.js; do node --check \"$f\" || exit 1; done && echo '✅ JS syntax OK'",
     "lint": "npx eslint src/ --ext .js || echo '⚠️ eslint not installed — run npm install'",
     "format": "npx prettier --write \"src/**/*.{js,html,css}\" || echo '⚠️ prettier not installed'",
-    "test": "node build.js --minify && node tests/smoke.test.js && node tests/sprint2.test.js && node tests/sprint3.test.js && node tests/sprint4.test.js && node tests/sprint5.test.js && node tests/sprint6.test.js"
+    "test": "node build.js --minify && node tests/smoke.test.js && node tests/sprint2.test.js && node tests/sprint3.test.js && node tests/sprint4.test.js && node tests/sprint5.test.js && node tests/sprint6.test.js && node tests/sprint7.test.js"
   },
   "devDependencies": {
     "@codemirror/autocomplete": "^6.20.4",

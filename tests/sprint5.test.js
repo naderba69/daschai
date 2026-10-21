@@ -259,7 +259,7 @@ let W = null;
     // ------------------------------------------------------------------
     section('Conversation modes (#802-#805, #1005-#1007, #1009)');
     app.activeSessionId = s1.id;
-    ok(Object.keys(app.CHAT_MODES).length === 8, '8 conversation modes');
+    ok(Object.keys(app.CHAT_MODES).length === 12, '8 conversation modes + 4 from Sprint 7 (learn/quiz/game/story)');
     app.setChatMode('review');
     ok(session().mode === 'review' && $('session-mode-badge').style.display !== 'none' && $('session-mode-badge').textContent.includes('مراجعة'), 'mode stored per session + badge');
     ok($('btn-chat-mode').classList.contains('active'), 'mode button highlighted');
@@ -273,7 +273,7 @@ let W = null;
     ok(!session().mode && $('session-mode-badge').style.display === 'none', 'back to normal mode');
     ok(app.decorateSystemPrompt('base', { mode: 'legacy' }).includes('COBOL'), 'legacy translation mode prompt');
     app.openModeMenu($('btn-chat-mode'));
-    ok(d.querySelectorAll('.fx-menu [data-mi]').length === 11, 'mode menu: normal + 8 modes + presentation + focus');
+    ok(d.querySelectorAll('.fx-menu [data-mi]').length === 15, 'mode menu: normal + 12 modes + presentation + focus');
     app.hideMenu();
 
     // ------------------------------------------------------------------

@@ -383,7 +383,7 @@
 
     // ------------------------------------------------------------------ REPORTS (#919, #920)
     P.buildActivityReport = function (period = 'day', now = Date.now()) {
-        const days = period === 'week' ? 7 : 1;
+        const days = period === 'month' ? 30 : period === 'week' ? 7 : 1;
         const stats = this.dailyStats(days, now);
         const sum = (k) => stats.reduce((n, d) => n + d[k], 0);
         const from = stats[0].from;
@@ -392,7 +392,7 @@
         const doneTasks = (this.tasks || []).filter(t => t.done && t.done >= from);
         const touched = Array.from(new Set((this.activityLog || []).filter(e => e.t >= from).map(e => e.path)));
         const topics = this.topicStats(days, now).tech.slice(0, 5).map(([t]) => t);
-        const title = period === 'week' ? `📅 التقرير الأسبوعي (${new Date(from).toLocaleDateString('ar')} — ${new Date(now).toLocaleDateString('ar')})` : `📆 التقرير اليومي — ${new Date(now).toLocaleDateString('ar', { weekday: 'long', day: 'numeric', month: 'long' })}`;
+        const title = period === 'month' ? `🗓️ التقرير الشهري (${new Date(from).toLocaleDateString('ar')} — ${new Date(now).toLocaleDateString('ar')})` : period === 'week' ? `📅 التقرير الأسبوعي (${new Date(from).toLocaleDateString('ar')} — ${new Date(now).toLocaleDateString('ar')})` : `📆 التقرير اليومي — ${new Date(now).toLocaleDateString('ar', { weekday: 'long', day: 'numeric', month: 'long' })}`;
         return [
             title,
             `⏱️ وقت العمل: ${mins(sum('active'))} • 💬 رسائل: ${sum('sent')} • 🧩 كتل كود: ${sum('code')} • ✏️ تعديلات ملفات: ${sum('edits')}`,
@@ -411,7 +411,7 @@
             const model = (this.routeForCategory && this.routeForCategory('chat')) || this.settings.selectedModel;
             const r = await this.streamOpenRouter({
                 model, maxTokens: 700,
-                messages: [{ role: 'user', content: `حوّل بيانات النشاط هذه إلى ملخص ${period === 'week' ? 'أسبوعي' : 'يومي'} محفز وموجز بالعربية (Markdown): أبرز الإنجازات، ملاحظة عن الإنتاجية، و3 اقتراحات عملية للفترة القادمة.\n\n${this.buildActivityReport(period)}` }],
+                messages: [{ role: 'user', content: `حوّل بيانات النشاط هذه إلى ملخص ${period === 'month' ? 'شهري' : period === 'week' ? 'أسبوعي' : 'يومي'} محفز وموجز بالعربية (Markdown): أبرز الإنجازات، ملاحظة عن الإنتاجية، و3 اقتراحات عملية للفترة القادمة.\n\n${this.buildActivityReport(period)}` }],
                 onDelta: (c) => { if (box) box.innerHTML = this.renderMarkdownSafe(c); }
             });
             if (box) box.innerHTML = this.renderMarkdownSafe(r.content);
@@ -506,7 +506,7 @@
             const p = this._insPeriod || 'day';
             const text = this.buildActivityReport(p);
             this._insReportText = text;
-            root.innerHTML = `<div class="gh-toolbar"><button class="fx-link ${p === 'day' ? 'active' : ''}" onclick="app._insPeriod='day'; app.renderInsights()">يومي</button><button class="fx-link ${p === 'week' ? 'active' : ''}" onclick="app._insPeriod='week'; app.renderInsights()">أسبوعي</button></div>
+            root.innerHTML = `<div class="gh-toolbar"><button class="fx-link ${p === 'day' ? 'active' : ''}" onclick="app._insPeriod='day'; app.renderInsights()">يومي</button><button class="fx-link ${p === 'week' ? 'active' : ''}" onclick="app._insPeriod='week'; app.renderInsights()">أسبوعي</button><button class="fx-link ${p === 'month' ? 'active' : ''}" onclick="app._insPeriod='month'; app.renderInsights()">شهري</button></div>
                 <pre class="ins-report" dir="auto">${esc(text)}</pre>
                 <div class="gh-toolbar"><button class="sidebar-btn-util gh-btn" onclick="app.copyText(app._insReportText, 'تم نسخ التقرير')"><i class="fa-solid fa-copy"></i> نسخ</button>
                     <button class="sidebar-btn-util gh-btn" onclick="app.reportSummaryAI('${p}')"><i class="fa-solid fa-wand-magic-sparkles"></i> ملخص بالذكاء</button>

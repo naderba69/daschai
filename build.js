@@ -69,11 +69,22 @@ try {
         fs.rmSync(outdir, { recursive: true, force: true });
         const result = await esbuild.build({
             absWorkingDir: __dirname,
-            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js' },
+            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js' },
             bundle: true, splitting: true, format: 'esm', target: ['es2020'],
             outdir: 'assets/studio', outExtension: { '.js': '.mjs' },
             entryNames: '[name]-[hash]', chunkNames: 'chunk-[hash]',
-            minify: useMinify, legalComments: 'none', charset: 'utf8', metafile: true, logLevel: 'warning'
+            minify: useMinify, legalComments: 'none', charset: 'utf8', metafile: true, logLevel: 'warning',
+            // Lazy-chunk stylesheets (src/ui/ui.css) are imported as minified text and injected on install.
+            plugins: [{
+                name: 'css-text',
+                setup(b) {
+                    b.onLoad({ filter: /\.css$/ }, async (args) => {
+                        const css = fs.readFileSync(args.path, 'utf8');
+                        const out = await esbuild.transform(css, { loader: 'css', minify: useMinify, legalComments: 'none' });
+                        return { contents: out.code, loader: 'text' };
+                    });
+                }
+            }]
         });
         const outputs = result.metafile.outputs;
         chunks = { shared: [] };

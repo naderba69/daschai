@@ -858,7 +858,17 @@
         ctx.strokeStyle = it.color; ctx.fillStyle = it.color; ctx.lineWidth = it.size; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
         if (it.tool === 'marker') { ctx.globalAlpha = 0.35; ctx.lineWidth = it.size * 3; }
         if (it.tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = it.size * 4; }
-        if (it.points) {
+        if (it.points && it.pressure && it.points.length > 1) {
+            // Stylus pressure (#357): per-segment width from the 3rd point component
+            const base = ctx.lineWidth;
+            for (let i = 1; i < it.points.length; i++) {
+                const a = it.points[i - 1], b = it.points[i];
+                ctx.beginPath();
+                ctx.lineWidth = Math.max(0.5, base * (0.35 + 1.3 * (((a[2] == null ? 0.5 : a[2]) + (b[2] == null ? 0.5 : b[2])) / 2)));
+                ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+                ctx.stroke();
+            }
+        } else if (it.points) {
             ctx.beginPath();
             it.points.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
             if (it.points.length === 1) ctx.lineTo(it.points[0][0] + 0.1, it.points[0][1]);
@@ -921,12 +931,13 @@
                 return;
             }
             c.setPointerCapture?.(e.pointerId);
-            cur = ['pen', 'marker', 'eraser'].includes(wb.tool) ? { tool: wb.tool, color: wb.color, size: wb.size, points: [[x, y]] } : { tool: wb.tool, color: wb.color, size: wb.size, x1: x, y1: y, x2: x, y2: y };
+            const pen = e.pointerType === 'pen' && wb.tool === 'pen';
+            cur = ['pen', 'marker', 'eraser'].includes(wb.tool) ? { tool: wb.tool, color: wb.color, size: wb.size, points: [pen ? [x, y, +(e.pressure || 0.5).toFixed(2)] : [x, y]], ...(pen ? { pressure: true } : {}) } : { tool: wb.tool, color: wb.color, size: wb.size, x1: x, y1: y, x2: x, y2: y };
         });
         c.addEventListener('pointermove', (e) => {
             if (!cur) return;
             const [x, y] = pt(e);
-            if (cur.points) { const l = cur.points[cur.points.length - 1]; if (Math.abs(l[0] - x) + Math.abs(l[1] - y) >= 2) cur.points.push([x, y]); }
+            if (cur.points) { const l = cur.points[cur.points.length - 1]; if (Math.abs(l[0] - x) + Math.abs(l[1] - y) >= 2) cur.points.push(cur.pressure ? [x, y, +(e.pressure || 0.5).toFixed(2)] : [x, y]); }
             else { cur.x2 = x; cur.y2 = y; }
             this.wbRender(cur);
         });
