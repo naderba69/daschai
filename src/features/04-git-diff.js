@@ -286,7 +286,8 @@
             throw e;
         }
         const ct = res.headers && res.headers.get('content-type') || '';
-        return ct.includes('json') ? res.json() : res.text();
+        const text = await res.text();
+        return ct.includes('json') ? (text ? JSON.parse(text) : null) : text;
     };
 
     const baseKey = (o, r, b, path) => `${o}/${r}@${b}:${String(path).replace(/^[/\\]+/, '')}`;

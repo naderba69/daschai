@@ -28,3 +28,4 @@ for (const f of process.argv.slice(2)) {
   }});
 }
 console.log(bad ? `❌ ${bad}` : '✅ no undefined refs');
+process.exitCode = bad ? 1 : 0;

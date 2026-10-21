@@ -3,7 +3,7 @@
 
 > **ملاحظة:** أفكار الأمان (80 فكرة) مستبعدة حسب طلبك — مركزة هنا فقط للعلم، لن تنفذ.
 
-**التقدم:** ✅ = منفذ (الدفعة 1 — v2.1.0، الدفعة 2 — v2.2.0، الدفعة 3 — v2.3.0، الدفعة 4 — v2.4.0، الدفعة 5 — v2.5.0، الدفعة 6 — v2.6.0، الدفعة 7 — v2.7.0، الدفعة 8 — v2.8.0) — 557 فكرة منفذة
+**التقدم:** ✅ = منفذ (الدفعة 1 — v2.1.0، الدفعة 2 — v2.2.0، الدفعة 3 — v2.3.0، الدفعة 4 — v2.4.0، الدفعة 5 — v2.5.0، الدفعة 6 — v2.6.0، الدفعة 7 — v2.7.0، الدفعة 8 — v2.8.0، الدفعة 9 — v2.9.0) — 648 فكرة منفذة
 
 **العدد الإجمالي:** 1010 فكرة موثقة
 
@@ -455,115 +455,115 @@
 419. ✅ الموافقة على PR Approve
 420. ✅ طلب تغييرات Request Changes
 421. ✅ حل تعارضات Merge بصري
-422. Cherry-pick بصري
-423. Rebase بصري
+422. ✅ Cherry-pick بصري
+423. ✅ Rebase بصري
 424. ✅ Squash Commits
-425. إعادة ترتيب Commits
-426. تعديل رسالة Commit
-427. التراجع عن Commit
-428. عرض تاريخ Commits كـ Timeline
-429. Blame من عدّل كل سطر
-430. Graph الشبكة Network Graph
-431. بحث في كود كل مستودعاتك
-432. بحث في Issues
-433. بحث في PRs
+425. ✅ إعادة ترتيب Commits
+426. ✅ تعديل رسالة Commit
+427. ✅ التراجع عن Commit
+428. ✅ عرض تاريخ Commits كـ Timeline
+429. ✅ Blame من عدّل كل سطر
+430. ✅ Graph الشبكة Network Graph
+431. ✅ بحث في كود كل مستودعاتك
+432. ✅ بحث في Issues
+433. ✅ بحث في PRs
 434. ✅ إنشاء Issue
 435. ✅ إغلاق Issue
-436. ربط Issue بـ PR
-437. Labels و Milestones
-438. إسناد Assignees
-439. عرض Projects Board
-440. ربط Commits بـ Issues
+436. ✅ ربط Issue بـ PR
+437. ✅ Labels و Milestones
+438. ✅ إسناد Assignees
+439. ✅ عرض Projects Board
+440. ✅ ربط Commits بـ Issues
 441. ✅ عرض Actions Workflows
 442. ✅ تشغيل Workflow يدوياً
 443. ✅ إعادة تشغيل فاشل
-444. عرض Logs حياً
-445. تحميل Artifacts
-446. عرض Runners
-447. إدارة Secrets
-448. إدارة Environments
-449. إدارة Variables
-450. عرض Usage
+444. ✅ عرض Logs حياً
+445. ✅ تحميل Artifacts
+446. ✅ عرض Runners
+447. ✅ إدارة Secrets
+448. ✅ إدارة Environments
+449. ✅ إدارة Variables
+450. ✅ عرض Usage
 451. ✅ عرض Releases
 452. ✅ إنشاء Release جديد
-453. رفع Assets
+453. ✅ رفع Assets
 454. ✅ توليد Release Notes تلقائي
-455. عرض Tags
-456. إنشاء Tag
+455. ✅ عرض Tags
+456. ✅ إنشاء Tag
 457. ✅ عرض Contributors
-458. عرض Traffic و Clones
-459. عرض Dependency Graph
+458. ✅ عرض Traffic و Clones
+459. ✅ عرض Dependency Graph
 460. Dependabot Alerts
 461. ✅ إحصائيات المستودع لغات ونشاط
-462. رسم بياني Commits
-463. رسم بياني المساهمين
-464. أكثر الملفات تعديلاً
+462. ✅ رسم بياني Commits
+463. ✅ رسم بياني المساهمين
+464. ✅ أكثر الملفات تعديلاً
 465. ✅ أكثر الأوقات نشاطاً
-466. مقارنة فترتين
-467. تصدير الإحصائيات
-468. مشاركة الإحصائيات
-469. تقرير أسبوعي
-470. تنبؤ النشاط
-471. أرشفة مستودع
-472. حذف مستودع
-473. نقل مستودع
-474. تكرار Fork
-475. نجمة Star وإلغاء
-476. متابعة Watch
-477. إنشاء Gist
-478. إدارة Gists
-479. تحويل كود إلى Gist
+466. ✅ مقارنة فترتين
+467. ✅ تصدير الإحصائيات
+468. ✅ مشاركة الإحصائيات
+469. ✅ تقرير أسبوعي
+470. ✅ تنبؤ النشاط
+471. ✅ أرشفة مستودع
+472. ✅ حذف مستودع
+473. ✅ نقل مستودع
+474. ✅ تكرار Fork
+475. ✅ نجمة Star وإلغاء
+476. ✅ متابعة Watch
+477. ✅ إنشاء Gist
+478. ✅ إدارة Gists
+479. ✅ تحويل كود إلى Gist
 480. ✅ استيراد من Gist
-481. إدارة Organizations
-482. عرض Teams
-483. إدارة Members
-484. إدارة Roles
-485. إدارة Billing
-486. عرض Audit Log
-487. إدارة Webhooks
-488. إضافة Deploy Keys
-489. إدارة Apps
-490. إعداد Codespaces
-491. استنساخ Clone برابط
-492. تحميل ZIP
-493. فتح في Codespaces
-494. فتح في VS Code
-495. نسخ Clone Command
-496. عرض Clone Options SSH/HTTPS/GH CLI
-497. تعليمات Clone للمبتدئين
-498. فحص اتصال Git
-499. اختبار SSH Key
-500. توليد SSH Key جديد
+481. ✅ إدارة Organizations
+482. ✅ عرض Teams
+483. ✅ إدارة Members
+484. ✅ إدارة Roles
+485. ✅ إدارة Billing
+486. ✅ عرض Audit Log
+487. ✅ إدارة Webhooks
+488. ✅ إضافة Deploy Keys
+489. ✅ إدارة Apps
+490. ✅ إعداد Codespaces
+491. ✅ استنساخ Clone برابط
+492. ✅ تحميل ZIP
+493. ✅ فتح في Codespaces
+494. ✅ فتح في VS Code
+495. ✅ نسخ Clone Command
+496. ✅ عرض Clone Options SSH/HTTPS/GH CLI
+497. ✅ تعليمات Clone للمبتدئين
+498. ✅ فحص اتصال Git
+499. ✅ اختبار SSH Key
+500. ✅ توليد SSH Key جديد
 501. ✅ توليد .gitignore ذكي
-502. توليد LICENSE
-503. توليد CONTRIBUTING.md
-504. توليد CODE_OF_CONDUCT
-505. توليد FUNDING.yml
-506. توليد Issue Templates
-507. توليد PR Template
-508. إعداد Branch Protection
-509. إعداد CODEOWNERS
-510. تفعيل Discussions
-511. مقارنة مستودعين
-512. نقل ملفات بين مستودعات
-513. نسخ مجلد لمستودع آخر
-514. مزامنة Fork مع الأصل
-515. تحديث Fork
-516. إنشاء Mirror
-517. استيراد من GitLab/Bitbucket
-518. تصدير لمستودع جديد
-519. تحويل مستودع عام/خاص
-520. تغيير اسم المستودع
+502. ✅ توليد LICENSE
+503. ✅ توليد CONTRIBUTING.md
+504. ✅ توليد CODE_OF_CONDUCT
+505. ✅ توليد FUNDING.yml
+506. ✅ توليد Issue Templates
+507. ✅ توليد PR Template
+508. ✅ إعداد Branch Protection
+509. ✅ إعداد CODEOWNERS
+510. ✅ تفعيل Discussions
+511. ✅ مقارنة مستودعين
+512. ✅ نقل ملفات بين مستودعات
+513. ✅ نسخ مجلد لمستودع آخر
+514. ✅ مزامنة Fork مع الأصل
+515. ✅ تحديث Fork
+516. ✅ إنشاء Mirror
+517. ✅ استيراد من GitLab/Bitbucket
+518. ✅ تصدير لمستودع جديد
+519. ✅ تحويل مستودع عام/خاص
+520. ✅ تغيير اسم المستودع
 521. ✅ عرض GitHub Pages وحالتها
 522. ✅ نشر Pages
 523. ✅ إنشاء Pages من Branch
-524. ربط Domain مخصص
-525. عرض Wikis
-526. إنشاء Wiki Page
-527. تحرير Wiki
-528. عرض Sponsors
-529. إنشاء Sponsorship
-530. عرض Insights كاملة
+524. ✅ ربط Domain مخصص
+525. ✅ عرض Wikis
+526. ✅ إنشاء Wiki Page
+527. ✅ تحرير Wiki
+528. ✅ عرض Sponsors
+529. ✅ إنشاء Sponsorship
+530. ✅ عرض Insights كاملة
 
 ## الملفات
 

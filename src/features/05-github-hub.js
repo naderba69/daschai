@@ -118,7 +118,7 @@
         const { owner, repo, branch } = this.ghRepo();
         document.getElementById('gh-hub-repo').textContent = `${owner}/${repo}@${branch}`;
         modal.classList.add('active');
-        this.switchGhTab(tab || this.ghTab || 'prs');
+        return this.switchGhTab(tab || this.ghTab || 'prs');
     };
     P.openBranchManagerModal = function () { this.openGitHubHub('branches'); };
 

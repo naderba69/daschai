@@ -223,7 +223,7 @@ async function github(url, opts = {}) {
     section('GitHub Hub — shell');
     app.openGitHubHub('prs');
     await wait(30);
-    ok($('gh-hub-modal').classList.contains('active') && d.querySelectorAll('.gh-tab').length === 7, 'hub opens with 7 tabs');
+    ok($('gh-hub-modal').classList.contains('active') && d.querySelectorAll('.gh-tab').length === 18, 'hub opens with 18 tabs (7 + 11 GitHub Pro)');
     ok($('gh-hub-repo').textContent === 'o/r@main', 'repo label');
     ok(/4990\/5000/.test($('gh-hub-rate').textContent), 'rate limit shown');
     const lastReq = repo.log[repo.log.length - 1];
