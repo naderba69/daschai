@@ -54,7 +54,7 @@ export function installSpace(P) {
         const root = document.createElement('div');
         root.id = 'ix-space';
         root.className = 'ix-space' + (stereo ? ' ix-stereo' : '');
-        root.innerHTML = `<div class="ix-sp-eye">${scene()}</div>${stereo ? `<div class="ix-sp-eye">${scene()}</div>` : ''}<div class="ix-sp-ui"><button data-act="gyro">🧭 الجيروسكوب</button><button data-act="stereo">👓 ${stereo ? 'عرض عادي' : 'نظارة'}</button><button data-act="close">✕</button></div>`;
+        root.innerHTML = `<div class="ix-sp-eye">${scene()}</div>${stereo ? `<div class="ix-sp-eye">${scene()}</div>` : ''}<div class="ix-sp-ui"><button data-act="gyro"><i class="fa-solid fa-compass" aria-hidden="true"></i> الجيروسكوب</button><button data-act="stereo"><i class="fa-solid fa-glasses" aria-hidden="true"></i> ${stereo ? 'عرض عادي' : 'نظارة'}</button><button data-act="close" aria-label="إغلاق"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button></div>`;
         document.body.appendChild(root);
         const st = this._ixSpace = { ry: 0, rx: 0, base: null, stereo };
         const apply = () => root.querySelectorAll('.ix-sp-scene').forEach((s, i) => { s.style.transform = `translateZ(600px) rotateX(${st.rx}deg) rotateY(${st.ry + (stereo ? (i ? -1.2 : 1.2) : 0)}deg)`; });

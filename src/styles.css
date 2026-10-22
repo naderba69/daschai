@@ -681,15 +681,6 @@ html, body {
     margin-bottom: 4px;
 }
 
-.markdown-body blockquote {
-    border-left: none;
-    margin-bottom: 12px;
-}
-
-.markdown-body[dir="ltr"] blockquote, [dir="ltr"] .markdown-body blockquote {
-    border-right: none;
-}
-
 .markdown-body table {
     margin-bottom: 14px;
     font-size: 0.86rem;
@@ -3003,8 +2994,9 @@ kbd { font-family: var(--font-mono); font-size: 0.72em; padding: 1px 5px; border
 .markdown-body h1 { font-size: 1.35em; } .markdown-body h2 { font-size: 1.18em; } .markdown-body h3 { font-size: 1.05em; }
 .markdown-body a { color: var(--primary); text-decoration: underline; text-decoration-color: rgba(91, 155, 255, 0.35); text-underline-offset: 3px; }
 .markdown-body code:not(pre code) { background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-main); padding: 1px 5px; font-size: 0.84em; }
-.markdown-body blockquote { background: transparent; border-right: 2px solid var(--border-light); border-radius: 0; padding: 2px 14px; color: var(--text-muted); }
-.markdown-body[dir="ltr"] blockquote, [dir="ltr"] .markdown-body blockquote { border-left: 2px solid var(--border-light); }
+/* callout-style quote: start-side accent bar follows the text direction (RTL/LTR) via logical props */
+.markdown-body blockquote { margin: 0 0 12px; border: 0; border-inline-start: 3px solid var(--primary); background: var(--accent-soft); border-radius: 6px; padding: 8px 14px; color: var(--text-soft); }
+.markdown-body blockquote > :last-child { margin-bottom: 0; }
 .markdown-body table { border-collapse: separate; border-spacing: 0; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); width: max-content; max-width: 100%; }
 .markdown-body th, .markdown-body td { border: 0; border-bottom: 1px solid var(--border-subtle); padding: 8px 14px; }
 .markdown-body tr:last-child td { border-bottom: 0; }

@@ -1299,7 +1299,7 @@ class OXAlphaApp {
             <div class="attachment-file-chip">
                 <i class="${att.isGitHubProject ? 'fa-brands fa-github text-emerald' : att.isZipProject ? 'fa-solid fa-file-zipper text-amber' : att.isImage ? 'fa-solid fa-image text-purple' : 'fa-solid fa-file-code text-blue'}"></i>
                 <span class="truncate" style="max-width: 150px;">${this.escapeHTML(att.name)}</span>
-                <button class="attachment-remove-btn" onclick="app.removeAttachment(${idx})" title="حذف هذا المرفق">✖</button>
+                <button class="attachment-remove-btn" onclick="app.removeAttachment(${idx})" title="حذف هذا المرفق" aria-label="حذف هذا المرفق"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
             </div>
         `).join('');
     }

@@ -878,7 +878,7 @@ export function install(app) {
             ov = document.createElement('div');
             ov.id = 'ox-drive'; ov.className = 'ox-drive';
             ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'وضع القيادة');
-            ov.innerHTML = `<div class="drive-top"><b><i class="fa-solid fa-car"></i> وضع القيادة</b><button class="drive-exit" aria-label="خروج">خروج ✕</button></div>
+            ov.innerHTML = `<div class="drive-top"><b><i class="fa-solid fa-car"></i> وضع القيادة</b><button class="drive-exit" aria-label="خروج"><i class="fa-solid fa-xmark" aria-hidden="true"></i> خروج</button></div>
                 <div class="drive-status" id="drive-status" aria-live="assertive">اضغط الزر الكبير وتحدّث</div>
                 <button class="drive-mic" id="drive-mic" aria-label="تحدث"><i class="fa-solid fa-microphone"></i></button>
                 <div class="drive-reply" id="drive-reply" dir="auto"></div>

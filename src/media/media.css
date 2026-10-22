@@ -61,6 +61,7 @@
 .fmx-kv { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr); gap: 4px 12px; font-size: 0.8rem; overflow-wrap: anywhere; }
 .fmx-tag, .fmx-count-badge { display: inline-block; padding: 1px 7px; border-radius: 99px; background: rgba(56,189,248,.14); color: var(--primary); font-size: 0.7rem; margin: 1px; }
 .fmx-star, .fmx-stars button { background: none; border: 0; color: var(--warning); cursor: pointer; font-size: 1rem; padding: 0 1px; }
+.fmx-star:not(.on) { color: var(--text-dim); } .fmx-star:hover { color: var(--warning); }
 .fmx-toggle { cursor: pointer; }
 .fmx-list .gh-item, .fmx-pl-list .gh-item { align-items: center; }
 .fmx-kanban { display: flex; gap: 10px; overflow-x: auto; align-items: flex-start; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }

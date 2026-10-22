@@ -122,7 +122,7 @@ export function installModes(P) {
         let ov = document.getElementById('pfx-drive');
         if (!ov) {
             ov = document.createElement('div'); ov.id = 'pfx-drive'; ov.className = 'pfx-drive'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'وضع القيادة');
-            ov.innerHTML = `<div class="pfx-drive-top"><b><i class="fa-solid fa-car"></i> وضع القيادة</b><button onclick="app.pfDriveStop()" aria-label="خروج">خروج ✕</button></div><div id="pfx-drive-status" class="pfx-drive-status" aria-live="assertive"></div><button class="pfx-drive-big" onclick="app.pfDriveTap()" aria-label="إيقاف / تحدث"><i class="fa-solid fa-microphone"></i></button><div id="pfx-drive-reply" class="pfx-drive-reply" dir="auto"></div>`;
+            ov.innerHTML = `<div class="pfx-drive-top"><b><i class="fa-solid fa-car"></i> وضع القيادة</b><button onclick="app.pfDriveStop()" aria-label="خروج"><i class="fa-solid fa-xmark" aria-hidden="true"></i> خروج</button></div><div id="pfx-drive-status" class="pfx-drive-status" aria-live="assertive"></div><button class="pfx-drive-big" onclick="app.pfDriveTap()" aria-label="إيقاف / تحدث"><i class="fa-solid fa-microphone"></i></button><div id="pfx-drive-reply" class="pfx-drive-reply" dir="auto"></div>`;
             document.body.appendChild(ov);
         }
         if (status != null) { const s = document.getElementById('pfx-drive-status'); if (s) s.textContent = status; }

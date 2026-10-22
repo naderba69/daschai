@@ -1,24 +1,24 @@
 {
  "version": "2.16.0",
  "channel": "stable",
- "builtAt": "2026-10-22T20:18:16.950Z",
+ "builtAt": "2026-10-22T20:28:31.576Z",
  "entries": {
-  "/assets/studio/dev-OILRFCD3.mjs": "dev",
-  "/assets/studio/integ-WWRV7DE5.mjs": "integ",
-  "/assets/studio/widgets-ND27DT5U.mjs": "widgets",
-  "/assets/studio/studio-JMOIRDYP.mjs": "studio",
+  "/assets/studio/dev-NHDBESJJ.mjs": "dev",
+  "/assets/studio/integ-DWWQFWUB.mjs": "integ",
+  "/assets/studio/widgets-WWRMEYPX.mjs": "widgets",
+  "/assets/studio/studio-RZQMH4WL.mjs": "studio",
   "/assets/studio/runner-IFD6F6TL.mjs": "runner",
-  "/assets/studio/ui-CHOCEMEU.mjs": "ui",
+  "/assets/studio/ui-RQZHYNID.mjs": "ui",
   "/assets/studio/ai-SD3TAAS5.mjs": "ai",
   "/assets/studio/github-BBF4U7B7.mjs": "github",
-  "/assets/studio/media-V5CQJDNX.mjs": "media",
-  "/assets/studio/team-6VK24V2I.mjs": "team",
-  "/assets/studio/perf-Z7UZEOYO.mjs": "perf"
+  "/assets/studio/media-ZYGS5627.mjs": "media",
+  "/assets/studio/team-7KRU6NRF.mjs": "team",
+  "/assets/studio/perf-3BAKUNNG.mjs": "perf"
  },
  "files": {
   "/index.html": {
-   "h": "25042b192d45",
-   "gz": 256801
+   "h": "54017c303035",
+   "gz": 256810
   },
   "/sw.js": {
    "h": "9ed92acb724b",
@@ -516,25 +516,25 @@
    "h": "896230b3bf01",
    "gz": 11648
   },
-  "/assets/studio/dev-OILRFCD3.mjs": {
-   "h": "e5825aeede2e",
-   "gz": 89084
+  "/assets/studio/dev-NHDBESJJ.mjs": {
+   "h": "066b0e3bab21",
+   "gz": 89085
   },
-  "/assets/studio/integ-WWRV7DE5.mjs": {
-   "h": "2a2cf139340c",
-   "gz": 106665
+  "/assets/studio/integ-DWWQFWUB.mjs": {
+   "h": "9272bc9c8afd",
+   "gz": 106703
   },
-  "/assets/studio/chunk-P7JJYJOH.mjs": {
-   "h": "fbff7cb5dd9f",
+  "/assets/studio/chunk-QJT4QJLW.mjs": {
+   "h": "3d4abd0e9c80",
    "gz": 39446
   },
-  "/assets/studio/widgets-ND27DT5U.mjs": {
-   "h": "cfba0bf8028a",
+  "/assets/studio/widgets-WWRMEYPX.mjs": {
+   "h": "490491ba8487",
    "gz": 2095
   },
-  "/assets/studio/chunk-7KWD6HK6.mjs": {
-   "h": "7e094006f5cf",
-   "gz": 6437
+  "/assets/studio/chunk-5VCJ66GA.mjs": {
+   "h": "927915533f1e",
+   "gz": 6450
   },
   "/assets/studio/chunk-NAYT2QE5.mjs": {
    "h": "b24eb1f8c141",
@@ -568,9 +568,9 @@
    "h": "b0548b86e397",
    "gz": 8923
   },
-  "/assets/studio/studio-JMOIRDYP.mjs": {
-   "h": "6ad1523a8b66",
-   "gz": 44841
+  "/assets/studio/studio-RZQMH4WL.mjs": {
+   "h": "3f2d5dacbe1c",
+   "gz": 44871
   },
   "/assets/studio/chunk-4L2T7PFF.mjs": {
    "h": "0ee8b12fcce6",
@@ -608,9 +608,9 @@
    "h": "17b54afff4ca",
    "gz": 18913
   },
-  "/assets/studio/ui-CHOCEMEU.mjs": {
-   "h": "062e4d7963ed",
-   "gz": 23734
+  "/assets/studio/ui-RQZHYNID.mjs": {
+   "h": "fcf3a3bb9a21",
+   "gz": 23736
   },
   "/assets/studio/ai-SD3TAAS5.mjs": {
    "h": "398d3b3d185d",
@@ -624,33 +624,33 @@
    "h": "a9da3dce966a",
    "gz": 2421
   },
-  "/assets/studio/media-V5CQJDNX.mjs": {
-   "h": "646aa75ea392",
-   "gz": 137859
+  "/assets/studio/media-ZYGS5627.mjs": {
+   "h": "c3092538d6c6",
+   "gz": 137902
   },
-  "/assets/studio/team-6VK24V2I.mjs": {
-   "h": "1ec828d2d143",
-   "gz": 91887
+  "/assets/studio/team-7KRU6NRF.mjs": {
+   "h": "bc8efa741066",
+   "gz": 91888
   },
   "/assets/studio/chunk-G3Z4YPVX.mjs": {
    "h": "3565a6715e05",
    "gz": 6680
   },
-  "/assets/studio/perf-Z7UZEOYO.mjs": {
-   "h": "6d2710266804",
-   "gz": 75709
+  "/assets/studio/perf-3BAKUNNG.mjs": {
+   "h": "2394eab508d9",
+   "gz": 75720
   },
-  "/assets/studio/chunk-EF2OW6QA.mjs": {
-   "h": "ee43fe294662",
+  "/assets/studio/chunk-6ESWYAXF.mjs": {
+   "h": "db462e352f41",
    "gz": 4056
   },
-  "/assets/studio/chunk-U2EUMTM7.mjs": {
-   "h": "30f1adba2b4e",
-   "gz": 1919
+  "/assets/studio/chunk-EAKVZBEE.mjs": {
+   "h": "40e8b38b9a42",
+   "gz": 1920
   },
-  "/assets/studio/chunk-MCUGONDY.mjs": {
-   "h": "2af70c373a53",
-   "gz": 7574
+  "/assets/studio/chunk-R47FAFRM.mjs": {
+   "h": "70fd078e6093",
+   "gz": 7597
   },
   "/assets/studio/chunk-M6LJ4BNZ.mjs": {
    "h": "3dc55864f7c7",

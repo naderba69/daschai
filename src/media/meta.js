@@ -89,7 +89,7 @@ export function installMeta(P) {
         const e = this.virtualProjectFiles.get(path), m = this.fileMeta(path), bytes = entryBytes(e);
         const sha = await sha256Hex(bytes).catch(() => '');
         const links = directLinks(path, this.ghRepo(), (typeof location !== 'undefined' && location.origin) || undefined);
-        const stars = [1, 2, 3, 4, 5].map(n => `<button class="fmx-star ${n <= (m.rating || 0) ? 'on' : ''}" data-star="${n}" onclick="${call('fmxSetMeta', path, { rating: n === m.rating ? 0 : n })}" aria-label="${n}">★</button>`).join('');
+        const stars = [1, 2, 3, 4, 5].map(n => `<button class="fmx-star ${n <= (m.rating || 0) ? 'on' : ''}" data-star="${n}" onclick="${call('fmxSetMeta', path, { rating: n === m.rating ? 0 : n })}" aria-label="${n}" aria-pressed="${n <= (m.rating || 0)}"><i class="fa-${n <= (m.rating || 0) ? 'solid' : 'regular'} fa-star" aria-hidden="true"></i></button>`).join('');
         const comments = (m.comments || []).map((c, i) => `<div class="fmx-comment" data-comment="${i}"><b>${esc(c.author || 'أنا')}</b> <small class="text-dim">${new Date(c.t).toLocaleString('ar')}</small>${c.line ? ` <code>L${c.line}</code>` : ''}<div dir="auto">${esc(c.text)}</div>${btn('fa-trash', '', call('fmxDeleteComment', path, i), 'gh-chip')}</div>`).join('') || '<div class="text-dim">لا تعليقات بعد</div>';
         const toggle = (key, on, icon, label) => `<label class="gh-check fmx-toggle" data-meta-toggle="${key}"><input type="checkbox" ${on ? 'checked' : ''} onchange="${call('fmxToggleMeta', path, key)}"> <i class="fa-solid ${icon}"></i> ${label}</label>`;
         return `${filePick(this, path)}
