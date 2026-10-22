@@ -4,7 +4,7 @@ require('fake-indexeddb/auto');
 const fs = require('fs');
 const path = require('path');
 const { pathToFileURL } = require('url');
-const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
+const { loadApp, mockOpenRouter, ok, wait, waitFor, section } = require('./helpers');
 const ROOT = path.join(__dirname, '..');
 function exposeGlobals(w) {
     const names = ['window', 'document', 'navigator', 'Node', 'Element', 'HTMLElement', 'MutationObserver', 'getComputedStyle', 'requestAnimationFrame', 'cancelAnimationFrame',
@@ -201,7 +201,7 @@ function browserStubs(w) {
     ok(Object.keys(zz.files).some(k => k.endsWith('util.js')), 'ZIP contains the files');
     await app.saveProjectNow();
     const boot2 = loadApp({ indexedDB: globalThis.indexedDB, beforeParse: browserStubs });
-    await wait(150);
+    await waitFor(() => boot2.app.virtualProjectFiles.has('src/util.js') && boot2.app.pinnedFiles.has('src/Main.jsx'));
     ok(boot2.app.virtualProjectFiles.has('src/util.js') && boot2.app.pinnedFiles.has('src/Main.jsx'), 'project restored from IndexedDB after reload');
     ok(!boot2.app.virtualProjectFiles.has('App.tsx') || files.has('App.tsx'), 'deleted starter files stay deleted after reload');
     boot2.w.close();

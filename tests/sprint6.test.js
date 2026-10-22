@@ -8,7 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const { pathToFileURL } = require('url');
-const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
+const { loadApp, mockOpenRouter, ok, wait, waitFor, section } = require('./helpers');
 
 const ROOT = path.join(__dirname, '..');
 let aiReply = 'تم';
@@ -227,7 +227,7 @@ let W = null, teardown = () => {};
     ok(app.codeEditor.getValue() === 'item;\nitem;\nitem;\n', 'replay the macro N times');
     const before = imported.length;
     app.setEditorSettings({ keymap: 'vim' });
-    for (let i = 0; i < 100 && !app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode'); i++) await wait(20);
+    await waitFor(() => app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode'));
     ok(app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode') && imported.length === before, 'vim keymap: its chunk loads on demand (not part of the editor chunk) and activates');
     app.setEditorSettings({ keymap: 'default' });
     await wait(20);
@@ -295,6 +295,7 @@ let W = null, teardown = () => {};
     app.switchStudioFile('src/math.test.js');
     res = await app.runStudioCode();
     ok(res && res.tests && res.tests.summary.total === 6, 'running a test file runs its tests');
+    await app._runHistQ;
     const hist = await app.idbGet('run_history_v1');
     ok(Array.isArray(hist) && hist.length >= 8 && hist.some(h => h.mode === 'test') && hist.some(h => !h.success), `run history persisted (${hist && hist.length} runs) (#180, #229)`);
     await app.openRunHistory();
@@ -330,8 +331,14 @@ let W = null, teardown = () => {};
     ok(res.success && /2,4,6/.test(box.textContent) && box.classList.contains('ox-term'), 'chat JS runs isolated (no new Function on the page)');
     res = await app.runPythonCode('def test_upper():\n    assert "a".upper() == "A"\n', box);
     ok(res.success && res.tests && res.tests.summary.pass === 1, 'chat Python test blocks run as tests');
+    await app._runHistQ; // history writes are queued (fire-and-forget from the runner) — wait for them
     const histChat = await app.idbGet('run_history_v1');
     ok(histChat.some(h => h.source === 'chat'), 'chat runs recorded with source=chat');
+    // Two runs finishing together: both entries must survive (read-modify-write used to drop one).
+    const nBefore = histChat.length;
+    await Promise.all([app.recordRun({ lang: 'js', mode: 'run', success: true, output: 'A', source: 'race-a' }), app.recordRun({ lang: 'js', mode: 'run', success: true, output: 'B', source: 'race-b' })]);
+    const histRace = await app.idbGet('run_history_v1');
+    ok(histRace.length === Math.min(50, nBefore + 2) && histRace.some(h => h.source === 'race-a') && histRace.some(h => h.source === 'race-b'), 'concurrent run records are both kept (history writes serialized)');
 
     // ------------------------------------------------------------------
     section('Preview, split editor, editor AI (#154, #137, #178, #179)');

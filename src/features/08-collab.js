@@ -1208,6 +1208,8 @@
                 if (Array.isArray(comments)) this.codeComments = comments.concat(this.codeComments.filter(c => !comments.some(x => x.id === c.id)));
                 if (Array.isArray(log)) this.activityLog = log.concat(this.activityLog);
             } catch (e) {}
+            // The page may have been torn down while IndexedDB was answering — nothing left to update.
+            if (typeof document === 'undefined' || !document) return;
         }
         if (this.tasks.some(t => t.timerStart)) this.ensureTaskTicker();
         this.updateCommentBadge();
@@ -1221,6 +1223,7 @@
         if (/^#(share|gist)=/.test(location.hash)) setTimeout(() => this.handleShareHash(), 50);
     };
     if (window.app) {
-        try { window.app.initSprint5Collab(); } catch (e) { console.error('Sprint 5 collab init failed', e); }
+        // async init: try/catch alone never sees its rejections — keep the promise and catch it.
+        try { window.app._collabReady = window.app.initSprint5Collab().catch(e => console.error('Sprint 5 collab init failed', e)); } catch (e) { console.error('Sprint 5 collab init failed', e); }
     }
 })();

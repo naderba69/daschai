@@ -278,6 +278,7 @@ export function installRun(P) {
     // ---------------------------------------------------------------- #230 share
     P.dvShare = async function () {
         let hist = [];
+        await this._runHistQ; // pending history writes land first
         try { hist = (this.idbGet && (await this.idbGet('run_history_v1'))) || []; } catch (e) { hist = []; }
         const last = this._lastRunRecord;
         const list = (last && !hist.some(h => h.at === last.at) ? [last] : []).concat(hist).slice(0, 15);

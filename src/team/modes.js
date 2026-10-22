@@ -261,6 +261,7 @@ export function installModes(P) {
         return q.xp;
     };
     P.tmGame = async function () {
+        await this._runHistQ; // pending history writes land first
         try { this._tmRuns = (this.idbGet && (await this.idbGet('run_history_v1'))) || []; } catch (e) { this._tmRuns = []; }
         const quests = this.tmQuestProgress();
         const info = this.progressInfo ? this.progressInfo() : null;

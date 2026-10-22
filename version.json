@@ -1,24 +1,24 @@
 {
  "version": "2.16.0",
  "channel": "stable",
- "builtAt": "2026-10-22T21:00:32.099Z",
+ "builtAt": "2026-10-22T21:24:49.548Z",
  "entries": {
-  "/assets/studio/dev-NHDBESJJ.mjs": "dev",
+  "/assets/studio/dev-H2MGETJN.mjs": "dev",
   "/assets/studio/integ-DWWQFWUB.mjs": "integ",
   "/assets/studio/widgets-WWRMEYPX.mjs": "widgets",
   "/assets/studio/studio-RZQMH4WL.mjs": "studio",
-  "/assets/studio/runner-IFD6F6TL.mjs": "runner",
+  "/assets/studio/runner-6ZKRTUAL.mjs": "runner",
   "/assets/studio/ui-RQZHYNID.mjs": "ui",
   "/assets/studio/ai-SD3TAAS5.mjs": "ai",
   "/assets/studio/github-BBF4U7B7.mjs": "github",
   "/assets/studio/media-ZYGS5627.mjs": "media",
-  "/assets/studio/team-7KRU6NRF.mjs": "team",
+  "/assets/studio/team-UOUTLJJB.mjs": "team",
   "/assets/studio/perf-3BAKUNNG.mjs": "perf"
  },
  "files": {
   "/index.html": {
-   "h": "34308bbf452c",
-   "gz": 257355
+   "h": "4f00aa30f87f",
+   "gz": 257397
   },
   "/sw.js": {
    "h": "9ed92acb724b",
@@ -516,9 +516,9 @@
    "h": "896230b3bf01",
    "gz": 11648
   },
-  "/assets/studio/dev-NHDBESJJ.mjs": {
-   "h": "066b0e3bab21",
-   "gz": 89085
+  "/assets/studio/dev-H2MGETJN.mjs": {
+   "h": "5f9df87a85ca",
+   "gz": 89093
   },
   "/assets/studio/integ-DWWQFWUB.mjs": {
    "h": "9272bc9c8afd",
@@ -596,9 +596,9 @@
    "h": "de7773386c23",
    "gz": 104596
   },
-  "/assets/studio/runner-IFD6F6TL.mjs": {
-   "h": "1b353fdcac83",
-   "gz": 77737
+  "/assets/studio/runner-6ZKRTUAL.mjs": {
+   "h": "14bdffc58c8b",
+   "gz": 77800
   },
   "/assets/studio/chunk-2EPK7E37.mjs": {
    "h": "ed17fb190be8",
@@ -628,9 +628,9 @@
    "h": "c3092538d6c6",
    "gz": 137902
   },
-  "/assets/studio/team-7KRU6NRF.mjs": {
-   "h": "bc8efa741066",
-   "gz": 91888
+  "/assets/studio/team-UOUTLJJB.mjs": {
+   "h": "f1baafccada9",
+   "gz": 91906
   },
   "/assets/studio/chunk-G3Z4YPVX.mjs": {
    "h": "3565a6715e05",

@@ -315,14 +315,23 @@ export function install(app) {
     P.recordRun = async function (entry) {
         this._lastRunRecord = { at: Date.now(), ...entry };
         if (!this.idbGet || !this.idbSet) return;
-        try {
+        const at = Date.now();
+        // Read-modify-write on one IDB key: serialize, or two runs finishing together each
+        // read the same old list and the last write silently drops the other entry.
+        return this.queueRunHistory(async () => {
             const list = (await this.idbGet('run_history_v1')) || [];
-            list.unshift({ id: 'run_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), at: Date.now(), ...entry, output: String(entry.output || '').slice(0, 20000) });
+            list.unshift({ id: 'run_' + at.toString(36) + Math.random().toString(36).slice(2, 5), at, ...entry, output: String(entry.output || '').slice(0, 20000) });
             await this.idbSet('run_history_v1', list.slice(0, 50));
-        } catch (e) { /* history is best effort */ }
+        });
+    };
+    /** Run history writes one after another; the returned promise never rejects (history is best effort). */
+    P.queueRunHistory = function (job) {
+        this._runHistQ = (this._runHistQ || Promise.resolve()).then(job).catch(() => {});
+        return this._runHistQ;
     };
     P.openRunHistory = async function () {
         let list = [];
+        await this._runHistQ; // pending history writes land first
         try { list = (this.idbGet && (await this.idbGet('run_history_v1'))) || []; } catch (e) { list = []; }
         this._runHistory = list;
         const body = list.length ? list.map((r, i) => `<div class="gh-card run-hist ${r.success ? 'ok' : 'bad'}"><i class="fa-solid ${r.success ? 'fa-circle-check text-emerald' : 'fa-circle-xmark text-red'}"></i> <b dir="ltr">${esc(r.path || r.lang)}</b> <span class="gh-badge">${esc(r.mode || 'run')}</span> <small class="hv-dim">${new Date(r.at).toLocaleString('ar')} • ${r.durationMs || 0}ms</small><span class="gh-spacer"></span>
@@ -338,7 +347,7 @@ export function install(app) {
         this.showDialog({ title: `${r.path || r.lang} — ${new Date(r.at).toLocaleString('ar')}`, body: `<pre class="ai-code" dir="ltr">${esc(r.output || '(لا مخرجات)')}${r.error ? '\n\n' + esc(r.error) : ''}</pre>`, buttons: [{ label: 'نسخ', value: 'copy', primary: true }, { label: 'إغلاق', value: null }] })
             .then(res => { if (res && res.button === 'copy' && this.copyText) this.copyText((r.output || '') + (r.error ? '\n\n' + r.error : '')); });
     };
-    P.clearRunHistory = async function () { if (this.idbSet) await this.idbSet('run_history_v1', []); this.openRunHistory(); };
+    P.clearRunHistory = async function () { if (this.idbSet) await this.queueRunHistory(() => this.idbSet('run_history_v1', [])); this.openRunHistory(); };
 
     // ------------------------------------------------------------------ CORE RUN
     P.stopRun = function () {

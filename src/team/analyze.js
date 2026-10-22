@@ -283,6 +283,7 @@ export function installAnalyze(P) {
     P.tmBugs = async function () {
         const errs = groupErrors((this.getErrorLog ? this.getErrorLog() : []) || []);
         let runs = [];
+        await this._runHistQ; // pending history writes land first
         try { runs = ((this.idbGet && (await this.idbGet('run_history_v1'))) || []).filter(r => !r.success && r.error); } catch (e) { runs = []; }
         let issues = [];
         if (this.tmHasGH()) issues = await this.tmList(`${this.ghRepoPath()}/issues?labels=bug&state=all&since=${encodeURIComponent(iso(Date.now() - 90 * DAY))}`, { max: 300 }).catch(() => []);
