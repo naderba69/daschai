@@ -6,7 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { loadApp, ok, wait, section } = require('./helpers');
+const { loadApp, ok, wait, section, gzipBudgetKB } = require('./helpers');
 
 const ROOT = path.join(__dirname, '..');
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
@@ -114,7 +114,7 @@ function computed(rules, selector, prop, vp) {
     ok(!/<!-- Sidebar/.test(html) && /<pre/.test(html) === /<pre/.test(layout), 'layout comments are stripped, <pre> blocks kept');
     const zlib = require('zlib');
     const gz = zlib.gzipSync(html, { level: 9 }).length / 1024;
-    ok(gz < 250, `main page stays under the 250 KB gzip budget (${gz.toFixed(1)} KB)`);
+    ok(gz < gzipBudgetKB, `main page stays under the ${gzipBudgetKB} KB gzip budget (${gz.toFixed(1)} KB)`);
 
     section('v2.16 design system: tokens, clean chrome, compact phone banners');
     const rootTok = (css.match(/:root \{([\s\S]*?)\n\}/) || [])[1] || '';

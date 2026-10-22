@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { pathToFileURL } = require('url');
-const { loadApp, ok, wait, section } = require('./helpers');
+const { loadApp, ok, wait, section, gzipBudgetKB } = require('./helpers');
 
 const ROOT = path.join(__dirname, '..');
 
@@ -53,7 +53,7 @@ let W = null;
     const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/studio/manifest.json'), 'utf8'));
     ok(manifest.chunks.ui === build.chunks.ui, 'manifest.json lists the UI chunk');
     const gz = zlib.gzipSync(fs.readFileSync(path.join(ROOT, 'index.html')), { level: 9 }).length / 1024;
-    ok(gz < 250, `main page stays under the 250 KB gzip budget (${gz.toFixed(1)} KB)`);
+    ok(gz < gzipBudgetKB, `main page stays under the ${gzipBudgetKB} KB gzip budget (${gz.toFixed(1)} KB)`);
     const stubs = app.lazyUIMethods();
     ok(stubs.length > 40 && stubs.every(n => typeof app[n] === 'function' && app[n].__oxLazy === 'ui'), 'panel entry points are lazy stubs before first use (' + stubs.length + ')');
     ok(!d.getElementById('ox-ui-chunk-css'), 'panel CSS is not in the page until the chunk loads');

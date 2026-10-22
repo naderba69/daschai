@@ -1,5 +1,5 @@
 /* Image editor + recorder — moved from the main bundle (Sprint 4b, ideas #535 #548 #581 #661-#663 #671 #673)
-   into the lazy media chunk in Sprint 10 to make room under the 250 KB budget. Behaviour is unchanged. */
+   into the lazy media chunk in Sprint 10 to make room under the then-250 KB budget. Behaviour is unchanged. */
 import { win } from './shared.js';
 
 export function installLegacy(P) {

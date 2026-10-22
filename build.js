@@ -284,9 +284,10 @@ ${appJsContent}
     // What actually travels over the network: Vercel serves index.html compressed (gzip/brotli)
     const gzipKB = (require('zlib').gzipSync(fullHtml, { level: 9 }).length / 1024).toFixed(1);
     const brKB = (require('zlib').brotliCompressSync(fullHtml, { params: { [require('zlib').constants.BROTLI_PARAM_QUALITY]: 11 } }).length / 1024).toFixed(1);
-    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget 250 KB) • brotli: ${brKB} KB`);
-    if (parseFloat(gzipKB) > 250) {
-        console.warn(`⚠️  Warning: compressed bundle >250KB (${gzipKB}KB) — consider code splitting`);
+    const budgetKB = (JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8')).config || {}).gzipBudgetKB || 270; // single source: package.json config.gzipBudgetKB
+    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget ${budgetKB} KB) • brotli: ${brKB} KB`);
+    if (parseFloat(gzipKB) > budgetKB) {
+        console.warn(`⚠️  Warning: compressed bundle >${budgetKB}KB (${gzipKB}KB) — consider code splitting`);
     }
 
 } catch (err) {

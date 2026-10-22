@@ -66,4 +66,7 @@ const ok = (cond, msg) => { console.log((cond ? '✅' : '❌') + ' ' + msg); if 
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
 const section = (t) => console.log('\n— ' + t);
 
-module.exports = { loadApp, mockOpenRouter, ok, wait, section, getFailures: () => failures };
+/** Main-page gzip budget — single source of truth in package.json → config.gzipBudgetKB */
+const gzipBudgetKB = require('../package.json').config.gzipBudgetKB;
+
+module.exports = { gzipBudgetKB, loadApp, mockOpenRouter, ok, wait, section, getFailures: () => failures };
