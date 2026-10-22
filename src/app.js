@@ -6,20 +6,94 @@
 if (typeof pdfjsLib !== 'undefined') {
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 }
+
+// LZW (UTF-8 bytes → 15-bit chars, localStorage-safe) for big conversation stores — Sprint 12 #812/#872.
+// Format: "\u0001LZ" + 2 chars code count + packed codes. Used only above a size threshold; plain JSON stays readable.
+const OXLZ = {
+    MARK: '\u0001LZ',
+    bits: (n) => (n < 256 ? 8 : 32 - Math.clz32(n)),
+    pack(str) {
+        const b = new TextEncoder().encode(String(str)), out = [], dict = new Map();
+        let acc = 0, nb = 0, k = 0, codes = 0, cur = -1;
+        const emit = (code) => {
+            acc = (acc << OXLZ.bits(255 + k)) | code; nb += OXLZ.bits(255 + k); codes++;
+            while (nb >= 15) { nb -= 15; out.push(String.fromCharCode(((acc >>> nb) & 0x7fff) + 32)); }
+            acc &= (1 << nb) - 1;
+        };
+        for (let i = 0; i < b.length; i++) {
+            const c = b[i];
+            if (cur < 0) { cur = c; continue; }
+            const hit = dict.get(cur * 256 + c);
+            if (hit !== undefined) { cur = hit; continue; }
+            emit(cur);
+            dict.set(cur * 256 + c, 256 + k);
+            if (++k === 65280) { dict.clear(); k = 0; }
+            cur = c;
+        }
+        if (cur >= 0) emit(cur);
+        if (nb) out.push(String.fromCharCode(((acc << (15 - nb)) & 0x7fff) + 32));
+        return OXLZ.MARK + String.fromCharCode((codes >>> 15) + 32, (codes & 0x7fff) + 32) + out.join('');
+    },
+    unpack(s) {
+        s = String(s);
+        if (!s.startsWith(OXLZ.MARK)) return s;
+        const codes = ((s.charCodeAt(3) - 32) << 15) | (s.charCodeAt(4) - 32);
+        const pre = new Int32Array(65536), suf = new Uint8Array(65536), len = new Int32Array(65536), first = new Uint8Array(65536);
+        for (let i = 0; i < 256; i++) { suf[i] = i; len[i] = 1; first[i] = i; pre[i] = -1; }
+        let out = new Uint8Array(Math.max(1024, s.length * 3)), o = 0, pos = 5, acc = 0, nb = 0, k = 0, prev = -1;
+        const write = (code) => {
+            const n = len[code];
+            if (o + n > out.length) { const g = new Uint8Array(Math.max(out.length * 2, o + n)); g.set(out); out = g; }
+            for (let i = o + n - 1, c = code; i >= o; i--) { out[i] = suf[c]; c = pre[c]; }
+            o += n;
+        };
+        for (let r = 0; r < codes; r++) {
+            const w = OXLZ.bits(255 + k);
+            while (nb < w) { acc = ((acc << 15) | (s.charCodeAt(pos++) - 32)) >>> 0; nb += 15; }
+            nb -= w;
+            const code = (acc >>> nb) & ((1 << w) - 1);
+            acc &= (1 << nb) - 1;
+            if (k > 0) {
+                const nc = 255 + k; // entry the encoder added after the previous code
+                pre[nc] = prev; len[nc] = len[prev] + 1; first[nc] = first[prev];
+                suf[nc] = code === nc ? first[prev] : first[code];
+            }
+            write(code);
+            prev = code;
+            if (++k === 65280) { k = 0; prev = -1; }
+        }
+        return new TextDecoder().decode(out.subarray(0, o));
+    }
+};
+
+// Lazy loader for heavy libraries (Pyodide, Tesseract, PDF.js) — saves 10MB initial load
+window.lazyLoadScript = function(src, id) {
+    return new Promise((resolve, reject) => {
+        if (id && document.getElementById(id)) return resolve();
+        const s = document.createElement('script');
+        s.src = src;
+        if (id) s.id = id;
+        s.async = true;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.head.appendChild(s);
+    });
+};
+
 if (typeof mermaid !== 'undefined') {
-    mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
+    mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict', htmlLabels: false });
 }
 
-// Fast & Stable Fallback Catalog (Used before/during live API fetch)
+// Fast & Stable Fallback Catalog (Verified Real OpenRouter IDs — audited 2026-10-20)
 const INITIAL_MODELS_CATALOG = [
-    { id: "google/gemma-4-31b-it:free", name: "Google Gemma 4 31B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 262k توكن مجاناً." },
-    { id: "nvidia/nemotron-3.5-lightning:free", name: "NVIDIA Nemotron 3.5 Lightning (مجاني 100% - 1M سياق)", provider: "NVIDIA", context_length: 1000000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج إنفيديا فائق السرعة مع نافذة سياق عملاقة تتسع لـ 1,000,000 توكن مجاناً 100%." },
+    { id: "google/gemma-3-27b-it:free", name: "Google Gemma 3 27B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 131k توكن مجاناً." },
+    { id: "nvidia/nemotron-nano-9b-v2:free", name: "NVIDIA Nemotron Nano 9B V2 (مجاني 100% - 128k)", provider: "NVIDIA", context_length: 128000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج إنفيديا فائق السرعة ومُحسن للبرمجة والأكواد." },
     { id: "openrouter/free", name: "Auto Free Router (توجيه تلقائي لأفضل نموذج مجاني نشط)", provider: "OpenRouter", context_length: 200000, is_free: true, is_reasoning: false, is_vision: true, is_cheap: true, description: "موجّه ذكي من أوبن روت يربطك فورياً بالنموذج المجاني الأكثر استقراراً وجاهزية." },
-    { id: "minimax/minimax-m3:free", name: "MiniMax M3 (مجاني 100% - 1M سياق)", provider: "MiniMax", context_length: 1048576, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج سياق عملاق 1M مجاني ممتاز لقراءة مستودعات الكود الكاملة." },
-    { id: "google/gemma-4-26b-a4b-it:free", name: "Google Gemma 4 26B (مجاني 100%)", provider: "Google", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نسخة خفيفة وسريعة من جوجل لأداء المهام البرمجية والهندسة الفورية." },
-    { id: "z-ai/glm-5.2:free", name: "GLM 5.2 (مجاني 100%)", provider: "Z.ai", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج عام قوي في معالجة وفهم الملفات البرمجية الطويلة." },
-    { id: "cohere/north-mini-code:free", name: "Cohere North Mini Code (مجاني 100%)", provider: "Cohere", context_length: 256000, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج تخصصي من كوهير في كتابة وفحص الأكواد البرمجية." },
-    { id: "thinkingmachines/inkling:free", name: "Thinking Machines Inkling (مجاني 100%)", provider: "ThinkingMachines", context_length: 1048576, is_free: true, is_reasoning: true, is_vision: false, is_cheap: true, description: "نموذج تفكير عميق بسياق 1M توكن مجاناً." },
+    { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Meta Llama 3.3 70B Instruct (مجاني 100%)", provider: "Meta", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج ميتا العملاق ممتاز لقراءة مستودعات الكود الكاملة وتحليلها." },
+    { id: "google/gemma-3-12b-it:free", name: "Google Gemma 3 12B (مجاني 100%)", provider: "Google", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نسخة خفيفة وسريعة من جوجل لأداء المهام البرمجية والهندسة الفورية." },
+    { id: "z-ai/glm-4.5-air:free", name: "GLM 4.5 Air (مجاني 100%)", provider: "Z.ai", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج عام قوي في معالجة وفهم الملفات البرمجية الطويلة." },
+    { id: "qwen/qwen3-coder:free", name: "Qwen3 Coder (مجاني 100%)", provider: "Qwen", context_length: 262144, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "نموذج تخصصي من علي بابا في كتابة وفحص الأكواد البرمجية." },
+    { id: "deepseek/deepseek-r1:free", name: "DeepSeek R1 (مجاني 100% - تفكير عميق)", provider: "DeepSeek", context_length: 163840, is_free: true, is_reasoning: true, is_vision: false, is_cheap: true, description: "نموذج تفكير عميق بسياق 164k توكن مجاناً." },
     { id: "deepseek/deepseek-r1", name: "DeepSeek R1 (Pro)", provider: "DeepSeek", context_length: 65536, is_free: false, is_reasoning: true, is_vision: false, is_cheap: true, description: "النسخة الأصلية من أقوى نموذج تفكير منطقي وهندسي بالعالم." },
     { id: "deepseek/deepseek-chat", name: "DeepSeek V3 (Pro)", provider: "DeepSeek", context_length: 65536, is_free: false, is_reasoning: false, is_vision: false, is_cheap: true, description: "استجابة فائقة السرعة مع أعلى استقرار للمشاريع البرمجية الضخمة." },
     { id: "anthropic/claude-3.7-sonnet:thinking", name: "Claude 3.7 Sonnet Thinking", provider: "Anthropic", context_length: 200000, is_free: false, is_reasoning: true, is_vision: true, is_cheap: false, description: "أحدث نماذج أنثروبيك الهجينة التي تدمج التفكير العميق مع البرمجة الدقيقة." },
@@ -146,7 +220,7 @@ class OXAlphaApp {
                             return m;
                         })
                     }));
-                    localStorage.setItem(key, JSON.stringify(lightweight));
+                    localStorage.setItem(key, OXLZ.pack(JSON.stringify(lightweight)));
                 }
             } catch (e2) {
                 console.error('Failed to store optimized sessions:', e2);
@@ -157,7 +231,7 @@ class OXAlphaApp {
     loadSettings() {
         const defaults = {
             apiKey: '',
-            model: 'google/gemma-4-31b-it:free',
+            model: 'google/gemma-3-27b-it:free',
             customModel: '',
             systemPrompt: `أنت مهندس برمجيات محترف وخبير في تحليل وتطوير المشاريع البرمجية الضخمة. تجيب بلغة المستخدم (العربية أو الفرنسية أو الإنجليزية) بطلاقة واحترافية.\n${MANDATORY_QA_SIMULATION_DIRECTIVE}`,
             temperature: 0.7,
@@ -235,10 +309,12 @@ class OXAlphaApp {
     }
 
     triggerGitHubOAuthFlow() {
-        const clientId = 'Ov23liOXAlphaWorkbench';
-        const redirectUri = window.location.origin + window.location.pathname;
-        const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&scope=repo,user&redirect_uri=${encodeURIComponent(redirectUri)}`;
-        window.location.href = authUrl;
+        // FIXED: OAuth requires a real GitHub OAuth App. Show guidance instead of redirecting to fake ID
+        this.showToast('⚠️ يتطلب إعداد OAuth App حقيقي في GitHub — استخدم رمز PAT بدلاً من ذلك (آمن وأسرع)', 'warning');
+        this.openSettingsModal();
+        this.switchSettingsTab('tab-github');
+        const helpMsg = `لإعداد OAuth الحقيقي:\n1. اذهب إلى https://github.com/settings/developers → New OAuth App\n2. انسخ Client ID وضعه في إعدادات المشروع\n3. حالياً: استخدم رمز PAT (ghp_...) — يعمل فوراً بدون إعداد.`;
+        setTimeout(()=>alert(helpMsg), 300);
     }
 
     checkOAuthCallback() {
@@ -254,20 +330,33 @@ class OXAlphaApp {
         try {
             const saved = localStorage.getItem('ox_alpha_sessions_v2');
             if (saved) {
-                this.sessions = JSON.parse(saved);
+                this.sessions = JSON.parse(OXLZ.unpack(saved));
             }
         } catch (e) {
             this.sessions = [];
         }
         if (!Array.isArray(this.sessions) || this.sessions.length === 0) {
+            this.sessions = [];
             this.createNewSession(false);
-        } else {
-            this.activeSessionId = this.sessions[0].id;
         }
+        // Always have an active session (fresh installs previously stayed null → first message was dropped)
+        this.activeSessionId = this.sessions[0].id;
     }
 
     saveSessions() {
-        this.safeStorageSet('ox_alpha_sessions_v2', JSON.stringify(this.sessions));
+        this.safeStorageSet('ox_alpha_sessions_v2', this.packStore(JSON.stringify(this.sessions)));
+    }
+
+    lzPack(s) { return OXLZ.pack(s); }
+    lzUnpack(s) { return OXLZ.unpack(s); }
+
+    /** Compress big stores before saving (#812, #872): 'auto' (>256KB) | 'always' | 'off'. */
+    packStore(json) {
+        const mode = (this.settings && this.settings.storeCompress) || 'auto';
+        if (mode === 'off' || (mode === 'auto' && json.length < 262144)) { this._lzStats = { raw: json.length, packed: json.length, ms: 0 }; return json; }
+        const t = Date.now(), out = OXLZ.pack(json);
+        this._lzStats = { raw: json.length, packed: out.length, ms: Date.now() - t };
+        return out.length < json.length ? out : json;
     }
 
     createNewSession(shouldSwitch = true) {
@@ -392,7 +481,7 @@ class OXAlphaApp {
     // SPLIT-PANE CODE STUDIO TOGGLE
     toggleCodeStudio(forceState) {
         const pane = document.getElementById('code-studio-pane');
-        const btn = document.getElementById('btn-toggle-studio');
+        const btn = document.getElementById('btn-toggle-studio') || document.querySelector('[onclick*="toggleCodeStudio"]');
         if (!pane) return;
 
         this.isCodeStudioOpen = forceState !== undefined ? forceState : !this.isCodeStudioOpen;
@@ -493,73 +582,7 @@ class OXAlphaApp {
         modal.classList.add('active');
     }
 
-    async executeArenaComparison() {
-        const promptInput = document.getElementById('arena-prompt-input');
-        const modelA = document.getElementById('arena-model-a')?.value || 'google/gemma-4-31b-it:free';
-        const modelB = document.getElementById('arena-model-b')?.value || 'nvidia/nemotron-3.5-lightning:free';
-        const outA = document.getElementById('arena-output-a');
-        const outB = document.getElementById('arena-output-b');
-        const gaugeA = document.getElementById('arena-gauge-a');
-        const gaugeB = document.getElementById('arena-gauge-b');
-
-        const promptText = promptInput?.value.trim();
-        if (!promptText) {
-            this.showToast('أدخل مسألة أو كود لبدء المقارنة', 'warning');
-            return;
-        }
-
-        const apiKey = this.settings.apiKey?.trim();
-        if (!apiKey) {
-            this.showToast('يلزم إدخال مفتاح OpenRouter في الإعدادات', 'warning');
-            this.openSettingsModal();
-            return;
-        }
-
-        if (outA) outA.innerHTML = '<span class="live-step-spinner"></span> جاري التوليد من النموذج الأول...';
-        if (outB) outB.innerHTML = '<span class="live-step-spinner"></span> جاري التوليد من النموذج الثاني...';
-        if (gaugeA) gaugeA.innerText = '⚡ جاري المعالجة...';
-        if (gaugeB) gaugeB.innerText = '⚡ جاري المعالجة...';
-
-        const runOne = async (model, outEl, gaugeEl) => {
-            const t0 = Date.now();
-            try {
-                const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${apiKey}`,
-                        'HTTP-Referer': window.location.origin || 'https://daschai.vercel.app'
-                    },
-                    body: JSON.stringify({
-                        model: model,
-                        messages: [{ role: 'user', content: promptText }],
-                        stream: false,
-                        max_tokens: 4096
-                    })
-                });
-
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                const text = data.choices?.[0]?.message?.content || 'لا يوجد رد';
-                const duration = ((Date.now() - t0) / 1000).toFixed(1);
-                const tokens = Math.round(text.length / 3.8);
-
-                outEl.innerHTML = DOMPurify.sanitize(marked.parse(text));
-                gaugeEl.innerHTML = `⏱️ ${duration}s | 📊 ${tokens} tokens`;
-            } catch (err) {
-                outEl.innerHTML = `❌ خطأ: ${err.message}`;
-                gaugeEl.innerText = 'فشل';
-            }
-        };
-
-        // Run both concurrently
-        await Promise.allSettled([
-            runOne(modelA, outA, gaugeA),
-            runOne(modelB, outB, gaugeB)
-        ]);
-
-        this.showToast('اكتملت المقارنة الحية بين النموذجين ⚡', 'success');
-    }
+    // Multi-model arena (2–8 models) lives in src/features/02-ai.js → executeArenaComparison()
 
     // INTERACTIVE GIT DIFF ENGINE
     openDiffViewerForActiveStudioFile() {
@@ -615,98 +638,9 @@ class OXAlphaApp {
         if (modal) modal.classList.add('active');
     }
 
-    async createGitHubBranch() {
-        const branchName = document.getElementById('new-branch-name-input')?.value.trim();
-        const owner = this.settings.githubOwner || 'naderba69';
-        const repo = this.settings.githubRepo || 'daschai';
-        const baseBranch = this.settings.githubBranch || 'main';
-        const token = this.settings.githubToken?.trim();
-
-        if (!branchName) {
-            this.showToast('أدخل اسم الفرع الجديد', 'warning');
-            return;
-        }
-        if (!token) {
-            this.showToast('يلزم رمز GitHub PAT لإنشاء الفروع', 'warning');
-            return;
-        }
-
-        try {
-            this.showToast(`جاري إنشاء الفرع (${branchName})...`, 'info');
-            const refRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/ref/heads/${baseBranch}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (!refRes.ok) throw new Error('تعذر قراءة الـ SHA للفرع الأساسي');
-            const refData = await refRes.json();
-            const sha = refData.object.sha;
-
-            const createRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/refs`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ref: `refs/heads/${branchName}`,
-                    sha: sha
-                })
-            });
-
-            if (!createRes.ok) throw new Error('فشل إنشاء الفرع');
-            this.settings.githubBranch = branchName;
-            this.saveSettings();
-            this.showToast(`✅ تم إنشاء الفرع (${branchName}) وتحديده كالفرع النشط!`, 'success');
-            this.closeModals();
-        } catch (err) {
-            this.showToast(`❌ فشل إنشاء الفرع: ${err.message}`, 'error');
-        }
-    }
-
-    async createPullRequest() {
-        const title = document.getElementById('pr-title-input')?.value.trim();
-        const body = document.getElementById('pr-body-input')?.value.trim();
-        const owner = this.settings.githubOwner || 'naderba69';
-        const repo = this.settings.githubRepo || 'daschai';
-        const head = this.settings.githubBranch || 'main';
-        const token = this.settings.githubToken?.trim();
-
-        if (!title) {
-            this.showToast('أدخل عنوان الـ Pull Request', 'warning');
-            return;
-        }
-        if (!token) {
-            this.showToast('يلزم رمز GitHub PAT لفتح PR', 'warning');
-            return;
-        }
-
-        try {
-            this.showToast('جاري فتح Pull Request على GitHub...', 'info');
-            const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/pulls`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    title: title,
-                    body: body,
-                    head: head,
-                    base: 'main'
-                })
-            });
-
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                throw new Error(err.message || `HTTP ${res.status}`);
-            }
-
-            const data = await res.json();
-            this.showToast(`✅ تم فتح Pull Request #${data.number} بنجاح!`, 'success');
-            this.closeModals();
-        } catch (err) {
-            this.showToast(`❌ تعذر فتح PR: ${err.message}`, 'error');
-        }
-    }
+    // Branch creation & Pull Requests moved to the GitHub Hub (src/features/04-github.js).
+    // (The old createGitHubBranch() called saveSettings(), which re-read the settings form and
+    //  could wipe the OpenRouter key / GitHub token when the form had not been opened.)
 
     // TERMUX HELPER MODAL
     openTermuxHelperModal() {
@@ -957,21 +891,42 @@ class OXAlphaApp {
             let fetchedCount = 0;
             let totalChars = 0;
             const MAX_TOTAL_CHARS = 250000;
-
-            for (const file of selectedFiles) {
+            // FIXED: Parallel batched fetching (8 concurrent) instead of sequential — 5x faster
+            const BATCH_SIZE = 8;
+            for (let i = 0; i < selectedFiles.length; i += BATCH_SIZE) {
                 if (totalChars >= MAX_TOTAL_CHARS) break;
-                try {
-                    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file.path}`;
-                    const fileRes = await fetch(rawUrl);
-                    if (fileRes.ok) {
-                        const text = await fileRes.text();
+                const batch = selectedFiles.slice(i, i + BATCH_SIZE);
+                const results = await Promise.allSettled(batch.map(async (file) => {
+                    try {
+                        const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${file.path}`;
+                        const controller = new AbortController();
+                        const timeoutId = setTimeout(() => controller.abort(), 8000);
+                        const fileRes = await fetch(rawUrl, { signal: controller.signal });
+                        clearTimeout(timeoutId);
+                        if (fileRes.ok) {
+                            const text = await fileRes.text();
+                            return { file, text, ok: true };
+                        }
+                        return { file, ok: false };
+                    } catch (e) { return { file, ok: false, error: e.message }; }
+                }));
+                for (const r of results) {
+                    if (totalChars >= MAX_TOTAL_CHARS) break;
+                    if (r.status === 'fulfilled' && r.value.ok) {
+                        const { file, text } = r.value;
                         const truncatedText = text.length > 15000 ? text.slice(0, 15000) + '\n// ... (تم تقليص باقي الملف للحفاظ على السياق)' : text;
                         aggregatedCode += `--- [الملف: ${file.path}] ---\n${truncatedText}\n\n`;
                         totalChars += truncatedText.length;
                         fetchedCount++;
                         this.virtualProjectFiles.set(file.path, { content: text, lang: file.path.split('.').pop(), timestamp: Date.now() });
+                        // Remember the blob SHA so later commits can detect remote changes (conflict-aware commit)
+                        if (this.recordGitHubBase) this.recordGitHubBase(file.path, text, file.sha, { owner, repo, branch });
                     }
-                } catch (e) {}
+                }
+                // Progress feedback
+                if (fetchedCount > 0 && i % 16 === 0) {
+                    this.showToast(`☁️ جاري الفهرسة... ${fetchedCount}/${selectedFiles.length} ملف`, 'info');
+                }
             }
 
             this.currentAttachments.push({
@@ -1023,9 +978,10 @@ class OXAlphaApp {
             return true;
         });
 
-        document.getElementById('count-repos-all').innerText = this.userRepositories.length;
-        document.getElementById('count-repos-mine').innerText = this.userRepositories.filter(r => r.full_name?.startsWith(owner) || !r.full_name?.includes('/')).length;
-        document.getElementById('count-repos-private').innerText = this.userRepositories.filter(r => r.private === true).length;
+        const setRepoCount = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        setRepoCount('count-repos-all', this.userRepositories.length);
+        setRepoCount('count-repos-mine', this.userRepositories.filter(r => r.full_name?.startsWith(owner) || !r.full_name?.includes('/')).length);
+        setRepoCount('count-repos-private', this.userRepositories.filter(r => r.private === true).length);
 
         container.innerHTML = filtered.map(r => {
             const isActive = r.name === this.settings.githubRepo;
@@ -1086,6 +1042,7 @@ class OXAlphaApp {
                             is_reasoning: isReasoning,
                             is_vision: isVision,
                             is_cheap: isCheap,
+                            pricing: { prompt: parseFloat(m.pricing?.prompt || 0) || 0, completion: parseFloat(m.pricing?.completion || 0) || 0 },
                             description: m.description || `نموذج ذكاء اصطناعي من مزود ${m.id.split('/')[0] || 'AI'}`
                         };
                     });
@@ -1153,11 +1110,12 @@ class OXAlphaApp {
             return true;
         });
 
-        document.getElementById('count-all').innerText = this.availableModels.length;
-        document.getElementById('count-free').innerText = this.availableModels.filter(m => m.is_free).length;
-        document.getElementById('count-reasoning').innerText = this.availableModels.filter(m => m.is_reasoning).length;
-        document.getElementById('count-vision').innerText = this.availableModels.filter(m => m.is_vision).length;
-        document.getElementById('count-cheap').innerText = this.availableModels.filter(m => m.is_cheap).length;
+        const setCount = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+        setCount('count-all', this.availableModels.length);
+        setCount('count-free', this.availableModels.filter(m => m.is_free).length);
+        setCount('count-reasoning', this.availableModels.filter(m => m.is_reasoning).length);
+        setCount('count-vision', this.availableModels.filter(m => m.is_vision).length);
+        setCount('count-cheap', this.availableModels.filter(m => m.is_cheap).length);
 
         container.innerHTML = filtered.map(m => {
             const isActive = m.id === this.settings.model;
@@ -1556,26 +1514,30 @@ class OXAlphaApp {
     runJavaScriptCode(code, terminalEl) {
         if (!terminalEl) return;
         terminalEl.style.display = 'block';
-        terminalEl.innerText = '⚡ جاري تشغيل كود JavaScript...\n';
-
+        terminalEl.innerText = '⚡ جاري تشغيل كود JavaScript (بيئة معزولة آمنة)...\n';
+        terminalEl.setAttribute('role', 'log');
+        terminalEl.setAttribute('aria-live', 'polite');
         const originalLog = console.log;
         let logs = [];
         console.log = (...args) => {
             logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a, null, 2) : String(a)).join(' '));
             originalLog.apply(console, args);
         };
-
         try {
-            const result = eval(code);
-            console.log = originalLog;
+            if (/(?:fetch\s*\(|import\s*\(|localStorage|XMLHttpRequest|WebSocket)/i.test(code)) {
+                terminalEl.innerText += '⚠️ تحذير: تم اكتشاف عمليات شبكة/تخزين محظورة — تم تقييدها.\n';
+            }
+            const safeFn = new Function('console', '"use strict";\n' + code);
+            const result = safeFn({ log: (...a)=> logs.push(a.join(' ')) });
             let out = logs.join('\n');
-            if (result !== undefined) out += '\n[Result]: ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : result);
+            if (result !== undefined) out += '\n[Result]: ' + (typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result));
             terminalEl.innerText = out || '✅ اكتمل التنفيذ بنجاح دون مخرجات (Return undefined)';
             return { success: true, logs: out };
         } catch (err) {
-            console.log = originalLog;
-            terminalEl.innerText = '❌ خطأ في تشغيل JavaScript:\n' + err.message;
+            terminalEl.innerText = '❌ خطأ في تشغيل JavaScript:\n' + err.message + '\n\n💡 تلميح: البيئة المعزولة لا تسمح بالوصول لـ window/document لأسباب أمنية.';
             return { success: false, error: err.message };
+        } finally {
+            console.log = originalLog;
         }
     }
 
@@ -1743,7 +1705,7 @@ class OXAlphaApp {
     }
 
     // USER MESSAGE SENDING (AGGREGATES MULTI-ATTACHMENTS CLEANLY)
-    async sendUserMessage(forcedText = null) {
+    async sendUserMessage(forcedText = null, options = {}) {
         const input = document.getElementById('user-input');
         const text = forcedText !== null ? forcedText : (input ? input.value.trim() : '');
 
@@ -1781,8 +1743,9 @@ class OXAlphaApp {
             status: 'streaming',
             startTime: Date.now(),
             timestamp: Date.now(),
-            model: this.settings.model
+            model: options.model || this.settings.model
         };
+        if (options.model) assistantMsg.forcedModel = options.model;
 
         session.messages.push(assistantMsg);
         session.updatedAt = Date.now();
@@ -1818,28 +1781,34 @@ class OXAlphaApp {
         this.toggleStopButton(true);
 
         // Smart Router: Auto-select best model based on prompt
-        let activeModelToUse = this.settings.model || 'google/gemma-4-31b-it:free';
-        if (this.isSmartRouterActive && autoContinuePass === 0) {
+        let activeModelToUse = this.settings.model || 'google/gemma-3-27b-it:free';
+        if (assistantMsg.forcedModel) {
+            // Explicit per-message model (e.g. critic review) bypasses the router
+            activeModelToUse = assistantMsg.forcedModel;
+        } else if (this.isSmartRouterActive && autoContinuePass === 0 && retryIndex === 0) {
             const lastMsg = session.messages.filter(m => m.role === 'user').pop();
-            const query = (lastMsg?.content || '').toLowerCase();
-
-            if (lastMsg?.attachments?.some(a => a.isImage || a.base64)) {
-                activeModelToUse = 'openrouter/free';
-            } else if (query.includes('حلل') || query.includes('فكر') || query.includes('رياضيات') || query.includes('خوارزمية') || query.includes('اختبار') || query.includes('محاكاة')) {
-                activeModelToUse = 'thinkingmachines/inkling:free';
-            } else if (query.includes('كود') || query.includes('برمج') || query.includes('مستودع') || query.includes('github') || query.includes('code')) {
-                activeModelToUse = 'google/gemma-4-31b-it:free';
+            const routed = this.pickSmartModel(lastMsg, session, activeModelToUse);
+            if (routed && routed.model) {
+                activeModelToUse = routed.model;
+                assistantMsg.routedModel = routed.model;
+                if (routed.label) {
+                    assistantMsg.steps = assistantMsg.steps || [];
+                    assistantMsg.steps.push({ text: `🧭 الموجّه الذكي: ${routed.label} → ${routed.model}`, done: true });
+                }
             }
+        } else if (assistantMsg.routedModel) {
+            activeModelToUse = assistantMsg.routedModel;
         }
 
         const freeModelsList = this.availableModels.filter(m => m.is_free && !m.id.includes('ultra')).map(m => m.id);
         const fallbackChain = [
             activeModelToUse,
-            'google/gemma-4-31b-it:free',
-            'nvidia/nemotron-3.5-lightning:free',
+            'google/gemma-3-27b-it:free',
+            'meta-llama/llama-3.3-70b-instruct:free',
             'openrouter/free',
-            'minimax/minimax-m3:free',
-            'google/gemma-4-26b-a4b-it:free',
+            'qwen/qwen3-coder:free',
+            'google/gemma-3-12b-it:free',
+            'deepseek/deepseek-r1:free',
             ...freeModelsList
         ];
         const uniqueCascade = Array.from(new Set(fallbackChain.filter(Boolean)));
@@ -1894,7 +1863,7 @@ class OXAlphaApp {
             this.renderMessages();
 
             let personaPrompt = PERSONA_PROMPTS[this.activePersona] || PERSONA_PROMPTS.fullstack;
-            let systemText = `${personaPrompt}\n${this.settings.systemPrompt || ''}`;
+            let systemText = `${personaPrompt}\n${this.settings.systemPrompt || ''}${this._kidsPrompt || ''}`;
             if (this.settings.githubRepo) {
                 systemText += `\nالمشروع النشط الحالي في GitHub هو: ${this.settings.githubOwner || 'naderba69'}/${this.settings.githubRepo}.`;
             }
@@ -1902,7 +1871,11 @@ class OXAlphaApp {
                 systemText += `\n\nنتائج البحث الحي المرفقة بالويب:\n${webContext}`;
             }
 
-            const messagesPayload = [{ role: 'system', content: systemText }];
+            // Hook: feature modules (e.g. conversation modes) can extend the system prompt per session
+            if (this.decorateSystemPrompt) systemText = this.decorateSystemPrompt(systemText, session);
+            let messagesPayload = [{ role: 'system', content: systemText }];
+            const latestUserMsg = session.messages.filter(m => m.role === 'user').pop();
+            const latestUserQuery = latestUserMsg ? (latestUserMsg.content || '') : '';
 
             session.messages.forEach(m => {
                 if (m.id === assistantMsgId) {
@@ -1914,19 +1887,16 @@ class OXAlphaApp {
                 if (m.role === 'user') {
                     let userContent = m.content || '';
                     if (m.attachments && Array.isArray(m.attachments)) {
-                        m.attachments.forEach(att => {
-                            if (att.textContent) {
-                                userContent += `\n\n[محتوى الملف المرفق: ${att.name}]:\n${att.textContent}`;
-                            }
-                        });
+                        userContent += this.buildAttachmentContext(m, { query: latestUserQuery, assistantMsg, isLatest: m === latestUserMsg, autoContinuePass });
                     }
-                    const imageAtt = m.attachments?.find(a => a.isImage && a.base64);
-                    if (imageAtt) {
+                    // Send every attached image (previously only the first one reached the model)
+                    const imageAtts = (m.attachments || []).filter(a => a.isImage && a.base64).slice(0, 8);
+                    if (imageAtts.length) {
                         messagesPayload.push({
                             role: 'user',
                             content: [
                                 { type: 'text', text: userContent },
-                                { type: 'image_url', image_url: { url: imageAtt.base64 } }
+                                ...imageAtts.map(a => ({ type: 'image_url', image_url: { url: a.base64 } }))
                             ]
                         });
                     } else {
@@ -1936,6 +1906,11 @@ class OXAlphaApp {
                     messagesPayload.push({ role: 'assistant', content: m.content || '' });
                 }
             });
+
+            // Hook: AI lab (summary replaces old turns, long-term memory, visible reasoning, team standards)
+            if (this.transformChatPayload) {
+                try { messagesPayload = (await this.transformChatPayload(messagesPayload, session, { autoContinuePass, assistantMsgId })) || messagesPayload; } catch (hookErr) { console.warn('payload hook failed', hookErr); }
+            }
 
             if (autoContinuePass > 0) {
                 messagesPayload.push({
@@ -1957,8 +1932,12 @@ class OXAlphaApp {
                 model: currentModel,
                 messages: messagesPayload,
                 stream: true,
-                max_tokens: this.settings.maxTokens || 16384
+                max_tokens: this.settings.maxTokens || 16384,
+                usage: { include: true } // OpenRouter: return real token usage + cost in the final chunk
             };
+            const promptChars = messagesPayload.reduce((n, m) => n + (typeof m.content === 'string' ? m.content.length : JSON.stringify(m.content).length), 0);
+            const passStartedAt = Date.now();
+            let passUsage = null;
 
             if (!isReasoningModel) {
                 requestBody.temperature = this.settings.temperature || 0.7;
@@ -1981,7 +1960,7 @@ class OXAlphaApp {
 
                 if (response.status === 402) {
                     if (retryIndex < uniqueCascade.length - 1) {
-                        const nextFreeModel = uniqueCascade.find(m => m.endsWith(':free') || m.includes('free')) || 'google/gemma-4-31b-it:free';
+                        const nextFreeModel = uniqueCascade.find(m => m.endsWith(':free') || m.includes('free')) || 'google/gemma-3-27b-it:free';
                         this.showToast(`⚠️ رصيد المفتاح 0$. التحويل التلقائي الذكي للنموذج المجاني 100% (${nextFreeModel})...`, 'warning');
                         assistantMsg.steps.push({ text: `⚠️ رصيد 0$، تم التحويل تلقائياً إلى النموذج المجاني ${nextFreeModel}...`, done: true });
                         this.renderMessages();
@@ -2024,6 +2003,7 @@ class OXAlphaApp {
 
                     try {
                         const parsed = JSON.parse(jsonStr);
+                        if (parsed.usage) passUsage = parsed.usage;
                         const choice = parsed.choices?.[0];
                         const delta = choice?.delta;
                         if (choice?.finish_reason) {
@@ -2073,6 +2053,16 @@ class OXAlphaApp {
             assistantMsg.tokens = Math.max(1, Math.round((assistantMsg.content.length + (assistantMsg.reasoning || '').length) / 3.8));
             assistantMsg.tps = (assistantMsg.tokens / (parseFloat(assistantMsg.duration) || 1)).toFixed(1);
 
+            try {
+                this.onStreamPassComplete({
+                    sessionId, messageId: assistantMsgId, model: currentModel, usage: passUsage,
+                    promptChars, completionChars: charCount, durationMs: Date.now() - passStartedAt, pass: autoContinuePass
+                });
+            } catch (hookErr) { console.warn('usage hook failed', hookErr); }
+            if (passUsage && passUsage.completion_tokens) {
+                assistantMsg.usage = passUsage;
+            }
+
             this.playCompletionAudioHaptic();
 
             // Seamless Auto-Continuation if truncated
@@ -2101,7 +2091,7 @@ class OXAlphaApp {
                     assistantMsg.content += `\n\n*(اكتمل الرد جزئياً - انقر أدناه لإكمال باقي الإجابة مباشرة)*\n\n<button class="btn-new-thread" style="width: auto; padding: 6px 14px; font-size: 0.75rem;" onclick="app.continueGeneration('${assistantMsgId}')"><i class="fa-solid fa-play"></i> إكمال التوليد من آخر نقطة</button>`;
                     assistantMsg.status = 'completed';
                 } else {
-                    assistantMsg.content += `\n\n> ❌ **تعذر إكمال الاستجابة:** ${err.message}\n> *نصيحة: تأكد من صحة مفتاح OpenRouter من [openrouter.ai/keys](https://openrouter.ai/keys) أو اختر نموذجاً مستقراً مثل \`google/gemma-4-31b-it:free\`.*\n\n<button class="btn-new-thread" style="width: auto; padding: 8px 18px; margin-top: 8px;" onclick="app.openSettingsModal()"><i class="fa-solid fa-key"></i> إدخال مفتاح OpenRouter في الإعدادات</button>`;
+                    assistantMsg.content += `\n\n> ❌ **تعذر إكمال الاستجابة:** ${err.message}\n> *نصيحة: تأكد من صحة مفتاح OpenRouter من [openrouter.ai/keys](https://openrouter.ai/keys) أو اختر نموذجاً مستقراً مثل \`google/gemma-3-27b-it:free\`.*\n\n<button class="btn-new-thread" style="width: auto; padding: 8px 18px; margin-top: 8px;" onclick="app.openSettingsModal()"><i class="fa-solid fa-key"></i> إدخال مفتاح OpenRouter في الإعدادات</button>`;
                     assistantMsg.status = 'error';
                 }
             }
@@ -2112,6 +2102,27 @@ class OXAlphaApp {
             this.renderUIState();
         }
     }
+
+    // Default smart router (overridden by src/features/02-ai.js when present)
+    pickSmartModel(lastMsg, session, currentModel) {
+        const query = (lastMsg?.content || '').toLowerCase();
+        if (lastMsg?.attachments?.some(a => a.isImage || a.base64)) return { model: 'google/gemma-3-27b-it:free', label: 'صورة' };
+        if (/حلل|فكر|رياضيات|خوارزمية|reason|math|algorithm/.test(query)) return { model: 'deepseek/deepseek-r1:free', label: 'تفكير' };
+        if (/كود|برمج|مستودع|github|code/.test(query)) return { model: 'qwen/qwen3-coder:free', label: 'برمجة' };
+        return { model: currentModel, label: '' };
+    }
+
+    // Default attachment context builder (overridden by RAG in src/features/02-ai.js)
+    buildAttachmentContext(message, ctx) {
+        let out = '';
+        (message.attachments || []).forEach(att => {
+            if (att.textContent) out += `\n\n[محتوى الملف المرفق: ${att.name}]:\n${att.textContent}`;
+        });
+        return out;
+    }
+
+    // Hook called after every successful streaming pass (usage analytics live in feature modules)
+    onStreamPassComplete(info) {}
 
     async continueGeneration(assistantMsgId) {
         const session = this.sessions.find(s => s.id === this.activeSessionId);
@@ -2153,14 +2164,16 @@ class OXAlphaApp {
 
     renderUIState() {
         const repoName = this.settings.githubRepo || 'daschai';
-        const modelName = this.settings.model || 'google/gemma-4-31b-it:free';
+        const modelName = this.settings.model || 'google/gemma-3-27b-it:free';
 
         const headerRepo = document.getElementById('active-repo-name-text');
         const sidebarRepo = document.getElementById('sidebar-active-repo-name');
+        const sidebarOwner = document.getElementById('current-github-owner-display');
         const headerModel = document.getElementById('active-model-display');
 
         if (headerRepo) headerRepo.innerText = repoName;
         if (sidebarRepo) sidebarRepo.innerText = repoName;
+        if (sidebarOwner) sidebarOwner.innerText = this.settings.githubOwner || 'naderba69';
         if (headerModel) headerModel.innerText = modelName;
 
         const banner = document.getElementById('api-key-banner');
@@ -2553,17 +2566,16 @@ class OXAlphaApp {
     toggleSidebar(forceState) {
         const sidebar = document.getElementById('sidebar');
         const backdrop = document.getElementById('sidebar-backdrop');
-        const closeBtn = document.getElementById('sidebar-close-btn');
         if (!sidebar) return;
-
         const isOpen = forceState !== undefined ? forceState : !sidebar.classList.contains('active');
         if (isOpen) {
             sidebar.classList.add('active');
             if (backdrop) backdrop.classList.add('active');
-            if (closeBtn && window.innerWidth <= 900) closeBtn.style.display = 'flex';
+            document.body.style.overflow = window.innerWidth <= 900 ? 'hidden' : '';
         } else {
             sidebar.classList.remove('active');
             if (backdrop) backdrop.classList.remove('active');
+            document.body.style.overflow = '';
         }
     }
 

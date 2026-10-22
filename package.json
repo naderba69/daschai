@@ -1,0 +1,79 @@
+{
+  "name": "ox-alpha-workbench-pro",
+  "version": "2.14.0",
+  "description": "منظومة هندسة البرمجيات بالذكاء الاصطناعي — Gemini AI Autonomous Engineering Copilot",
+  "type": "commonjs",
+  "private": true,
+  "keywords": [
+    "ai",
+    "gemini",
+    "github",
+    "copilot",
+    "workbench",
+    "arabic"
+  ],
+  "author": "OX-Alpha Team <naderba69>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naderba69/daschai.git"
+  },
+  "bin": {
+    "ox-alpha": "cli/ox-alpha.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "node build.js",
+    "build:minify": "node build.js --minify",
+    "vercel-build": "node build.js --minify && node scripts/stage-public.cjs",
+    "dev": "node build.js && npx serve . -l 3000 --cors",
+    "preview": "npx serve . -l 3000",
+    "audit": "node --check src/app.js && for f in src/features/*.js workers/*.js sw.js; do node --check \"$f\" || exit 1; done && node tests/undef-check.cjs src/ai/*.js src/ui/*.js src/studio/*.js src/github/*.js src/media/*.js src/team/*.js src/perf/*.js && echo '✅ JS syntax OK'",
+    "lint": "npx eslint src/ --ext .js || echo '⚠️ eslint not installed — run npm install'",
+    "format": "npx prettier --write \"src/**/*.{js,html,css}\" || echo '⚠️ prettier not installed'",
+    "test": "node build.js --minify && node scripts/sync-extensions.cjs --check && node tests/vercel-config.test.js && node tests/smoke.test.js && node tests/sprint2.test.js && node tests/sprint3.test.js && node tests/sprint4.test.js && node tests/sprint5.test.js && node tests/sprint6.test.js && node tests/sprint7.test.js && node tests/sprint8.test.js && node tests/sprint9.test.js && node tests/sprint10.test.js && node tests/sprint11.test.js && node tests/sprint12.test.js && node tests/sprint13.test.js && node tests/sprint14.test.js"
+  },
+  "devDependencies": {
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/lint": "^6.9.7",
+    "@codemirror/search": "^6.7.2",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@emmetio/codemirror6-plugin": "^0.4.1",
+    "@replit/codemirror-emacs": "^6.1.0",
+    "@replit/codemirror-indentation-markers": "^6.5.3",
+    "@replit/codemirror-minimap": "^0.5.2",
+    "@replit/codemirror-vim": "^6.4.0",
+    "@xterm/xterm": "^6.0.0",
+    "acorn": "^8.19.0",
+    "blakejs": "^1.2.1",
+    "dexie": "^4.4.6",
+    "esbuild": "^0.25.12",
+    "eslint-linter-browserify": "^10.13.0",
+    "fake-indexeddb": "^6.2.6",
+    "fflate": "^0.8.3",
+    "gifenc": "^1.0.3",
+    "js-yaml": "^4.3.2",
+    "jsdom": "^24.1.3",
+    "jszip": "^3.10.1",
+    "pdf-lib": "^1.17.1",
+    "prettier": "^3.9.10",
+    "pyodide": "^0.27.7",
+    "qrcode-generator": "^1.4.4",
+    "serve": "^14.2.0",
+    "sucrase": "^3.35.1",
+    "terser": "^5.51.2",
+    "tweetnacl": "^1.0.3",
+    "typescript": "^6.0.3"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

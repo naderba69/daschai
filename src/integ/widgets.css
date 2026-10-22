@@ -1,0 +1,26 @@
+/* Sprint 14 widgets (ox-t* tables, ox-c* carousel, ox-sel* dropdowns, ox-prog images, ox-lt lottie) */
+.ox-tbar { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 6px 0; font-size: .82rem; }
+.ox-tbar .ox-tq { flex: 1 1 140px; min-width: 120px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border-color, #3334); background: var(--bg-secondary, transparent); color: inherit; }
+.ox-tbar button { border: 1px solid var(--border-color, #3334); background: var(--bg-tertiary, #8881); color: inherit; border-radius: 6px; padding: 2px 8px; cursor: pointer; }
+.ox-tcount, .ox-tpage { opacity: .7; }
+.ox-twrap { overflow: auto; max-width: 100%; }
+th.ox-tsort { cursor: pointer; user-select: none; white-space: nowrap; }
+th.ox-tsort::after { content: attr(data-dir); margin-inline-start: 4px; font-size: .7em; opacity: .7; }
+th.ox-tsort:focus-visible { outline: 2px solid var(--accent-color, #6366f1); outline-offset: -2px; }
+.ox-carousel { position: relative; display: block; margin: 8px 0; }
+.ox-ctrack { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; gap: 8px; border-radius: 12px; scrollbar-width: none; }
+.ox-ctrack::-webkit-scrollbar { display: none; }
+.ox-cslide { flex: 0 0 100%; scroll-snap-align: center; margin: 0; display: flex; align-items: center; justify-content: center; }
+.ox-cslide img { max-width: 100%; max-height: 420px; object-fit: contain; border-radius: 10px; }
+.ox-cnav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 2; width: 34px; height: 34px; border-radius: 50%; border: 0; background: #0009; color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+.ox-cprev { inset-inline-start: 6px; } .ox-cnext { inset-inline-end: 6px; }
+.ox-cdots { display: flex; justify-content: center; gap: 6px; margin-top: 6px; }
+.ox-cdots button { width: 8px; height: 8px; border-radius: 50%; border: 0; padding: 0; background: #8886; cursor: pointer; }
+.ox-cdots button.active { background: var(--accent-color, #6366f1); width: 20px; border-radius: 4px; }
+.ox-selq { display: block; width: 100%; margin-bottom: 4px; font-size: .8rem; padding: 4px 8px; }
+img.ox-prog { filter: blur(10px); opacity: .6; background: linear-gradient(90deg, #8881, #8883, #8881); background-size: 200% 100%; animation: ox-shimmer 1.2s infinite linear; }
+img.ox-loaded { filter: none; opacity: 1; transition: filter .35s ease, opacity .35s ease; }
+@keyframes ox-shimmer { to { background-position: -200% 0; } }
+.ox-lt { display: inline-block; width: 22px; height: 22px; vertical-align: middle; margin-inline-end: 6px; }
+[data-lottie] { display: inline-block; width: 48px; height: 48px; }
+@media (prefers-reduced-motion: reduce) { img.ox-prog { animation: none; } .ox-ctrack { scroll-behavior: auto; } }

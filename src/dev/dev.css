@@ -1,0 +1,112 @@
+/* Sprint 13 — Developer Lab (dvx-*) */
+.dvx-root { --dvx-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.dvx-root textarea[dir=ltr], .dvx-code, .dvx-pre, .dvx-ctx, .dvx-diff td, .dvx-cl code, .dvx-blame { font-family: var(--dvx-mono); }
+.dvx-code { width: 100%; min-height: 220px; font-size: .82rem; line-height: 1.55; tab-size: 4; resize: vertical; }
+.dvx-pre { max-height: 420px; }
+.dvx-wide { grid-column: 1 / -1; }
+.dvx-good { color: #22c55e; } .dvx-bad { color: #ef4444; }
+.dvx-off { opacity: .55; }
+.dvx-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin: 6px 0; }
+.dvx-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin: 6px 0; }
+.dvx-flags { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0; }
+.dvx-flags.dvx-col { flex-direction: column; }
+.dvx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+.dvx-chipgrp { display: inline-flex; gap: 2px; }
+.dvx-tag { display: inline-block; font-size: .7rem; padding: 1px 6px; border-radius: 999px; background: rgba(148, 163, 184, .18); margin-inline-start: 4px; }
+.dvx-narrow { max-width: 680px; }
+.dvx-pbar { height: 8px; border-radius: 999px; background: rgba(148, 163, 184, .2); overflow: hidden; min-width: 80px; }
+.dvx-pbar > span { display: block; height: 100%; background: linear-gradient(90deg, #ef4444, #f59e0b 50%, #22c55e); }
+
+/* search */
+.dvx-match { display: flex; gap: 8px; align-items: baseline; padding: 3px 0; font-size: .82rem; }
+.dvx-ctx { white-space: pre; overflow: hidden; text-overflow: ellipsis; direction: ltr; unicode-bidi: plaintext; }
+.dvx-old { background: rgba(239, 68, 68, .28); text-decoration: line-through; color: inherit; }
+.dvx-new { background: rgba(34, 197, 94, .3); color: inherit; }
+.dvx-groups code { font-size: .72rem; margin-inline-start: 4px; opacity: .8; }
+.dvx-file > summary { cursor: pointer; padding: 6px 0; }
+
+/* diff */
+.dvx-diffwrap { overflow: auto; max-height: 460px; border-radius: 8px; background: var(--bg-code, #0d0e11); }
+.dvx-diff { width: 100%; border-collapse: collapse; font-size: .78rem; direction: ltr; }
+.dvx-diff td { padding: 0 6px; white-space: pre; vertical-align: top; }
+.dvx-diff .dvx-ln { width: 1%; color: #64748b; text-align: right; user-select: none; }
+.dvx-dadd { background: rgba(34, 197, 94, .14); } .dvx-ddel { background: rgba(239, 68, 68, .14); }
+.dvx-sign { display: inline-block; width: 1.2em; opacity: .7; }
+.dvx-gap td { text-align: center; color: #64748b; background: rgba(148, 163, 184, .08); }
+
+/* quality */
+.dvx-sev { font-size: .7rem; padding: 1px 6px; border-radius: 4px; background: rgba(148, 163, 184, .2); }
+.dvx-sev.dvx-error { background: rgba(239, 68, 68, .25); } .dvx-sev.dvx-warning { background: rgba(245, 158, 11, .25); }
+.dvx-rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+
+/* terminal + run */
+.dvx-term { white-space: pre-wrap; word-break: break-word; }
+.dvx-stdout { color: inherit; } .dvx-stderr { color: #f87171; } .dvx-info { color: #94a3b8; }
+.dvx-xterm { height: 380px; border-radius: 8px; overflow: hidden; background: #0b0d12; padding: 6px; direction: ltr; }
+.dvx-term-in { width: 100%; font-family: var(--dvx-mono); direction: ltr; }
+.dvx-share { border: 1px solid rgba(148, 163, 184, .25); border-radius: 10px; padding: 10px; }
+
+/* tests + coverage + e2e */
+.dvx-tests { display: flex; flex-direction: column; gap: 2px; font-size: .82rem; }
+.dvx-t { display: flex; gap: 8px; padding: 3px 6px; border-radius: 6px; }
+.dvx-t-pass { background: rgba(34, 197, 94, .08); } .dvx-t-fail { background: rgba(239, 68, 68, .12); } .dvx-t-skip, .dvx-t-todo { opacity: .7; }
+.dvx-covsrc, .dvx-dbg-src .fmx-card-b, .dvx-dbg-src > div:last-child { max-height: 460px; overflow: auto; direction: ltr; background: var(--bg-code, #0d0e11); border-radius: 8px; font-size: .78rem; }
+.dvx-cl { display: flex; gap: 6px; align-items: baseline; white-space: pre; min-height: 1.45em; padding-inline-end: 8px; }
+.dvx-ln { display: inline-block; min-width: 3.2em; text-align: right; color: #64748b; user-select: none; text-decoration: none; }
+.dvx-hits { display: inline-block; min-width: 2.6em; font-size: .7rem; color: #94a3b8; }
+.dvx-cov-hit { background: rgba(34, 197, 94, .1); } .dvx-cov-miss { background: rgba(239, 68, 68, .16); }
+.dvx-cov-br { box-shadow: inset 3px 0 0 #f59e0b; }
+.dvx-e2e { display: grid; grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr); gap: 10px; }
+.dvx-e2e-view { min-height: 240px; border: 1px solid rgba(148, 163, 184, .25); border-radius: 8px; overflow: hidden; background: #fff; }
+.dvx-e2e-frame, .dvx-frame { width: 100%; height: 320px; border: 0; background: #fff; border-radius: 6px; }
+.dvx-snap { border: 1px solid rgba(148, 163, 184, .2); border-radius: 8px; padding: 6px; margin: 6px 0; }
+.dvx-snap-h { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+
+/* debugger */
+.dvx-dbg-status { margin: 6px 0; font-size: .85rem; }
+.dvx-dbg-ctrl { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 6px 0; position: sticky; top: 0; z-index: 2; background: var(--bg-secondary, #15171c); padding: 4px 0; }
+.dvx-dbg-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(220px, 2fr); gap: 10px; }
+.dvx-dbg-side { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.dvx-cur { background: rgba(250, 204, 21, .22); box-shadow: inset 3px 0 0 #facc15; }
+.dvx-ran { background: rgba(56, 189, 248, .06); }
+.dvx-bp { cursor: pointer; }
+.dvx-bp.on { color: #ef4444; font-weight: 700; }
+.dvx-bp:hover { color: #f87171; }
+.dvx-vars td { font-size: .78rem; word-break: break-all; }
+.dvx-changed { background: rgba(245, 158, 11, .16); }
+.dvx-stack { margin: 0; padding-inline-start: 1.4em; font-size: .78rem; }
+.dvx-stack li.on { font-weight: 700; }
+.dvx-range { flex: 1; min-width: 120px; }
+.dvx-pos { font-size: .75rem; color: #94a3b8; }
+.dvx-watchbar { display: flex; gap: 6px; margin: 6px 0; }
+
+/* history */
+.dvx-day h4 { margin: 10px 0 4px; font-size: .8rem; color: #94a3b8; }
+.dvx-tl-item { display: flex; gap: 8px; align-items: center; padding: 4px 0; border-inline-start: 2px solid rgba(148, 163, 184, .25); padding-inline-start: 10px; position: relative; font-size: .82rem; flex-wrap: wrap; }
+.dvx-tl-dot { width: 10px; height: 10px; border-radius: 50%; background: #64748b; margin-inline-start: -16px; flex: none; }
+.dvx-tl-dot.cur { background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, .25); }
+.dvx-tl-item time { color: #94a3b8; font-size: .75rem; min-width: 3.6em; }
+.dvx-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-items: start; }
+.dvx-cmp-side { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.dvx-cmp-side pre { min-height: 220px; }
+.dvx-blame { max-height: 520px; overflow: auto; background: var(--bg-code, #0d0e11); border-radius: 8px; font-size: .78rem; }
+.dvx-bl { display: flex; gap: 6px; white-space: pre; min-height: 1.45em; align-items: baseline; }
+.dvx-bl-meta { flex: none; width: 190px; overflow: hidden; text-overflow: ellipsis; padding-inline-start: 6px; font-family: inherit; direction: rtl; text-align: start; }
+.dvx-bl-meta small { color: #94a3b8; margin-inline-start: 4px; }
+
+/* refactor + custom */
+.dvx-pal { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 12px; max-height: 360px; overflow: auto; margin-top: 6px; }
+.dvx-pal .pfx-toggle { margin: 2px 0; font-size: .8rem; }
+.dvx-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.dvx-theme { text-align: start; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 10px; border: 1px solid rgba(148, 163, 184, .25); background: transparent; color: inherit; cursor: pointer; }
+.dvx-theme.active { border-color: var(--accent, #6366f1); box-shadow: 0 0 0 2px rgba(99, 102, 241, .25); }
+.dvx-theme small { color: #94a3b8; }
+.dvx-icrow { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.dvx-ic { font-size: 1rem; }
+.dvx-icprev { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px 12px; font-size: .82rem; }
+
+@media (max-width: 760px) {
+    .dvx-dbg-grid, .dvx-cmp, .dvx-e2e { grid-template-columns: 1fr; }
+    .dvx-bl-meta { width: 110px; }
+    .dvx-xterm { height: 300px; }
+}

@@ -6,20 +6,26 @@
     <aside class="sidebar" id="sidebar">
         <!-- Sidebar Header -->
         <div class="sidebar-header">
-            <div class="brand-row" onclick="app.createNewSession(true)">
-                <div class="gemini-sparkle-icon">✦</div>
-                <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div class="brand-row" onclick="app.createNewSession(true)" role="button" tabindex="0" aria-label="إنشاء محادثة جديدة">
+                    <div class="gemini-sparkle-icon" aria-hidden="true">✦</div>
+                    <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
+                </div>
+                <button class="nav-icon-btn" id="sidebar-close-btn" onclick="app.toggleSidebar(false)" aria-label="إغلاق القائمة" style="width:28px;height:28px; display:none;">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
             <button class="btn-new-thread" onclick="app.createNewSession(true)">
                 <i class="fa-solid fa-plus"></i>
                 <span>محادثة جديدة</span>
             </button>
-            <div class="sidebar-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتغيير مستودع GitHub">
+            <div class="sidebar-repo-pill" onclick="app.openRepositoriesHubModal()" title="انقر لتغيير مستودع GitHub" role="button" tabindex="0" aria-label="تغيير مستودع GitHub النشط">
                 <div class="repo-info-row">
-                    <i class="fa-brands fa-github text-emerald"></i>
+                    <i class="fa-brands fa-github text-emerald" aria-hidden="true"></i>
                     <span id="sidebar-active-repo-name" class="truncate">daschai</span>
+                    <span id="active-repo-name-text" style="display:none;">daschai</span>
                 </div>
-                <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem;"></i>
+                <i class="fa-solid fa-chevron-left" style="font-size: 0.7rem;" aria-hidden="true"></i>
             </div>
         </div>
 
@@ -27,7 +33,7 @@
         <div class="sidebar-search-container">
             <div class="sidebar-search-box">
                 <i class="fa-solid fa-magnifying-glass" style="color: var(--text-dim);"></i>
-                <input type="text" id="session-search-input" placeholder="بحث في المحادثات..." oninput="app.filterSessions(this.value)">
+                <input type="text" id="session-search-input" placeholder="بحث في المحادثات..." oninput="app.filterSessions(this.value)" aria-label="بحث في المحادثات">
             </div>
         </div>
 
@@ -52,7 +58,7 @@
                     <i class="fa-solid fa-cube text-blue"></i>
                     <span>النماذج</span>
                 </button>
-                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة نموذجين جنباً إلى جنب">
+                <button class="tool-grid-btn" onclick="app.openDualModelArena()" title="حلبة مقارنة 2–8 نماذج بالتوازي">
                     <i class="fa-solid fa-bolt text-amber"></i>
                     <span>حلبة النماذج</span>
                 </button>
@@ -64,13 +70,41 @@
                     <i class="fa-solid fa-terminal text-emerald"></i>
                     <span>Termux</span>
                 </button>
-                <button class="tool-grid-btn" onclick="app.openBranchManagerModal()" title="إدارة الفروع و Pull Requests">
+                <button class="tool-grid-btn" onclick="app.openGitHubHub('prs')" title="GitHub Hub: الفروع، PR، Actions، الإصدارات، النشر">
                     <i class="fa-solid fa-code-branch text-blue"></i>
                     <span>الفروع و PR</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openAIHub()" title="الاستهلاك والتكلفة والموجّه الذكي">
+                    <i class="fa-solid fa-chart-line text-blue"></i>
+                    <span>الاستهلاك</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openCodeSearch()" title="البحث الذكي في كود المشروع">
+                    <i class="fa-solid fa-magnifying-glass-chart text-emerald"></i>
+                    <span>بحث الكود</span>
                 </button>
                 <button class="tool-grid-btn" onclick="app.openDiagnosticsModal()" title="فحص الأنظمة وتشخيص الأخطاء">
                     <i class="fa-solid fa-stethoscope text-purple"></i>
                     <span>الفحص</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openTasks()" title="المهام — لوحة Kanban ومؤقت وتذكيرات">
+                    <i class="fa-solid fa-list-check text-emerald"></i>
+                    <span>المهام</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openWhiteboard()" title="السبورة البيضاء — ارسم وحوّل الرسم إلى كود">
+                    <i class="fa-solid fa-chalkboard text-amber"></i>
+                    <span>السبورة</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openSharePanel()" title="مشاركة المحادثة برابط أو Gist">
+                    <i class="fa-solid fa-share-nodes text-purple"></i>
+                    <span>مشاركة</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openInsights()" title="التقارير: التكاليف، النشاط، المهارات، جودة المشروع">
+                    <i class="fa-solid fa-chart-pie text-blue"></i>
+                    <span>التقارير</span>
+                </button>
+                <button class="tool-grid-btn" onclick="app.openPlatform()" title="المنصة: الصحة، النسخ الاحتياطي، الشبكة، الجهاز، التكاملات">
+                    <i class="fa-solid fa-gauge-high text-emerald"></i>
+                    <span>المنصة</span><span id="health-error-badge" class="cm-badge" style="display:none"></span>
                 </button>
                 <button class="tool-grid-btn" onclick="app.openSettingsModal()" title="الإعدادات والمفاتيح">
                     <i class="fa-solid fa-gear text-blue"></i>
@@ -85,8 +119,8 @@
         <!-- Top Navbar (Clean Single-Line, Zero Collisions) -->
         <header class="top-navbar">
             <div class="navbar-left">
-                <button class="nav-icon-btn" id="sidebar-toggle-btn" title="القائمة الجانبية" onclick="app.toggleSidebar()">
-                    <i class="fa-solid fa-bars"></i>
+                <button class="nav-icon-btn" id="sidebar-toggle-btn" title="القائمة الجانبية" onclick="app.toggleSidebar()" aria-label="فتح/إغلاق القائمة الجانبية" aria-expanded="false">
+                    <i class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
                 <div class="nav-brand" onclick="app.createNewSession(true)">
                     <span class="nav-sparkle">✦</span>
@@ -95,7 +129,7 @@
                 <!-- Active Model Dropdown Pill -->
                 <div class="nav-model-pill" onclick="app.openModelExplorerModal()" title="انقر لتغيير النموذج">
                     <span class="live-dot"></span>
-                    <span id="active-model-display" class="truncate">google/gemma-4-31b-it:free</span>
+                    <span id="active-model-display" class="truncate">google/gemma-3-27b-it:free</span>
                     <i class="fa-solid fa-chevron-down pill-arrow"></i>
                 </div>
             </div>
@@ -108,8 +142,18 @@
                 </div>
 
                 <!-- Dual Arena Button -->
-                <button class="nav-icon-btn" title="حلبة مقارنة نموذجين" onclick="app.openDualModelArena()">
+                <button class="nav-icon-btn" title="حلبة النماذج المتعددة (2–8)" onclick="app.openDualModelArena()">
                     <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
+                </button>
+
+                <!-- Theme Toggle -->
+                <button class="theme-toggle-btn" id="theme-toggle-btn" title="تبديل المظهر (فاتح/داكن)" onclick="app.toggleTheme()" aria-label="تبديل المظهر">
+                    <i class="fa-solid fa-moon" id="theme-toggle-icon"></i>
+                </button>
+
+                <!-- Command Palette Trigger -->
+                <button class="nav-icon-btn" title="لوحة الأوامر (Ctrl+K)" onclick="app.openCommandPalette()" aria-label="لوحة الأوامر">
+                    <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
 
                 <!-- New Thread Button -->
@@ -123,6 +167,9 @@
                 </button>
             </div>
         </header>
+
+        <!-- Browser-like Session Tabs (Sprint 1) -->
+        <div class="top-tabs-bar" id="top-tabs-bar" role="tablist" aria-label="المحادثات المفتوحة"></div>
 
         <!-- API Key Banner -->
         <div id="api-key-banner" class="api-key-banner" style="display: none;">
@@ -190,13 +237,19 @@
                         </div>
                     </div>
 
-                    <!-- Gemini Input Card -->
+                    <div class="token-estimate-row"><span id="token-estimate-chip" class="token-estimate-chip" onclick="app.openAIHub()" title="تقدير التوكنات والتكلفة قبل الإرسال — انقر لفتح مركز الذكاء"></span></div>
+                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Alt+G</kbd> GitHub Hub • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
+                    <div id="session-mode-badge" class="session-mode-badge" style="display:none" aria-live="polite"></div>
+                <!-- Gemini Input Card -->
                     <div class="gemini-input-card">
+                        <div class="slash-autocomplete" id="slash-autocomplete" role="listbox" aria-label="أوامر الشرطة المائلة"></div>
                         <textarea 
                             class="gemini-input-field" 
                             id="user-input" 
-                            placeholder="اسأل OX-Alpha Pro، أو ارفع ملفات متعددة / مشروع ZIP، أو انقر أيقونة السحابة لجلب كود GitHub..."
+                            placeholder="اسأل OX-Alpha Pro… اكتب / للأوامر السريعة، أو Ctrl+K للوحة الأوامر"
                             rows="1"
+                            aria-label="حقل إدخال الرسالة"
+                            aria-multiline="true"
                         ></textarea>
 
                         <div class="gemini-input-actions">
@@ -204,6 +257,10 @@
                                 <!-- Agent Mode Toggle -->
                                 <button class="action-btn" id="btn-agent-mode" title="وضع الوكيل الذاتي المستقل (Autonomous Agent ReAct Loop)" onclick="app.toggleAutonomousAgent()">
                                     <i class="fa-solid fa-robot" style="color: #c084fc;"></i>
+                                </button>
+                                <!-- Conversation modes (teach / review / planning / …) -->
+                                <button class="action-btn" id="btn-chat-mode" title="وضع المحادثة: تدريس، مراجعة، تخطيط، عصف ذهني، مقابلة…" onclick="app.openModeMenu(this)" aria-label="وضع المحادثة">
+                                    <i class="fa-solid fa-masks-theater" style="color: #fbbf24;"></i>
                                 </button>
                                 <!-- Smart Router -->
                                 <button class="action-btn active" id="btn-smart-router" title="التوجيه الذكي التلقائي للنموذج" onclick="app.toggleSmartRouter()">
@@ -221,10 +278,16 @@
                                 <button class="action-btn" id="btn-attach-file" title="إرفاق ملفات متعددة أو مشروع ZIP أو صور" onclick="document.getElementById('universal-file-input').click()">
                                     <i class="fa-solid fa-paperclip"></i>
                                 </button>
-                                <input type="file" id="universal-file-input" multiple accept=".zip,application/zip,application/x-zip-compressed,.pdf,image/*,.txt,.md,.json,.py,.js,.ts,.html,.css,.csv,.vue,.rs,.go,.php" style="display: none;">
+                                <input type="file" id="universal-file-input" multiple accept=".zip,application/zip,application/x-zip-compressed,.pdf,.docx,.xlsx,.xls,.pptx,image/*,audio/*,video/*,.txt,.md,.json,.yaml,.yml,.toml,.xml,.svg,.py,.js,.jsx,.ts,.tsx,.html,.css,.scss,.csv,.tsv,.vue,.svelte,.rs,.go,.php,.java,.kt,.swift,.rb,.c,.cpp,.h,.cs,.sql,.sh,.env,.ini,.ttf,.otf,.woff,.woff2,.geojson,.ipynb" style="display: none;">
+                                <!-- Sprint 4: media & files menu -->
+                                <button class="action-btn" id="btn-media-menu" title="المزيد: رفع مجلد، تسجيل صوت/شاشة/كاميرا، معرض الوسائط، تصدير" aria-label="قائمة الوسائط" aria-haspopup="menu" onclick="app.openMediaMenu(this)">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                                <input type="file" id="folder-file-input" webkitdirectory directory multiple style="display: none;">
                                 <!-- Microphone STT -->
-                                <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN)" onclick="app.toggleRecording()">
-                                    <i class="fa-solid fa-microphone"></i>
+                                <button class="action-btn" id="btn-mic" title="إملاء صوتي (AR / FR / EN) — انقر مطولاً لتغيير اللغة" onclick="app.toggleRecording()" oncontextmenu="event.preventDefault(); app.toggleSTTLang();" aria-label="إملاء صوتي">
+                                    <i class="fa-solid fa-microphone" aria-hidden="true"></i>
+                                    <span id="stt-lang-label" style="font-size:0.6rem; font-weight:700; margin-right:2px;">AR</span>
                                 </button>
                             </div>
 
@@ -252,13 +315,17 @@
                 <div class="studio-topbar">
                     <div class="studio-tabs-row" id="studio-open-files-tabs"></div>
                     <div class="studio-actions-row">
+                        <button class="studio-action-btn" id="btn-studio-explorer" onclick="app.toggleStudioExplorer()" title="مستكشف الملفات (Ctrl+B)"><i class="fa-solid fa-folder-tree text-blue"></i><span>الملفات</span></button>
+                        <button class="studio-action-btn" onclick="app.openFileHistory()" title="سجل إصدارات الملف"><i class="fa-solid fa-clock-rotate-left text-purple"></i><span>السجل</span></button>
+                        <button class="studio-action-btn" id="btn-studio-comments" onclick="app.openComments()" oncontextmenu="event.preventDefault(); app.addCommentAtCaret()" title="تعليقات الكود — Ctrl+Alt+M لإضافة تعليق على السطر الحالي"><i class="fa-solid fa-comments text-blue"></i><span>تعليقات</span></button>
                         <button class="studio-action-btn" onclick="app.runStudioCode()"><i class="fa-solid fa-play text-emerald"></i><span>تشغيل</span></button>
                         <button class="studio-action-btn" onclick="app.openDiffViewerForActiveStudioFile()"><i class="fa-solid fa-code-compare text-amber"></i><span>Diff</span></button>
                         <button class="studio-action-btn" onclick="app.commitStudioFile()"><i class="fa-brands fa-github text-emerald"></i><span>Commit</span></button>
-                        <button class="studio-close-btn" onclick="app.toggleCodeStudio(false)"><i class="fa-solid fa-xmark"></i></button>
+                        <button class="studio-close-btn" id="btn-toggle-studio" onclick="app.toggleCodeStudio(false)" aria-label="إغلاق استوديو الأكواد"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                 </div>
                 <div class="studio-editor-wrapper">
+                    <aside class="studio-explorer" id="studio-explorer" aria-label="مستكشف ملفات المشروع"></aside>
                     <textarea class="studio-code-canvas" id="studio-editor-textarea" spellcheck="false" oninput="app.handleStudioCodeChange(this.value)"></textarea>
                 </div>
                 <div class="studio-console" id="studio-terminal">⚡ طرفية المخرجات جاهزة للتشغيل</div>
@@ -280,7 +347,7 @@
                     <span>مشاريع ومستودعات GitHub</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.74rem;" onclick="app.openBranchManagerModal()">
+                    <button class="btn-new-thread" style="width: auto; padding: 4px 12px; font-size: 0.74rem;" onclick="app.openGitHubHub('prs')">
                         <i class="fa-solid fa-code-branch"></i>
                         <span>الفروع و PR</span>
                     </button>
@@ -423,66 +490,89 @@
 
 <!-- 3. Dual Model Arena Modal -->
 <div class="modal-overlay-backdrop" id="arena-modal" onclick="if(event.target===this)app.closeModals()">
-    <div class="modal-card-box wide">
+    <div class="modal-card-box wide arena-xl">
         <div class="mobile-sheet-drag-handle"></div>
         <div class="modal-pinned-top">
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
                     <i class="fa-solid fa-bolt text-amber"></i>
-                    <span>حلبة مقارنة نموذجين جنباً إلى جنب (Dual Model Arena)</span>
+                    <span>حلبة النماذج المتعددة (2–8 نماذج بالتوازي)</span>
                 </div>
-                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <select id="arena-count-select" class="form-input-box" style="width:auto; padding:4px 8px; font-size:0.76rem;" onchange="app.setArenaCount(this.value)" aria-label="عدد النماذج">
+                        <option value="2">نموذجان</option>
+                        <option value="3">3 نماذج</option>
+                        <option value="4">4 نماذج</option>
+                        <option value="6">6 نماذج</option>
+                        <option value="8">8 نماذج (Mega Arena)</option>
+                    </select>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="arena-prompt-row">
+                <textarea id="arena-prompt-input" class="form-input-box" rows="2" placeholder="أدخل المسألة أو الكود للمقارنة المباشرة... (Ctrl+Enter للتشغيل)"></textarea>
+                <div style="display:flex; flex-direction:column; gap:6px;">
+                    <button class="btn-new-thread" id="arena-run-btn" style="width: auto; padding: 7px 16px; white-space: nowrap;" onclick="app.executeArenaComparison()">
+                        <i class="fa-solid fa-play"></i><span>بدء المقارنة</span>
+                    </button>
+                    <button class="sidebar-btn-util" id="arena-stop-btn" style="padding: 6px 12px; display:none;" onclick="app.stopArena()">
+                        <i class="fa-solid fa-stop"></i><span>إيقاف</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="arena-split-view arena-grid" id="arena-grid" data-count="2"></div>
+        <div class="modal-footer-bar" style="justify-content:space-between;">
+            <div id="arena-leaderboard-mini" class="arena-leaderboard-mini"></div>
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()"><span>إغلاق</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- AI Hub: usage analytics, router, RAG, storage (Sprint 2) -->
+<div class="modal-overlay-backdrop" id="ai-hub-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-chart-line text-blue"></i>
+                    <span>مركز الذكاء: الاستهلاك والتكلفة والموجّه</span>
+                </div>
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+        </div>
+        <div class="modal-body-scrollable" id="ai-hub-body"></div>
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding: 7px 14px;" onclick="app.exportUsageCSV()"><i class="fa-solid fa-file-csv"></i><span>تصدير CSV</span></button>
+            <button class="sidebar-btn-util" style="padding: 7px 14px;" onclick="app.clearUsageData()"><i class="fa-regular fa-trash-can"></i><span>مسح السجل</span></button>
+            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()"><span>إغلاق</span></button>
+        </div>
+    </div>
+</div>
 
-            <!-- Arena Input -->
-            <div style="display: flex; gap: 8px;">
-                <input type="text" id="arena-prompt-input" class="form-input-box" placeholder="أدخل المسألة أو الكود للمقارنة المباشرة بين النموذجين...">
-                <button class="btn-new-thread" style="width: auto; padding: 7px 16px; white-space: nowrap;" onclick="app.executeArenaComparison()">
-                    <i class="fa-solid fa-play"></i>
-                    <span>بدء المقارنة</span>
+<!-- Code Search (local RAG index) — Sprint 2 -->
+<div class="modal-overlay-backdrop" id="code-search-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-magnifying-glass-chart text-emerald"></i>
+                    <span>البحث الذكي في كود المشروع (فهرس محلي)</span>
+                </div>
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق">
+                    <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
+            <input type="text" id="code-search-input" class="form-input-box" placeholder="مثال: authentication token refresh أو دالة رفع الملفات..." autocomplete="off">
+            <div id="code-search-meta" style="font-size:0.72rem; color:var(--text-dim); margin-top:6px;"></div>
         </div>
-
-        <div class="arena-split-view">
-            <!-- Column A -->
-            <div class="arena-column-card">
-                <div class="arena-header-bar">
-                    <select id="arena-model-a" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;">
-                        <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B (مجاني)</option>
-                        <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
-                        <option value="deepseek/deepseek-r1">DeepSeek R1 (Thinking)</option>
-                    </select>
-                    <span id="arena-gauge-a" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
-                </div>
-                <div class="arena-body-scroll markdown-body" id="arena-output-a" dir="auto">
-                    بانتظار بدء المقارنة...
-                </div>
-            </div>
-
-            <!-- Column B -->
-            <div class="arena-column-card">
-                <div class="arena-header-bar">
-                    <select id="arena-model-b" class="form-input-box" style="padding: 4px 8px; font-size: 0.76rem; width: auto;">
-                        <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 (1M)</option>
-                        <option value="openrouter/free">OpenRouter Free Router</option>
-                        <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B</option>
-                    </select>
-                    <span id="arena-gauge-b" class="text-emerald" style="font-size: 0.72rem;">جاهز</span>
-                </div>
-                <div class="arena-body-scroll markdown-body" id="arena-output-b" dir="auto">
-                    بانتظار بدء المقارنة...
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-footer-bar">
-            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
-                <span>إغلاق</span>
-            </button>
-        </div>
+        <div class="modal-body-scrollable" id="code-search-results"></div>
     </div>
 </div>
 
@@ -494,30 +584,120 @@
             <div class="modal-header-bar">
                 <div class="modal-title-heading">
                     <i class="fa-solid fa-code-compare text-amber"></i>
-                    <span>مقارنة الفروقات قبل الرفع (Git Diff): <span id="diff-file-path-title" class="text-blue">src/App.tsx</span></span>
+                    <span>مراجعة الفروقات قبل الرفع: <span id="diff-file-path-title" class="text-blue" dir="ltr">src/App.tsx</span></span>
                 </div>
-                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span id="diff-stats" class="diff-stats"></span>
+                    <button class="sidebar-btn-util" style="padding:4px 10px; font-size:0.72rem;" onclick="app.toggleDiffView()" title="تبديل العرض: موحد / جنباً إلى جنب"><i class="fa-solid fa-table-columns"></i><span id="diff-view-label">جنباً إلى جنب</span></button>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
+            <div id="diff-context-note" class="diff-context-note"></div>
         </div>
 
         <div class="modal-body-scrollable">
-            <div class="git-diff-container" id="git-diff-output-box">
-                <!-- Populated with colored diff lines -->
-            </div>
+            <div class="git-diff-container" id="git-diff-output-box"></div>
         </div>
 
-        <div class="modal-footer-bar">
-            <button class="btn-new-thread" style="width: auto; padding: 7px 18px; font-size: 0.8rem;" id="btn-diff-confirm-commit" onclick="app.confirmCommitFromDiff()">
-                <i class="fa-brands fa-github"></i>
-                <span>قبول ورفع Commit مباشر إلى GitHub</span>
-            </button>
-            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
-                <span>إغلاق</span>
-            </button>
+        <div class="modal-footer-bar diff-commit-footer">
+            <div class="diff-commit-row">
+                <input type="text" id="diff-commit-message" class="form-input-box" placeholder="رسالة الـ Commit (مثال: fix: handle empty input)" dir="auto">
+                <button class="sidebar-btn-util" style="padding:6px 10px; white-space:nowrap;" onclick="app.suggestCommitMessage()" title="اقتراح رسالة بالذكاء الاصطناعي"><i class="fa-solid fa-wand-magic-sparkles text-purple"></i><span>اقتراح</span></button>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button class="btn-new-thread" style="width: auto; padding: 7px 18px; font-size: 0.8rem;" id="btn-diff-confirm-commit" onclick="app.confirmCommitFromDiff()">
+                    <i class="fa-brands fa-github"></i><span>Commit إلى <span id="diff-target-branch">main</span></span>
+                </button>
+                <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()"><span>إغلاق</span></button>
+            </div>
         </div>
     </div>
+</div>
+
+<!-- Merge / conflict resolver (Sprint 3) -->
+<div class="modal-overlay-backdrop" id="merge-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-solid fa-code-merge text-amber"></i>
+                    <span>حل التعارضات: <span id="merge-file-title" class="text-blue" dir="ltr"></span></span>
+                </div>
+                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="merge-summary" class="diff-context-note"></div>
+        </div>
+        <div class="modal-body-scrollable" id="merge-body"></div>
+        <div class="modal-footer-bar">
+            <button class="sidebar-btn-util" style="padding:7px 12px;" onclick="app.mergeChooseAll('ours')">كل نسختي</button>
+            <button class="sidebar-btn-util" style="padding:7px 12px;" onclick="app.mergeChooseAll('theirs')">كل نسخة GitHub</button>
+            <button class="btn-new-thread" style="width:auto; padding:7px 18px;" id="merge-continue-btn" onclick="app.finishMerge()"><i class="fa-solid fa-check"></i><span>متابعة إلى المراجعة والـ Commit</span></button>
+        </div>
+    </div>
+</div>
+
+<!-- GitHub Hub (Sprint 3) -->
+<div class="modal-overlay-backdrop" id="gh-hub-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide gh-hub-box">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading">
+                    <i class="fa-brands fa-github text-emerald"></i>
+                    <span>GitHub Hub: <span id="gh-hub-repo" dir="ltr" class="text-emerald"></span></span>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center;">
+                    <span id="gh-hub-rate" class="gh-rate" title="حد طلبات GitHub API المتبقي"></span>
+                    <button class="sidebar-btn-util" style="padding:4px 10px; font-size:0.72rem;" onclick="app.closeModals(); app.openGitHubWorkbench()" title="مستكشف الملفات"><i class="fa-solid fa-folder-tree"></i><span>الملفات</span></button>
+                    <button class="sidebar-btn-util" style="padding:4px 10px; font-size:0.72rem;" onclick="app.refreshGitHubHub()" aria-label="تحديث"><i class="fa-solid fa-rotate" id="gh-hub-refresh-icon"></i></button>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div class="gh-tabs" id="gh-hub-tabs" role="tablist"></div>
+        </div>
+        <div class="modal-body-scrollable" id="gh-hub-body"></div>
+    </div>
+</div>
+
+<!-- Sprint 4: generic wide panel (file tools, preview, image editor, recorder, gallery) -->
+<div class="modal-overlay-backdrop" id="ox-panel-modal" onclick="if(event.target===this)app.closeModals()">
+    <div class="modal-card-box wide ox-panel-box">
+        <div class="mobile-sheet-drag-handle"></div>
+        <div class="modal-pinned-top">
+            <div class="modal-header-bar">
+                <div class="modal-title-heading" style="min-width:0">
+                    <i class="fa-solid fa-folder-open text-blue" id="ox-panel-icon"></i>
+                    <span id="ox-panel-title" class="truncate"></span>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
+                    <div id="ox-panel-actions" class="ox-panel-actions"></div>
+                    <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+            <div id="ox-panel-tabs" class="gh-tabs"></div>
+        </div>
+        <div class="modal-body-scrollable" id="ox-panel-body"></div>
+        <div class="modal-footer-bar" id="ox-panel-footer" style="display:none"></div>
+    </div>
+</div>
+
+<!-- Sprint 4: small dialog (replaces prompt()/confirm(), stacks above other modals) -->
+<div class="modal-overlay-backdrop ox-dialog-backdrop" id="ox-dialog" onclick="if(event.target===this)app.resolveDialog(null)">
+    <div class="modal-card-box ox-dialog-box" role="dialog" aria-modal="true" aria-labelledby="ox-dialog-title">
+        <div class="modal-header-bar"><div class="modal-title-heading"><span id="ox-dialog-title"></span></div></div>
+        <div id="ox-dialog-body" class="ox-dialog-body"></div>
+        <div class="modal-footer-bar" id="ox-dialog-buttons"></div>
+    </div>
+</div>
+
+<!-- Sprint 4: drag & drop overlay + upload progress -->
+<div id="drop-overlay" class="drop-overlay" aria-hidden="true">
+    <div class="drop-overlay-inner"><i class="fa-solid fa-cloud-arrow-up"></i><b>أفلت الملفات أو المجلدات هنا</b><span>ملفات، مجلدات كاملة، ZIP، PDF، Word، Excel، صور، صوت وفيديو</span></div>
+</div>
+<div id="upload-progress" class="upload-progress" role="status" aria-live="polite" style="display:none">
+    <div class="upload-progress-row"><span id="upload-progress-label"></span><button class="upload-progress-cancel" onclick="app.cancelUpload()" aria-label="إلغاء الرفع"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="upload-progress-track"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
 </div>
 
 <!-- 5. Termux Quick Command Helper Modal -->
@@ -566,46 +746,6 @@
 </div>
 
 <!-- 6. Branch & Pull Request Modal -->
-<div class="modal-overlay-backdrop" id="branch-modal" onclick="if(event.target===this)app.closeModals()">
-    <div class="modal-card-box">
-        <div class="mobile-sheet-drag-handle"></div>
-        <div class="modal-pinned-top">
-            <div class="modal-header-bar">
-                <div class="modal-title-heading">
-                    <i class="fa-solid fa-code-branch text-blue"></i>
-                    <span>إدارة الفروع و Pull Requests</span>
-                </div>
-                <button class="nav-icon-btn" style="width: 32px; height: 32px;" onclick="app.closeModals()">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-        </div>
-
-        <div class="modal-body-scrollable">
-            <div class="form-group-item">
-                <label class="form-label-title">إنشاء فرع جديد (New Branch)</label>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="new-branch-name-input" class="form-input-box" placeholder="feat/new-feature">
-                    <button class="btn-new-thread" style="width: auto; padding: 6px 14px; white-space: nowrap;" onclick="app.createGitHubBranch()">إنشاء</button>
-                </div>
-            </div>
-
-            <div class="form-group-item" style="margin-top: 14px;">
-                <label class="form-label-title">فتح Pull Request رسمي على GitHub</label>
-                <input type="text" id="pr-title-input" class="form-input-box" placeholder="عنوان الـ Pull Request...">
-                <textarea id="pr-body-input" class="form-input-box" rows="3" style="margin-top: 6px;" placeholder="شرح التعديلات والميزات..."></textarea>
-                <button class="btn-new-thread" style="width: 100%; margin-top: 8px;" onclick="app.createPullRequest()">🚀 فتح Pull Request</button>
-            </div>
-        </div>
-
-        <div class="modal-footer-bar">
-            <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
-                <span>إغلاق</span>
-            </button>
-        </div>
-    </div>
-</div>
-
 <!-- 7. Settings Modal -->
 <div class="modal-overlay-backdrop" id="settings-modal" onclick="if(event.target===this)app.closeModals()">
     <div class="modal-card-box">
@@ -658,7 +798,7 @@
 
                 <div class="form-group-item" id="custom-model-input-group" style="margin-top: 10px; display: none;">
                     <label class="form-label-title">معرف النموذج المخصص</label>
-                    <input type="text" id="setting-custom-model" class="form-input-box" placeholder="مثال: google/gemma-4-31b-it:free">
+                    <input type="text" id="setting-custom-model" class="form-input-box" placeholder="مثال: google/gemma-3-27b-it:free">
                 </div>
 
                 <div class="form-group-item" style="margin-top: 10px;">
@@ -921,6 +1061,24 @@
             <button class="sidebar-btn-util" style="padding: 7px 16px;" onclick="app.closeModals()">
                 <span>إغلاق</span>
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Command Palette (Ctrl+K) — Sprint 1 -->
+<div class="cmd-palette-overlay" id="cmd-palette-overlay" onclick="if(event.target===this) app.closeCommandPalette()" role="dialog" aria-modal="true" aria-label="لوحة الأوامر">
+    <div class="cmd-palette-box">
+        <div class="cmd-palette-input-wrap">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+            <input type="text" class="cmd-palette-input" id="cmd-palette-input" placeholder="ابحث عن أمر، محادثة، نموذج أو ثيم..." autocomplete="off" aria-label="بحث في الأوامر">
+            <kbd>Esc</kbd>
+        </div>
+        <div class="cmd-palette-list" id="cmd-palette-list" role="listbox"></div>
+        <div class="cmd-palette-footer">
+            <span><kbd>↑</kbd> <kbd>↓</kbd> تنقل</span>
+            <span><kbd>Enter</kbd> تنفيذ</span>
+            <span><kbd>Esc</kbd> إغلاق</span>
+            <span style="margin-right:auto;"><kbd>&gt;</kbd> أوامر فقط • <kbd>#</kbd> محادثات • <kbd>@</kbd> نماذج</span>
         </div>
     </div>
 </div>

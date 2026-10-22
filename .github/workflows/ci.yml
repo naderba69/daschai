@@ -1,0 +1,24 @@
+name: OX-Alpha CI — Build & Audit
+on:
+  push:
+    branches: [ main, arena/* ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+      - name: Build
+        run: npm run build
+      - name: Syntax check
+        run: npm run audit
+      - name: Smoke tests (jsdom)
+        run: npm test
+      - name: Artifact check
+        run: ls -lh index.html && wc -l index.html
