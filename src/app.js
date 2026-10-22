@@ -80,10 +80,6 @@ window.lazyLoadScript = function(src, id) {
     });
 };
 
-if (typeof mermaid !== 'undefined') {
-    mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict', htmlLabels: false });
-}
-
 // Fast & Stable Fallback Catalog (Verified Real OpenRouter IDs — audited 2026-10-20)
 const INITIAL_MODELS_CATALOG = [
     { id: "google/gemma-3-27b-it:free", name: "Google Gemma 3 27B (مجاني 100% - فائق السرعة)", provider: "Google", context_length: 131072, is_free: true, is_reasoning: false, is_vision: false, is_cheap: true, description: "النموذج الأسرع والأكثر استقراراً للبرمجة والمشاريع مع نافذة سياق 131k توكن مجاناً." },
@@ -2430,7 +2426,8 @@ class OXAlphaApp {
 
                 pre.parentNode.replaceChild(mermaidContainer, pre);
                 try {
-                    mermaid.run({ nodes: [mermaidContainer.querySelector('.mermaid-svg-box')] });
+                    if (this.mermaidConfig) mermaid.initialize(this.mermaidConfig()); // palette follows the current theme
+                    Promise.resolve(mermaid.run({ nodes: [mermaidContainer.querySelector('.mermaid-svg-box')] })).catch(e => console.warn('Mermaid render error:', e));
                 } catch (e) {
                     console.warn('Mermaid render error:', e);
                 }

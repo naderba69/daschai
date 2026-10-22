@@ -295,7 +295,7 @@
         if (typeof mermaid !== 'undefined') return Promise.resolve(window.mermaid);
         if (!this._mermaidLoading) {
             this._mermaidLoading = this.loadScriptOnce(MERMAID_URL, 'mermaid').then((m) => {
-                m.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'strict', htmlLabels: false });
+                m.initialize(this.mermaidConfig ? this.mermaidConfig() : { startOnLoad: false, securityLevel: 'strict', htmlLabels: false });
                 return m;
             });
         }

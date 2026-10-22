@@ -1,7 +1,7 @@
 {
  "version": "2.16.0",
  "channel": "stable",
- "builtAt": "2026-10-22T20:28:31.576Z",
+ "builtAt": "2026-10-22T21:00:32.099Z",
  "entries": {
   "/assets/studio/dev-NHDBESJJ.mjs": "dev",
   "/assets/studio/integ-DWWQFWUB.mjs": "integ",
@@ -17,8 +17,8 @@
  },
  "files": {
   "/index.html": {
-   "h": "54017c303035",
-   "gz": 256810
+   "h": "34308bbf452c",
+   "gz": 257355
   },
   "/sw.js": {
    "h": "9ed92acb724b",

@@ -197,6 +197,8 @@
             }
             const r = _origApplyTheme.call(this, name, silent);
             this.applyBrand();
+            // redraw on-screen Mermaid diagrams in the new palette (rare event; only when diagrams exist)
+            if (typeof mermaid !== 'undefined' && document.querySelector('.mermaid-diagram-container') && this.renderMessages) { try { this.renderMessages(); } catch (e) { } }
             return r;
         };
     }
@@ -204,6 +206,30 @@
         const cs = getComputedStyle(document.documentElement);
         const get = (v, d) => { const c = parseColor(cs.getPropertyValue(v)); return c ? toHex(c) : d; };
         return { bg: get('--bg-base', '#131314'), surface: get('--bg-surface', '#1e1f20'), card: get('--bg-card', '#282a2c'), text: get('--text-main', '#e3e3e3'), accent: get('--primary', '#8ab4f8') };
+    };
+    /** Mermaid config that follows the active theme: 'base' theme fed with the live design tokens
+     *  (so diagrams match Obsidian, Light, Dracula, custom…), instead of a fixed dark palette. */
+    P.mermaidConfig = function () {
+        const cs = getComputedStyle(document.documentElement);
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        const c = this.readCurrentThemeColors();
+        const muted = (() => { const x = parseColor(cs.getPropertyValue('--text-muted')); return x ? toHex(x) : (light ? '#5b606b' : '#a0a3ab'); })();
+        return {
+            startOnLoad: false, securityLevel: 'strict', htmlLabels: false, theme: 'base',
+            // natural-size SVGs: CSS fits them on wide screens and lets narrow ones scroll (readable text)
+            ...Object.fromEntries(['flowchart', 'sequence', 'class', 'state', 'er', 'gantt', 'journey', 'pie', 'mindmap', 'timeline', 'gitGraph', 'quadrantChart', 'requirement'].map(k => [k, { useMaxWidth: false }])),
+            themeVariables: {
+                darkMode: !light, fontFamily: 'Inter, "IBM Plex Sans Arabic", sans-serif', fontSize: '14px',
+                background: c.surface, mainBkg: c.card, textColor: c.text, titleColor: c.text, lineColor: muted,
+                primaryColor: c.card, primaryTextColor: c.text, primaryBorderColor: c.accent, nodeBorder: c.accent,
+                secondaryColor: c.surface, secondaryTextColor: c.text, secondaryBorderColor: muted,
+                tertiaryColor: c.bg, tertiaryTextColor: c.text, tertiaryBorderColor: muted,
+                clusterBkg: c.surface, clusterBorder: muted, edgeLabelBackground: c.surface,
+                noteBkgColor: c.surface, noteTextColor: c.text, noteBorderColor: muted,
+                actorBkg: c.card, actorBorder: c.accent, actorTextColor: c.text, actorLineColor: muted,
+                signalColor: muted, signalTextColor: c.text, labelBoxBkgColor: c.card, labelBoxBorderColor: muted, labelTextColor: c.text,
+            },
+        };
     };
     P.setCustomThemeColor = function (key, value) {
         if (!HEX.test(value || '')) return false;

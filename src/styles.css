@@ -789,6 +789,7 @@ html, body {
 
 /* Mermaid Interactive Architecture Diagram Container */
 .mermaid-diagram-container {
+    container-type: inline-size;
     margin: 16px 0;
     border: 1px solid rgba(59, 130, 246, 0.3);
     overflow: hidden;
@@ -804,17 +805,23 @@ html, body {
 
 .mermaid-svg-box {
     padding: 16px;
-    background: #101114;
+    background: var(--bg-surface);
+    direction: ltr; /* diagrams read left→right: an overflowing one scrolls from its start */
     display: flex;
-    justify-content: center;
     align-items: center;
     overflow-x: auto;
 }
 
+/* margin:auto centres without clipping the start of an overflowing diagram (unlike justify-content:center) */
 .mermaid-svg-box svg {
     max-width: 100%;
     height: auto;
+    margin: auto;
 }
+.mermaid-diagram-header > div:first-child { min-width: 0; }
+.mermaid-diagram-header > div:first-child span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* phone-width diagrams: natural size + horizontal scroll instead of shrinking text to ~5px */
+@container (max-width: 520px) { .mermaid-diagram-container .mermaid-svg-box svg { max-width: none; flex-shrink: 0; } }
 
 .terminal-box {
     display: none;
