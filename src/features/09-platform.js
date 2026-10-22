@@ -389,7 +389,10 @@
             agent: () => this.startVoiceAgent && this.startVoiceAgent(),
             drive: () => this.openPerfHub && this.openPerfHub('modes', 'driving'),
             perf: () => this.openPerfHub && this.openPerfHub(q.get('tab') || undefined),
-            dev: () => this.openDevLab(q.get('tab') || undefined)
+            dev: () => this.openDevLab(q.get('tab') || undefined),
+            integ: () => this.openIntegHub(q.get('tab') || undefined),
+            // VS Code / CLI / Chrome extension (#988-#990): ?action=open&repo=owner/repo
+            open: () => { const r = q.get('repo') || ''; if (/^[\w.-]+\/[\w.-]+$/.test(r) && this.ghxCloneByUrl) this.ghxCloneByUrl('https://github.com/' + r, { active: true }); }
         };
         if (map[action]) setTimeout(() => map[action](), 300);
         return { kind: 'action', action };

@@ -69,7 +69,7 @@ try {
         fs.rmSync(outdir, { recursive: true, force: true });
         const result = await esbuild.build({
             absWorkingDir: __dirname,
-            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js', perf: 'src/perf/perf.js', dev: 'src/dev/dev.js' },
+            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js', perf: 'src/perf/perf.js', dev: 'src/dev/dev.js', integ: 'src/integ/integ.js', widgets: 'src/integ/widgets.js' },
             bundle: true, splitting: true, format: 'esm', target: ['es2020'],
             outdir: 'assets/studio', outExtension: { '.js': '.mjs' },
             entryNames: '[name]-[hash]', chunkNames: 'chunk-[hash]',
@@ -96,10 +96,10 @@ try {
             }
             return seen;
         };
-        const NAMED = new Set(['studio', 'runner', 'ui', 'ai', 'github', 'media', 'team', 'perf', 'dev']);
+        const NAMED = new Set(['studio', 'runner', 'ui', 'ai', 'github', 'media', 'team', 'perf', 'dev', 'integ', 'widgets']);
         for (const [file, meta] of Object.entries(outputs)) {
             // Only the named entry points go into OX_BUILD (dynamic-import chunks such as CodeMirror languages are reached via imports)
-            if (meta.entryPoint && NAMED.has(path.basename(meta.entryPoint, '.js')) && /src\/(studio|ui|ai|github|media|team|perf|dev)\//.test(meta.entryPoint)) chunks[path.basename(meta.entryPoint, '.js')] = file;
+            if (meta.entryPoint && NAMED.has(path.basename(meta.entryPoint, '.js')) && /src\/(studio|ui|ai|github|media|team|perf|dev|integ)\//.test(meta.entryPoint)) chunks[path.basename(meta.entryPoint, '.js')] = file;
             const buf = fs.readFileSync(path.join(__dirname, file));
             chunkFiles.push({ name: file, size: meta.bytes, gzip: require('zlib').gzipSync(buf, { level: 9 }).length, br: require('zlib').brotliCompressSync(buf).length });
         }
@@ -161,7 +161,7 @@ try {
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
     <!-- CSP: allow required CDNs only -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://uploads.github.com https://codeload.github.com https://*.actions.githubusercontent.com https://*.blob.core.windows.net https://gitlab.com https://api.bitbucket.org https://raw.githubusercontent.com https://gist.githubusercontent.com https://discord.com https://discordapp.com https://hooks.slack.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org https://registry.npmjs.org https://content.dropboxapi.com https://api.dropboxapi.com https://www.googleapis.com https://graph.microsoft.com https://api.onedrive.com https://*.sharepoint.com https://*.amazonaws.com https://api.figma.com; worker-src 'self' blob:; frame-src blob: https://www.figma.com https://embed.figma.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com blob: data:; media-src 'self' blob: data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.github.com https://uploads.github.com https://codeload.github.com https://*.actions.githubusercontent.com https://*.blob.core.windows.net https://gitlab.com https://api.bitbucket.org https://raw.githubusercontent.com https://gist.githubusercontent.com https://discord.com https://discordapp.com https://hooks.slack.com https://openrouter.ai https://api.tavily.com https://ar.wikipedia.org https://registry.npmjs.org https://content.dropboxapi.com https://api.dropboxapi.com https://www.googleapis.com https://graph.microsoft.com https://api.onedrive.com https://*.sharepoint.com https://*.amazonaws.com https://api.figma.com https://api.anthropic.com https://api.openai.com https://generativelanguage.googleapis.com https://*.supabase.co https://firestore.googleapis.com https://*.psdb.cloud https://*.algolia.net https://*.algolianet.com https://api.cloudinary.com https://res.cloudinary.com https://*.auth0.com https://*.clerk.accounts.dev https://*.sentry.io https://*.ingest.sentry.io https://*.posthog.com https://api.linear.app https://api.trello.com https://*.atlassian.net https://hooks.zapier.com https://*.make.com https://hook.integromat.com; worker-src 'self' blob:; frame-src blob: https://www.figma.com https://embed.figma.com;">
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">

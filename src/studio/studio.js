@@ -10,6 +10,7 @@ import * as intel from './code-intel.js';
 import { installRefactor } from './studio-refactor.js';
 import { installAI } from './studio-ai.js';
 import { installUI } from './studio-ui.js';
+import STUDIO_CSS from './studio.css';
 
 export const SETTINGS_KEY = 'ox_alpha_editor_v2';
 export const FONTS = ['JetBrains Mono', 'Fira Code', 'Source Code Pro', 'IBM Plex Mono', 'Roboto Mono', 'Ubuntu Mono', 'Inconsolata', 'Space Mono', 'Noto Sans Mono'];
@@ -45,6 +46,7 @@ export function install(app) {
     if (P.__oxStudio) return P.__oxStudio;
     const ctx = { intel, THEMES, DEFAULT_SETTINGS, COMMANDS, FONTS, PRESETS, TOOLBAR_ITEMS, DEFAULT_TOOLBAR, createEditor, languageCount, languageNames, findLanguage, toHex, tokenAt, esc, fmtBytes };
     P.__oxStudio = ctx;
+    if (typeof document !== 'undefined' && !document.getElementById('ox-studio-css')) { const st = document.createElement('style'); st.id = 'ox-studio-css'; st.textContent = STUDIO_CSS; document.head.appendChild(st); }
     P.codeIntel = intel;
     P.editorThemes = THEMES;
 

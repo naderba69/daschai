@@ -1,6 +1,6 @@
 {
   "name": "ox-alpha-workbench-pro",
-  "version": "2.13.0",
+  "version": "2.14.0",
   "description": "منظومة هندسة البرمجيات بالذكاء الاصطناعي — Gemini AI Autonomous Engineering Copilot",
   "type": "commonjs",
   "private": true,
@@ -18,6 +18,9 @@
     "type": "git",
     "url": "https://github.com/naderba69/daschai.git"
   },
+  "bin": {
+    "ox-alpha": "cli/ox-alpha.js"
+  },
   "engines": {
     "node": ">=18.0.0"
   },
@@ -29,7 +32,7 @@
     "audit": "node --check src/app.js && for f in src/features/*.js workers/*.js sw.js; do node --check \"$f\" || exit 1; done && node tests/undef-check.cjs src/ai/*.js src/ui/*.js src/studio/*.js src/github/*.js src/media/*.js src/team/*.js src/perf/*.js && echo '✅ JS syntax OK'",
     "lint": "npx eslint src/ --ext .js || echo '⚠️ eslint not installed — run npm install'",
     "format": "npx prettier --write \"src/**/*.{js,html,css}\" || echo '⚠️ prettier not installed'",
-    "test": "node build.js --minify && node tests/smoke.test.js && node tests/sprint2.test.js && node tests/sprint3.test.js && node tests/sprint4.test.js && node tests/sprint5.test.js && node tests/sprint6.test.js && node tests/sprint7.test.js && node tests/sprint8.test.js && node tests/sprint9.test.js && node tests/sprint10.test.js && node tests/sprint11.test.js && node tests/sprint12.test.js && node tests/sprint13.test.js"
+    "test": "node build.js --minify && node scripts/sync-extensions.cjs --check && node tests/smoke.test.js && node tests/sprint2.test.js && node tests/sprint3.test.js && node tests/sprint4.test.js && node tests/sprint5.test.js && node tests/sprint6.test.js && node tests/sprint7.test.js && node tests/sprint8.test.js && node tests/sprint9.test.js && node tests/sprint10.test.js && node tests/sprint11.test.js && node tests/sprint12.test.js && node tests/sprint13.test.js && node tests/sprint14.test.js"
   },
   "devDependencies": {
     "@codemirror/autocomplete": "^6.20.4",

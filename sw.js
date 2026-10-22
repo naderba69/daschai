@@ -1,4 +1,4 @@
-// OX-Alpha Workbench Pro — Service Worker (v2.13)
+// OX-Alpha Workbench Pro — Service Worker (v2.14)
 // • App shell (index.html): network-first, falls back to cache when offline (#815)
 // • CDN libraries & fonts: stale-while-revalidate (#825)
 // • Editor/runner chunks (/assets/, content-hashed): cache-first; workers (/workers/): network-first
@@ -11,7 +11,7 @@
 // • Update channels (#869): a stable client refuses to install a beta build (install fails → old SW stays)
 // • Background Sync (#826): queued requests (IndexedDB "ox-alpha-bg") are replayed on `sync`
 // • Push (#949) + notification actions for watches (#972, #973) + PWA widgets (#964)
-const VERSION = 'v2.13';
+const VERSION = 'v2.14';
 const SHELL_CACHE = 'ox-alpha-shell-' + VERSION;
 const PREV_CACHE = 'ox-alpha-shell-prev';
 const CDN_CACHE = 'ox-alpha-cdn-' + VERSION;
@@ -182,11 +182,32 @@ async function staleWhileRevalidate(event) {
   return refresh;
 }
 
+// ------------------------------------------------------------------ LOCAL REST API (#987)
+// /api/v1/* from same-origin pages/iframes/tabs is answered by an open OX-Alpha window (MessageChannel).
+const API_CORS = { 'content-type': 'application/json; charset=utf-8', 'access-control-allow-origin': '*', 'access-control-allow-headers': 'authorization, content-type', 'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS', 'cache-control': 'no-store' };
+async function apiProxy(req, url) {
+  if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: API_CORS });
+  const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+  const target = wins.find((c) => new URL(c.url).pathname.indexOf('/api/') === -1);
+  if (!target) return new Response(JSON.stringify({ error: 'OX-Alpha is not open in any tab' }), { status: 503, headers: API_CORS });
+  let body = null;
+  if (req.method !== 'GET' && req.method !== 'HEAD') { const t = await req.text(); try { body = t ? JSON.parse(t) : null; } catch (e) { body = t; } }
+  const msg = { type: 'ox-api', req: { method: req.method, path: url.pathname.replace(/^.*?\/api\/v1/, '/api/v1'), query: Object.fromEntries(url.searchParams), auth: req.headers.get('authorization') || '', body } };
+  const reply = await new Promise((resolve) => {
+    const ch = new MessageChannel();
+    const t = setTimeout(() => resolve({ status: 504, body: { error: 'OX-Alpha did not answer (is the API enabled in Integrations → API?)' } }), 60000);
+    ch.port1.onmessage = (e) => { clearTimeout(t); resolve(e.data || { status: 500, body: { error: 'empty reply' } }); };
+    target.postMessage(msg, [ch.port2]);
+  });
+  return new Response(JSON.stringify(reply.body == null ? null : reply.body, null, 2), { status: reply.status || 200, headers: API_CORS });
+}
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET') return;
   let url;
   try { url = new URL(req.url); } catch (e) { return; }
+  if (url.origin === self.location.origin && /\/api\/v1(\/|$)/.test(url.pathname)) { event.respondWith(apiProxy(req, url)); return; }
+  if (req.method !== 'GET') return;
 
   if (url.origin === self.location.origin) {
     if (req.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') { event.respondWith(shell(req)); return; }

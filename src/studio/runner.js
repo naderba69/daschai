@@ -17,6 +17,8 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '
 const JS_RUN = ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'mts', 'cts'];
 import { transpileArabic } from './arabic.js';
 import { rtExtSource } from './rt-ext.js';
+import { rtServicesSource } from './rt-services.js';
+import STUDIO_CSS from './studio.css';
 export const isTestPath = (p) => /(^|\/)__tests__\/|[._-](test|spec)\.(m|c)?[jt]sx?$/.test(p) || /(^|\/)test_[^/]+\.py$|_test\.py$/.test(p);
 const RUN_ARGS = 'exports, require, module, __filename, __dirname, process, console, prompt, input, fetch, setTimeout, setInterval, clearTimeout, clearInterval, describe, it, test, expect, beforeEach, afterEach, beforeAll, afterAll, jest, vi';
 
@@ -127,6 +129,7 @@ export function install(app) {
     if (P.__oxRunner) return P.__oxRunner;
     const api = { transpileModule, buildRunBundle, mapLine, mapStack, hasTopLevelAwait, isTestPath };
     P.__oxRunner = api;
+    if (typeof document !== 'undefined' && !document.getElementById('ox-studio-css')) { const st = document.createElement('style'); st.id = 'ox-studio-css'; st.textContent = STUDIO_CSS; document.head.appendChild(st); }
     P.runnerAPI = api;
 
     // ------------------------------------------------------------------ TERMINAL
@@ -243,6 +246,12 @@ export function install(app) {
         out.snapshots = snaps;
         if (this._updateSnapshots) out.updateSnapshots = true;
         return out;
+    };
+    /** #991-#998 mocked SDK traffic (emails, SMS, charges…) → the Integrations hub outbox. */
+    P.recordOutbox = function (m, w) {
+        this._ixOutbox = [{ service: m.service, kind: m.kind, data: m.data, at: m.at || Date.now() }, ...(this._ixOutbox || [])].slice(0, 200);
+        const d = m.data || {};
+        if (w) w.line('info', `📤 ${m.service}: ${m.kind}${d.to ? ' → ' + (Array.isArray(d.to) ? d.to.join(', ') : (d.to.email || d.to)) : ''}${d.amount_total != null ? ' — ' + (d.amount_total / 100).toFixed(2) + ' ' + String(d.currency || '').toUpperCase() : ''}`);
     };
     P.snapshotPath = function (testFile) { const d = intel.dirName(testFile); return (d ? d + '/' : '') + '__snapshots__/' + intel.baseName(testFile) + '.snap'; };
     P.recordSnapshot = function (m, w) {
@@ -381,7 +390,7 @@ export function install(app) {
         }
         let bundle;
         try {
-            bundle = buildRunBundle({ files, entry, mode: o.mode === 'test' ? 'test' : 'run', tests, cfg: { stdin: o.stdin || '', env: o.env || {}, mocks: this.collectMocks(), ...this.collectRunServices(), ...(o.cfg || {}) }, extensions: [rtExtSource, ...(o.extensions || (this.runExtensions ? this.runExtensions(o) : []))], transform: o.transform || null });
+            bundle = buildRunBundle({ files, entry, mode: o.mode === 'test' ? 'test' : 'run', tests, cfg: { stdin: o.stdin || '', env: o.env || {}, mocks: this.collectMocks(), ...this.collectRunServices(), ...(o.cfg || {}) }, extensions: [rtExtSource, rtServicesSource, ...(o.extensions || (this.runExtensions ? this.runExtensions(o) : []))], transform: o.transform || null });
         } catch (e) {
             const c = e.compile || {};
             w.line('error', `❌ خطأ في الصياغة: ${c.path || entry}${c.line ? ':' + c.line + (c.column != null ? ':' + (c.column + 1) : '') : ''}\n${e.message}`);
@@ -414,6 +423,7 @@ export function install(app) {
                     case 'test': results.push(m.result); this.renderTestResult(w, m.result, bundle); break;
                     case 'tests': summary = m.summary; break;
                     case 'snapshot': this.recordSnapshot(m, w); if (o.onMessage) o.onMessage(m, handle); break;
+                    case 'outbox': this.recordOutbox(m, w); if (o.onMessage) o.onMessage(m, handle); break;
                     case 'bench': this.renderBench(w, m.stats); if (o.onMessage) o.onMessage(m, handle); break;
                     case 'db': this._lastMockDb = m.data; if (m.changed && o.mode !== 'test') w.line('info', '🗄 تغيّرت قاعدة البيانات الوهمية أثناء التشغيل (لم تُحفظ في mocks/db.json — احفظها من مختبر المطور)'); if (o.onMessage) o.onMessage(m, handle); break;
                     case 'error': {

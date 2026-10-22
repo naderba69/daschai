@@ -220,7 +220,7 @@
     };
 
     // ------------------------------------------------------------------ PREDICTIVE PREFETCH (#828) — warm the chunks you use most when idle on a good network
-    const CHUNK_OF = { openTeamHub: 'team', openFilesMedia: 'media', openGitHubPro: 'github', openAILab: 'ai', toggleCodeStudio: 'studio', openPerfHub: 'perf', openGlobalSearch: 'ui' };
+    const CHUNK_OF = { openTeamHub: 'team', openFilesMedia: 'media', openGitHubPro: 'github', openAILab: 'ai', toggleCodeStudio: 'studio', openPerfHub: 'perf', openGlobalSearch: 'ui', openDevHub: 'dev', openIntegHub: 'integ' };
     P.pfPredictChunks = function (max = 2) {
         return Object.entries(CHUNK_OF).map(([k, c]) => [c, usage.counts[k] || 0]).filter(([, n]) => n >= 3).sort((a, b) => b[1] - a[1]).slice(0, max).map(([c]) => c);
     };

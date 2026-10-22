@@ -211,7 +211,7 @@ export function oxRuntime(cfg, post) {
         return null;
     }
     function load(id) {
-        if (id.indexOf('builtin:') === 0) { var b = id.slice(8); return cache[id] || (cache[id] = { exports: BUILTIN[b]() }).exports; }
+        if (id.indexOf('builtin:') === 0) { var b = id.slice(8); return (cache[id] || (cache[id] = { exports: BUILTIN[b]() })).exports; }
         if (cache[id]) return cache[id].exports;
         var def = modules[id];
         var module = { exports: {}, id: id, filename: id, loaded: false };

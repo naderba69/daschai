@@ -1,0 +1,2 @@
+chrome.storage.sync.get({ url: 'https://daschai.vercel.app/', token: '' }, (c) => { document.getElementById('url').value = c.url; document.getElementById('token').value = c.token; });
+document.getElementById('save').onclick = () => chrome.storage.sync.set({ url: document.getElementById('url').value.trim() || 'https://daschai.vercel.app/', token: document.getElementById('token').value.trim() }, () => { document.getElementById('msg').textContent = '✓ حُفظ'; });

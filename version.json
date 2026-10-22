@@ -1,11 +1,13 @@
 {
- "version": "2.13.0",
+ "version": "2.14.0",
  "channel": "stable",
- "builtAt": "2026-10-22T06:13:26.028Z",
+ "builtAt": "2026-10-22T09:12:28.672Z",
  "entries": {
-  "/assets/studio/dev-OBER7Q47.mjs": "dev",
-  "/assets/studio/studio-2ZMIRG67.mjs": "studio",
-  "/assets/studio/runner-5D3J6XHR.mjs": "runner",
+  "/assets/studio/dev-OYSLOPPD.mjs": "dev",
+  "/assets/studio/integ-Z4QBDCE4.mjs": "integ",
+  "/assets/studio/widgets-ND27DT5U.mjs": "widgets",
+  "/assets/studio/studio-E5MTACYS.mjs": "studio",
+  "/assets/studio/runner-KBR55SSY.mjs": "runner",
   "/assets/studio/ui-QINGKZB4.mjs": "ui",
   "/assets/studio/ai-OHNEFGOG.mjs": "ai",
   "/assets/studio/github-ZAWNKUZX.mjs": "github",
@@ -15,16 +17,24 @@
  },
  "files": {
   "/index.html": {
-   "h": "fed2e9a332d6",
-   "gz": 256643
+   "h": "d2ccc9c15fb5",
+   "gz": 255432
   },
   "/sw.js": {
-   "h": "84202c7625f5",
-   "gz": 5230
+   "h": "9ed92acb724b",
+   "gz": 5888
   },
   "/manifest.json": {
    "h": "da8e55eaf90e",
    "gz": 1329
+  },
+  "/assets/studio/chunk-UXOFV77R.mjs": {
+   "h": "8164ad2fa2c7",
+   "gz": 5521
+  },
+  "/assets/studio/chunk-PDCQQF3R.mjs": {
+   "h": "b25dd4503494",
+   "gz": 36803
   },
   "/assets/studio/chunk-UQBVHM5T.mjs": {
    "h": "1ca17af15c9d",
@@ -45,6 +55,14 @@
   "/assets/studio/chunk-NPYUM72L.mjs": {
    "h": "1f4db2bc11dd",
    "gz": 1041
+  },
+  "/assets/studio/chunk-ZSGJMCBN.mjs": {
+   "h": "c648d3eb72f5",
+   "gz": 2584
+  },
+  "/assets/studio/chunk-HWX4GG7Q.mjs": {
+   "h": "61c5f6e58d76",
+   "gz": 1114
   },
   "/assets/studio/chunk-GRTCME5R.mjs": {
    "h": "6fce775ac560",
@@ -70,13 +88,13 @@
    "h": "143583735480",
    "gz": 4580
   },
-  "/assets/studio/chunk-UXOFV77R.mjs": {
-   "h": "8164ad2fa2c7",
-   "gz": 5521
+  "/assets/studio/chunk-YOGETA2Q.mjs": {
+   "h": "fdad10f50652",
+   "gz": 2177
   },
-  "/assets/studio/chunk-PDCQQF3R.mjs": {
-   "h": "b25dd4503494",
-   "gz": 36803
+  "/assets/studio/chunk-MAZD2LHE.mjs": {
+   "h": "26705d4df423",
+   "gz": 1764
   },
   "/assets/studio/chunk-URCXWW5L.mjs": {
    "h": "0302c5d2eca4",
@@ -102,13 +120,13 @@
    "h": "922b64b79edd",
    "gz": 1537
   },
-  "/assets/studio/chunk-ZSGJMCBN.mjs": {
-   "h": "c648d3eb72f5",
-   "gz": 2584
+  "/assets/studio/chunk-VVV6XRBI.mjs": {
+   "h": "16ff37ffd851",
+   "gz": 1221
   },
-  "/assets/studio/chunk-HWX4GG7Q.mjs": {
-   "h": "61c5f6e58d76",
-   "gz": 1114
+  "/assets/studio/chunk-VCHRKPA3.mjs": {
+   "h": "d02c288103ed",
+   "gz": 3610
   },
   "/assets/studio/chunk-UJYZGXUY.mjs": {
    "h": "2e63a2271e0f",
@@ -134,13 +152,13 @@
    "h": "ec0052c1a9b1",
    "gz": 463
   },
-  "/assets/studio/chunk-YOGETA2Q.mjs": {
-   "h": "fdad10f50652",
-   "gz": 2177
+  "/assets/studio/chunk-T5X77IKP.mjs": {
+   "h": "cc7be0fbfe66",
+   "gz": 1239
   },
-  "/assets/studio/chunk-MAZD2LHE.mjs": {
-   "h": "26705d4df423",
-   "gz": 1764
+  "/assets/studio/chunk-SOXC4C73.mjs": {
+   "h": "c5aabd582aaf",
+   "gz": 798
   },
   "/assets/studio/chunk-WJYGE2AV.mjs": {
    "h": "b5739b2ab523",
@@ -166,13 +184,13 @@
    "h": "eaddf94a3715",
    "gz": 1805
   },
-  "/assets/studio/chunk-VVV6XRBI.mjs": {
-   "h": "16ff37ffd851",
-   "gz": 1221
+  "/assets/studio/chunk-D3UZSXU5.mjs": {
+   "h": "7fcbb6e311a4",
+   "gz": 1962
   },
-  "/assets/studio/chunk-VCHRKPA3.mjs": {
-   "h": "d02c288103ed",
-   "gz": 3610
+  "/assets/studio/chunk-6EXU4J7N.mjs": {
+   "h": "8bd328513c6c",
+   "gz": 1223
   },
   "/assets/studio/chunk-TUXYTPZ4.mjs": {
    "h": "68ffb28f39ec",
@@ -198,13 +216,13 @@
    "h": "afe7b0977fe6",
    "gz": 2410
   },
-  "/assets/studio/chunk-T5X77IKP.mjs": {
-   "h": "cc7be0fbfe66",
-   "gz": 1239
+  "/assets/studio/chunk-Y3VPRHKX.mjs": {
+   "h": "279a8d7adbb8",
+   "gz": 1118
   },
-  "/assets/studio/chunk-SOXC4C73.mjs": {
-   "h": "c5aabd582aaf",
-   "gz": 798
+  "/assets/studio/chunk-NQGQ7JPF.mjs": {
+   "h": "324ea4cce33c",
+   "gz": 1307
   },
   "/assets/studio/chunk-R2CVFSEN.mjs": {
    "h": "5f1d0935d352",
@@ -230,13 +248,13 @@
    "h": "ed2a207e5a4b",
    "gz": 542
   },
-  "/assets/studio/chunk-D3UZSXU5.mjs": {
-   "h": "7fcbb6e311a4",
-   "gz": 1962
+  "/assets/studio/chunk-ZI4KFEFI.mjs": {
+   "h": "c190d1e91928",
+   "gz": 2708
   },
-  "/assets/studio/chunk-6EXU4J7N.mjs": {
-   "h": "8bd328513c6c",
-   "gz": 1223
+  "/assets/studio/chunk-A2DGRLCD.mjs": {
+   "h": "ba1f3d07fa13",
+   "gz": 842
   },
   "/assets/studio/chunk-ZVXM34SW.mjs": {
    "h": "9813926b49a6",
@@ -262,13 +280,13 @@
    "h": "1a5c2d2d4f74",
    "gz": 771
   },
-  "/assets/studio/chunk-Y3VPRHKX.mjs": {
-   "h": "279a8d7adbb8",
-   "gz": 1118
+  "/assets/studio/chunk-T74YWGUZ.mjs": {
+   "h": "25a8f8e08c2f",
+   "gz": 1910
   },
-  "/assets/studio/chunk-NQGQ7JPF.mjs": {
-   "h": "324ea4cce33c",
-   "gz": 1307
+  "/assets/studio/chunk-45DW4TIC.mjs": {
+   "h": "4e205ed0480d",
+   "gz": 2969
   },
   "/assets/studio/chunk-MPIRDEKJ.mjs": {
    "h": "df2a251294a3",
@@ -298,13 +316,13 @@
    "h": "b0198d4a3e9c",
    "gz": 1461
   },
-  "/assets/studio/chunk-ZI4KFEFI.mjs": {
-   "h": "c190d1e91928",
-   "gz": 2708
+  "/assets/studio/chunk-XJTT2ZHA.mjs": {
+   "h": "3e0ebb81a9e1",
+   "gz": 626
   },
-  "/assets/studio/chunk-A2DGRLCD.mjs": {
-   "h": "ba1f3d07fa13",
-   "gz": 842
+  "/assets/studio/chunk-JP7Q44GN.mjs": {
+   "h": "ff35f6d6683d",
+   "gz": 974
   },
   "/assets/studio/chunk-E6WHB7LU.mjs": {
    "h": "38f38cb1d16c",
@@ -330,13 +348,13 @@
    "h": "a9f66b32c165",
    "gz": 1796
   },
-  "/assets/studio/chunk-T74YWGUZ.mjs": {
-   "h": "25a8f8e08c2f",
-   "gz": 1910
+  "/assets/studio/chunk-7STW7AQY.mjs": {
+   "h": "e320fe07cf05",
+   "gz": 899
   },
-  "/assets/studio/chunk-45DW4TIC.mjs": {
-   "h": "4e205ed0480d",
-   "gz": 2969
+  "/assets/studio/chunk-7AG5ULSH.mjs": {
+   "h": "1e1a54ad2714",
+   "gz": 1680
   },
   "/assets/studio/chunk-VY4QDBKB.mjs": {
    "h": "8128784fa4fe",
@@ -362,13 +380,13 @@
    "h": "3d468af87ab5",
    "gz": 10968
   },
-  "/assets/studio/chunk-XJTT2ZHA.mjs": {
-   "h": "3e0ebb81a9e1",
-   "gz": 626
+  "/assets/studio/chunk-AWMGSYXJ.mjs": {
+   "h": "bd4feb0bfd8c",
+   "gz": 1715
   },
-  "/assets/studio/chunk-JP7Q44GN.mjs": {
-   "h": "ff35f6d6683d",
-   "gz": 974
+  "/assets/studio/chunk-MEBLYQRC.mjs": {
+   "h": "797aa84b5ee8",
+   "gz": 1126
   },
   "/assets/studio/chunk-S7RK7DKT.mjs": {
    "h": "1818f839f614",
@@ -398,13 +416,13 @@
    "h": "823df3f43d94",
    "gz": 1098
   },
-  "/assets/studio/chunk-7STW7AQY.mjs": {
-   "h": "e320fe07cf05",
-   "gz": 899
+  "/assets/studio/chunk-62KQ2ONM.mjs": {
+   "h": "27f520db2ecc",
+   "gz": 1985
   },
-  "/assets/studio/chunk-7AG5ULSH.mjs": {
-   "h": "1e1a54ad2714",
-   "gz": 1680
+  "/assets/studio/chunk-L3YHLCNM.mjs": {
+   "h": "ab4384c7bee7",
+   "gz": 1807
   },
   "/assets/studio/chunk-GSUCEDBJ.mjs": {
    "h": "24d566a3aebc",
@@ -430,13 +448,13 @@
    "h": "3193fb2a774a",
    "gz": 487
   },
-  "/assets/studio/chunk-AWMGSYXJ.mjs": {
-   "h": "bd4feb0bfd8c",
-   "gz": 1715
+  "/assets/studio/chunk-WEWJGBZ2.mjs": {
+   "h": "7f36182545a4",
+   "gz": 19186
   },
-  "/assets/studio/chunk-MEBLYQRC.mjs": {
-   "h": "797aa84b5ee8",
-   "gz": 1126
+  "/assets/studio/chunk-FC6LXYV2.mjs": {
+   "h": "87f2868ce2e4",
+   "gz": 30368
   },
   "/assets/studio/chunk-3UDKHOHK.mjs": {
    "h": "9db5f59666f1",
@@ -462,13 +480,13 @@
    "h": "fb6b9f309750",
    "gz": 432
   },
-  "/assets/studio/chunk-62KQ2ONM.mjs": {
-   "h": "27f520db2ecc",
-   "gz": 1985
+  "/assets/studio/chunk-J2YQXXQR.mjs": {
+   "h": "666c5f3d4dd8",
+   "gz": 197
   },
-  "/assets/studio/chunk-L3YHLCNM.mjs": {
-   "h": "ab4384c7bee7",
-   "gz": 1807
+  "/assets/studio/chunk-3BIT74PB.mjs": {
+   "h": "0d0aeed575d7",
+   "gz": 19358
   },
   "/assets/studio/chunk-I3ITOFCJ.mjs": {
    "h": "d4de03e01e4a",
@@ -494,17 +512,29 @@
    "h": "8d9f58863327",
    "gz": 28588
   },
-  "/assets/studio/chunk-WEWJGBZ2.mjs": {
-   "h": "7f36182545a4",
-   "gz": 19186
+  "/assets/studio/chunk-25BXWXT5.mjs": {
+   "h": "896230b3bf01",
+   "gz": 11648
   },
-  "/assets/studio/chunk-FC6LXYV2.mjs": {
-   "h": "87f2868ce2e4",
-   "gz": 30368
+  "/assets/studio/dev-OYSLOPPD.mjs": {
+   "h": "8e75c596845c",
+   "gz": 88813
   },
-  "/assets/studio/dev-OBER7Q47.mjs": {
-   "h": "931367c1bcc3",
-   "gz": 128136
+  "/assets/studio/integ-Z4QBDCE4.mjs": {
+   "h": "26834f0fe40f",
+   "gz": 106634
+  },
+  "/assets/studio/chunk-HSNPNCYE.mjs": {
+   "h": "6e66d8394ecf",
+   "gz": 39424
+  },
+  "/assets/studio/widgets-ND27DT5U.mjs": {
+   "h": "cfba0bf8028a",
+   "gz": 2095
+  },
+  "/assets/studio/chunk-7KWD6HK6.mjs": {
+   "h": "7e094006f5cf",
+   "gz": 6437
   },
   "/assets/studio/chunk-NAYT2QE5.mjs": {
    "h": "b24eb1f8c141",
@@ -518,6 +548,10 @@
    "h": "94585868f65a",
    "gz": 159
   },
+  "/assets/studio/chunk-KR7S2USB.mjs": {
+   "h": "4f758c8b00c2",
+   "gz": 12807
+  },
   "/assets/studio/chunk-KPJXPE6Y.mjs": {
    "h": "a3f4fe9045dd",
    "gz": 12668
@@ -526,41 +560,25 @@
    "h": "93e6f666d7e8",
    "gz": 247
   },
-  "/assets/studio/chunk-J2YQXXQR.mjs": {
-   "h": "666c5f3d4dd8",
-   "gz": 197
-  },
-  "/assets/studio/chunk-25BXWXT5.mjs": {
-   "h": "896230b3bf01",
-   "gz": 11648
-  },
-  "/assets/studio/chunk-KR7S2USB.mjs": {
-   "h": "4f758c8b00c2",
-   "gz": 12807
-  },
   "/assets/studio/chunk-YTFYM2CA.mjs": {
    "h": "8b26d40454c2",
    "gz": 34453
-  },
-  "/assets/studio/chunk-3BIT74PB.mjs": {
-   "h": "0d0aeed575d7",
-   "gz": 19358
   },
   "/assets/studio/chunk-4AXDEU5H.mjs": {
    "h": "b0548b86e397",
    "gz": 8923
   },
-  "/assets/studio/studio-2ZMIRG67.mjs": {
-   "h": "b42b2417df2a",
-   "gz": 44795
-  },
-  "/assets/studio/chunk-W7FP2L2O.mjs": {
-   "h": "dddbbac7b0c9",
-   "gz": 6882
+  "/assets/studio/studio-E5MTACYS.mjs": {
+   "h": "dddeaf98b1d8",
+   "gz": 44842
   },
   "/assets/studio/chunk-4L2T7PFF.mjs": {
    "h": "0ee8b12fcce6",
    "gz": 6097
+  },
+  "/assets/studio/chunk-W7FP2L2O.mjs": {
+   "h": "dddbbac7b0c9",
+   "gz": 6882
   },
   "/assets/studio/chunk-QX3KAJW2.mjs": {
    "h": "8a66292ec975",
@@ -578,17 +596,17 @@
    "h": "de7773386c23",
    "gz": 104596
   },
-  "/assets/studio/runner-5D3J6XHR.mjs": {
-   "h": "d22b0a106d4e",
-   "gz": 75583
+  "/assets/studio/runner-KBR55SSY.mjs": {
+   "h": "6409b81fb64f",
+   "gz": 77737
   },
   "/assets/studio/chunk-2EPK7E37.mjs": {
    "h": "ed17fb190be8",
    "gz": 3137
   },
-  "/assets/studio/chunk-3LU2HVRM.mjs": {
-   "h": "48b6083f4752",
-   "gz": 16062
+  "/assets/studio/chunk-3AMXFNDL.mjs": {
+   "h": "1cccec0d4ce8",
+   "gz": 18935
   },
   "/assets/studio/ui-QINGKZB4.mjs": {
    "h": "d4feaf54b1c0",

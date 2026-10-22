@@ -1,0 +1,123 @@
+{
+  "name": "ox-alpha",
+  "displayName": "OX-Alpha",
+  "description": "OX-Alpha AI inside VS Code: ask, explain, fix, test and open the project in OX-Alpha Workbench.",
+  "version": "1.0.0",
+  "publisher": "naderba69",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naderba69/daschai"
+  },
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Other"
+  ],
+  "main": "./extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "oxAlpha.ask",
+        "title": "OX-Alpha: Ask about selection"
+      },
+      {
+        "command": "oxAlpha.explain",
+        "title": "OX-Alpha: Explain code"
+      },
+      {
+        "command": "oxAlpha.fix",
+        "title": "OX-Alpha: Fix / improve selection"
+      },
+      {
+        "command": "oxAlpha.tests",
+        "title": "OX-Alpha: Generate tests"
+      },
+      {
+        "command": "oxAlpha.commitMessage",
+        "title": "OX-Alpha: Commit message from staged changes"
+      },
+      {
+        "command": "oxAlpha.open",
+        "title": "OX-Alpha: Open in OX-Alpha Workbench"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "submenu": "oxAlpha.menu",
+          "group": "navigation@9"
+        }
+      ],
+      "oxAlpha.menu": [
+        {
+          "command": "oxAlpha.ask",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "oxAlpha.explain",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "oxAlpha.fix",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "oxAlpha.tests",
+          "when": "editorHasSelection"
+        },
+        {
+          "command": "oxAlpha.open"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "oxAlpha.menu",
+        "label": "OX-Alpha"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "oxAlpha.ask",
+        "key": "ctrl+alt+x",
+        "mac": "cmd+alt+x"
+      }
+    ],
+    "configuration": {
+      "title": "OX-Alpha",
+      "properties": {
+        "oxAlpha.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenRouter API key (stored in your VS Code settings). Prefer the OX_ALPHA_KEY / OPENROUTER_API_KEY env var."
+        },
+        "oxAlpha.model": {
+          "type": "string",
+          "default": "openai/gpt-4o-mini",
+          "description": "OpenRouter model id"
+        },
+        "oxAlpha.language": {
+          "type": "string",
+          "enum": [
+            "ar",
+            "en"
+          ],
+          "default": "ar",
+          "description": "Answer language"
+        },
+        "oxAlpha.url": {
+          "type": "string",
+          "default": "https://daschai.vercel.app/",
+          "description": "OX-Alpha Workbench URL"
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,8 @@
 {
-  "version": "2.13.0",
+  "version": "2.14.0",
   "chunks": {
     "shared": [
-      "assets/studio/chunk-3LU2HVRM.mjs",
+      "assets/studio/chunk-3AMXFNDL.mjs",
       "assets/studio/chunk-4L2T7PFF.mjs",
       "assets/studio/chunk-M6LJ4BNZ.mjs",
       "assets/studio/chunk-OKGMY7XS.mjs",
@@ -11,9 +11,11 @@
       "assets/studio/chunk-W7FP2L2O.mjs",
       "assets/studio/chunk-YSTU5W3L.mjs"
     ],
-    "dev": "assets/studio/dev-OBER7Q47.mjs",
-    "studio": "assets/studio/studio-2ZMIRG67.mjs",
-    "runner": "assets/studio/runner-5D3J6XHR.mjs",
+    "dev": "assets/studio/dev-OYSLOPPD.mjs",
+    "integ": "assets/studio/integ-Z4QBDCE4.mjs",
+    "widgets": "assets/studio/widgets-ND27DT5U.mjs",
+    "studio": "assets/studio/studio-E5MTACYS.mjs",
+    "runner": "assets/studio/runner-KBR55SSY.mjs",
     "ui": "assets/studio/ui-QINGKZB4.mjs",
     "ai": "assets/studio/ai-OHNEFGOG.mjs",
     "github": "assets/studio/github-ZAWNKUZX.mjs",
@@ -22,6 +24,18 @@
     "perf": "assets/studio/perf-PAU2ATQD.mjs"
   },
   "files": [
+    {
+      "name": "assets/studio/chunk-UXOFV77R.mjs",
+      "size": 15803,
+      "gzip": 5514,
+      "br": 4962
+    },
+    {
+      "name": "assets/studio/chunk-PDCQQF3R.mjs",
+      "size": 104900,
+      "gzip": 36781,
+      "br": 32303
+    },
     {
       "name": "assets/studio/chunk-UQBVHM5T.mjs",
       "size": 42885,
@@ -51,6 +65,18 @@
       "size": 3656,
       "gzip": 1036,
       "br": 821
+    },
+    {
+      "name": "assets/studio/chunk-ZSGJMCBN.mjs",
+      "size": 6651,
+      "gzip": 2584,
+      "br": 2324
+    },
+    {
+      "name": "assets/studio/chunk-HWX4GG7Q.mjs",
+      "size": 2181,
+      "gzip": 1114,
+      "br": 991
     },
     {
       "name": "assets/studio/chunk-GRTCME5R.mjs",
@@ -89,16 +115,16 @@
       "br": 4173
     },
     {
-      "name": "assets/studio/chunk-UXOFV77R.mjs",
-      "size": 15803,
-      "gzip": 5514,
-      "br": 4962
+      "name": "assets/studio/chunk-YOGETA2Q.mjs",
+      "size": 4884,
+      "gzip": 2176,
+      "br": 1889
     },
     {
-      "name": "assets/studio/chunk-PDCQQF3R.mjs",
-      "size": 104900,
-      "gzip": 36781,
-      "br": 32303
+      "name": "assets/studio/chunk-MAZD2LHE.mjs",
+      "size": 4138,
+      "gzip": 1763,
+      "br": 1543
     },
     {
       "name": "assets/studio/chunk-URCXWW5L.mjs",
@@ -137,16 +163,16 @@
       "br": 1383
     },
     {
-      "name": "assets/studio/chunk-ZSGJMCBN.mjs",
-      "size": 6651,
-      "gzip": 2584,
-      "br": 2324
+      "name": "assets/studio/chunk-VVV6XRBI.mjs",
+      "size": 3151,
+      "gzip": 1219,
+      "br": 1095
     },
     {
-      "name": "assets/studio/chunk-HWX4GG7Q.mjs",
-      "size": 2181,
-      "gzip": 1114,
-      "br": 991
+      "name": "assets/studio/chunk-VCHRKPA3.mjs",
+      "size": 8532,
+      "gzip": 3610,
+      "br": 3235
     },
     {
       "name": "assets/studio/chunk-UJYZGXUY.mjs",
@@ -185,16 +211,16 @@
       "br": 413
     },
     {
-      "name": "assets/studio/chunk-YOGETA2Q.mjs",
-      "size": 4884,
-      "gzip": 2176,
-      "br": 1889
+      "name": "assets/studio/chunk-T5X77IKP.mjs",
+      "size": 2598,
+      "gzip": 1239,
+      "br": 1143
     },
     {
-      "name": "assets/studio/chunk-MAZD2LHE.mjs",
-      "size": 4138,
-      "gzip": 1763,
-      "br": 1543
+      "name": "assets/studio/chunk-SOXC4C73.mjs",
+      "size": 1645,
+      "gzip": 798,
+      "br": 704
     },
     {
       "name": "assets/studio/chunk-WJYGE2AV.mjs",
@@ -233,16 +259,16 @@
       "br": 1628
     },
     {
-      "name": "assets/studio/chunk-VVV6XRBI.mjs",
-      "size": 3151,
-      "gzip": 1219,
-      "br": 1095
+      "name": "assets/studio/chunk-D3UZSXU5.mjs",
+      "size": 6695,
+      "gzip": 1955,
+      "br": 1771
     },
     {
-      "name": "assets/studio/chunk-VCHRKPA3.mjs",
-      "size": 8532,
-      "gzip": 3610,
-      "br": 3235
+      "name": "assets/studio/chunk-6EXU4J7N.mjs",
+      "size": 2570,
+      "gzip": 1224,
+      "br": 1065
     },
     {
       "name": "assets/studio/chunk-TUXYTPZ4.mjs",
@@ -281,16 +307,16 @@
       "br": 2165
     },
     {
-      "name": "assets/studio/chunk-T5X77IKP.mjs",
-      "size": 2598,
-      "gzip": 1239,
-      "br": 1143
+      "name": "assets/studio/chunk-Y3VPRHKX.mjs",
+      "size": 2333,
+      "gzip": 1118,
+      "br": 1018
     },
     {
-      "name": "assets/studio/chunk-SOXC4C73.mjs",
-      "size": 1645,
-      "gzip": 798,
-      "br": 704
+      "name": "assets/studio/chunk-NQGQ7JPF.mjs",
+      "size": 2923,
+      "gzip": 1307,
+      "br": 1179
     },
     {
       "name": "assets/studio/chunk-R2CVFSEN.mjs",
@@ -329,16 +355,16 @@
       "br": 462
     },
     {
-      "name": "assets/studio/chunk-D3UZSXU5.mjs",
-      "size": 6695,
-      "gzip": 1955,
-      "br": 1771
+      "name": "assets/studio/chunk-ZI4KFEFI.mjs",
+      "size": 5947,
+      "gzip": 2708,
+      "br": 2418
     },
     {
-      "name": "assets/studio/chunk-6EXU4J7N.mjs",
-      "size": 2570,
-      "gzip": 1224,
-      "br": 1065
+      "name": "assets/studio/chunk-A2DGRLCD.mjs",
+      "size": 1943,
+      "gzip": 842,
+      "br": 732
     },
     {
       "name": "assets/studio/chunk-ZVXM34SW.mjs",
@@ -377,16 +403,16 @@
       "br": 669
     },
     {
-      "name": "assets/studio/chunk-Y3VPRHKX.mjs",
-      "size": 2333,
-      "gzip": 1118,
-      "br": 1018
+      "name": "assets/studio/chunk-T74YWGUZ.mjs",
+      "size": 4189,
+      "gzip": 1910,
+      "br": 1751
     },
     {
-      "name": "assets/studio/chunk-NQGQ7JPF.mjs",
-      "size": 2923,
-      "gzip": 1307,
-      "br": 1179
+      "name": "assets/studio/chunk-45DW4TIC.mjs",
+      "size": 7932,
+      "gzip": 2966,
+      "br": 2724
     },
     {
       "name": "assets/studio/chunk-MPIRDEKJ.mjs",
@@ -431,16 +457,16 @@
       "br": 1336
     },
     {
-      "name": "assets/studio/chunk-ZI4KFEFI.mjs",
-      "size": 5947,
-      "gzip": 2708,
-      "br": 2418
+      "name": "assets/studio/chunk-XJTT2ZHA.mjs",
+      "size": 1694,
+      "gzip": 625,
+      "br": 549
     },
     {
-      "name": "assets/studio/chunk-A2DGRLCD.mjs",
-      "size": 1943,
-      "gzip": 842,
-      "br": 732
+      "name": "assets/studio/chunk-JP7Q44GN.mjs",
+      "size": 2102,
+      "gzip": 973,
+      "br": 875
     },
     {
       "name": "assets/studio/chunk-E6WHB7LU.mjs",
@@ -479,16 +505,16 @@
       "br": 1617
     },
     {
-      "name": "assets/studio/chunk-T74YWGUZ.mjs",
-      "size": 4189,
-      "gzip": 1910,
-      "br": 1751
+      "name": "assets/studio/chunk-7STW7AQY.mjs",
+      "size": 2086,
+      "gzip": 899,
+      "br": 815
     },
     {
-      "name": "assets/studio/chunk-45DW4TIC.mjs",
-      "size": 7932,
-      "gzip": 2966,
-      "br": 2724
+      "name": "assets/studio/chunk-7AG5ULSH.mjs",
+      "size": 4080,
+      "gzip": 1680,
+      "br": 1490
     },
     {
       "name": "assets/studio/chunk-VY4QDBKB.mjs",
@@ -527,16 +553,16 @@
       "br": 9619
     },
     {
-      "name": "assets/studio/chunk-XJTT2ZHA.mjs",
-      "size": 1694,
-      "gzip": 625,
-      "br": 549
+      "name": "assets/studio/chunk-AWMGSYXJ.mjs",
+      "size": 3895,
+      "gzip": 1715,
+      "br": 1577
     },
     {
-      "name": "assets/studio/chunk-JP7Q44GN.mjs",
-      "size": 2102,
-      "gzip": 973,
-      "br": 875
+      "name": "assets/studio/chunk-MEBLYQRC.mjs",
+      "size": 2350,
+      "gzip": 1126,
+      "br": 1013
     },
     {
       "name": "assets/studio/chunk-S7RK7DKT.mjs",
@@ -581,16 +607,16 @@
       "br": 1002
     },
     {
-      "name": "assets/studio/chunk-7STW7AQY.mjs",
-      "size": 2086,
-      "gzip": 899,
-      "br": 815
+      "name": "assets/studio/chunk-62KQ2ONM.mjs",
+      "size": 4016,
+      "gzip": 1985,
+      "br": 1639
     },
     {
-      "name": "assets/studio/chunk-7AG5ULSH.mjs",
-      "size": 4080,
-      "gzip": 1680,
-      "br": 1490
+      "name": "assets/studio/chunk-L3YHLCNM.mjs",
+      "size": 4521,
+      "gzip": 1807,
+      "br": 1598
     },
     {
       "name": "assets/studio/chunk-GSUCEDBJ.mjs",
@@ -629,16 +655,16 @@
       "br": 426
     },
     {
-      "name": "assets/studio/chunk-AWMGSYXJ.mjs",
-      "size": 3895,
-      "gzip": 1715,
-      "br": 1577
+      "name": "assets/studio/chunk-WEWJGBZ2.mjs",
+      "size": 45170,
+      "gzip": 19171,
+      "br": 15511
     },
     {
-      "name": "assets/studio/chunk-MEBLYQRC.mjs",
-      "size": 2350,
-      "gzip": 1126,
-      "br": 1013
+      "name": "assets/studio/chunk-FC6LXYV2.mjs",
+      "size": 83744,
+      "gzip": 30330,
+      "br": 24202
     },
     {
       "name": "assets/studio/chunk-3UDKHOHK.mjs",
@@ -677,16 +703,16 @@
       "br": 380
     },
     {
-      "name": "assets/studio/chunk-62KQ2ONM.mjs",
-      "size": 4016,
-      "gzip": 1985,
-      "br": 1639
+      "name": "assets/studio/chunk-J2YQXXQR.mjs",
+      "size": 330,
+      "gzip": 197,
+      "br": 163
     },
     {
-      "name": "assets/studio/chunk-L3YHLCNM.mjs",
-      "size": 4521,
-      "gzip": 1807,
-      "br": 1598
+      "name": "assets/studio/chunk-3BIT74PB.mjs",
+      "size": 47796,
+      "gzip": 19333,
+      "br": 15431
     },
     {
       "name": "assets/studio/chunk-I3ITOFCJ.mjs",
@@ -725,22 +751,40 @@
       "br": 22509
     },
     {
-      "name": "assets/studio/chunk-WEWJGBZ2.mjs",
-      "size": 45170,
-      "gzip": 19171,
-      "br": 15511
+      "name": "assets/studio/chunk-25BXWXT5.mjs",
+      "size": 28596,
+      "gzip": 11646,
+      "br": 10137
     },
     {
-      "name": "assets/studio/chunk-FC6LXYV2.mjs",
-      "size": 83744,
-      "gzip": 30330,
-      "br": 24202
+      "name": "assets/studio/dev-OYSLOPPD.mjs",
+      "size": 255214,
+      "gzip": 88687,
+      "br": 74752
     },
     {
-      "name": "assets/studio/dev-OBER7Q47.mjs",
-      "size": 384369,
-      "gzip": 127797,
-      "br": 106627
+      "name": "assets/studio/integ-Z4QBDCE4.mjs",
+      "size": 292463,
+      "gzip": 106556,
+      "br": 87899
+    },
+    {
+      "name": "assets/studio/chunk-HSNPNCYE.mjs",
+      "size": 129202,
+      "gzip": 39220,
+      "br": 32480
+    },
+    {
+      "name": "assets/studio/widgets-ND27DT5U.mjs",
+      "size": 4580,
+      "gzip": 2094,
+      "br": 1785
+    },
+    {
+      "name": "assets/studio/chunk-7KWD6HK6.mjs",
+      "size": 15129,
+      "gzip": 6435,
+      "br": 5680
     },
     {
       "name": "assets/studio/chunk-NAYT2QE5.mjs",
@@ -761,6 +805,12 @@
       "br": 135
     },
     {
+      "name": "assets/studio/chunk-KR7S2USB.mjs",
+      "size": 28198,
+      "gzip": 12805,
+      "br": 10985
+    },
+    {
       "name": "assets/studio/chunk-KPJXPE6Y.mjs",
       "size": 30849,
       "gzip": 12662,
@@ -773,34 +823,10 @@
       "br": 207
     },
     {
-      "name": "assets/studio/chunk-J2YQXXQR.mjs",
-      "size": 330,
-      "gzip": 197,
-      "br": 163
-    },
-    {
-      "name": "assets/studio/chunk-25BXWXT5.mjs",
-      "size": 28596,
-      "gzip": 11646,
-      "br": 10137
-    },
-    {
-      "name": "assets/studio/chunk-KR7S2USB.mjs",
-      "size": 28198,
-      "gzip": 12805,
-      "br": 10985
-    },
-    {
       "name": "assets/studio/chunk-YTFYM2CA.mjs",
       "size": 86853,
       "gzip": 34435,
       "br": 28336
-    },
-    {
-      "name": "assets/studio/chunk-3BIT74PB.mjs",
-      "size": 47796,
-      "gzip": 19333,
-      "br": 15431
     },
     {
       "name": "assets/studio/chunk-4AXDEU5H.mjs",
@@ -809,22 +835,22 @@
       "br": 8192
     },
     {
-      "name": "assets/studio/studio-2ZMIRG67.mjs",
-      "size": 134438,
-      "gzip": 44686,
-      "br": 38537
-    },
-    {
-      "name": "assets/studio/chunk-W7FP2L2O.mjs",
-      "size": 20352,
-      "gzip": 6877,
-      "br": 6291
+      "name": "assets/studio/studio-E5MTACYS.mjs",
+      "size": 134618,
+      "gzip": 44732,
+      "br": 38547
     },
     {
       "name": "assets/studio/chunk-4L2T7PFF.mjs",
       "size": 15618,
       "gzip": 6096,
       "br": 5527
+    },
+    {
+      "name": "assets/studio/chunk-W7FP2L2O.mjs",
+      "size": 20352,
+      "gzip": 6877,
+      "br": 6291
     },
     {
       "name": "assets/studio/chunk-QX3KAJW2.mjs",
@@ -851,10 +877,10 @@
       "br": 90046
     },
     {
-      "name": "assets/studio/runner-5D3J6XHR.mjs",
-      "size": 284390,
-      "gzip": 75209,
-      "br": 65035
+      "name": "assets/studio/runner-KBR55SSY.mjs",
+      "size": 290315,
+      "gzip": 77358,
+      "br": 66954
     },
     {
       "name": "assets/studio/chunk-2EPK7E37.mjs",
@@ -863,10 +889,10 @@
       "br": 2685
     },
     {
-      "name": "assets/studio/chunk-3LU2HVRM.mjs",
-      "size": 41977,
-      "gzip": 16056,
-      "br": 14435
+      "name": "assets/studio/chunk-3AMXFNDL.mjs",
+      "size": 52844,
+      "gzip": 18927,
+      "br": 16998
     },
     {
       "name": "assets/studio/ui-QINGKZB4.mjs",
