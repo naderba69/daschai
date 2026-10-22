@@ -194,7 +194,8 @@ export function installAudio(P) {
     P.pfVoiceOffline = async function () {
         const SR = this.pfSR();
         if (!SR || typeof SR.available !== 'function') return 'unsupported';
-        try { return await SR.available({ langs: [this.pfVoiceLang()], processLocally: true }); } catch (e) { return 'unsupported'; }
+        // never let the voice section wait forever on a pending on-device check (seen in builds without a speech service)
+        try { return await Promise.race([SR.available({ langs: [this.pfVoiceLang()], processLocally: true }), new Promise(r => setTimeout(() => r('unsupported'), 2500))]); } catch (e) { return 'unsupported'; }
     };
     P.pfVoice = async function () {
         const SR = this.pfSR(), off = await this.pfVoiceOffline(), on = !!this._pfVC;

@@ -946,9 +946,12 @@
             : `<button role="menuitem" class="${it.danger ? 'danger' : ''}" data-mi="${i}"><i class="fa-solid ${it.icon || 'fa-circle'}"></i><span>${this.escapeHTML(it.label)}</span>${it.kbd ? `<kbd>${it.kbd}</kbd>` : ''}</button>`).join('');
         document.body.appendChild(m);
         let x, y;
-        if (anchor && anchor.getBoundingClientRect) { const r = anchor.getBoundingClientRect(); x = r.left; y = r.bottom + 4; } else { x = (anchor && anchor.x) || 20; y = (anchor && anchor.y) || 20; }
+        let above = null;
+        if (anchor && anchor.getBoundingClientRect) { const r = anchor.getBoundingClientRect(); x = r.left; y = r.bottom + 4; above = r.top - 4; } else { x = (anchor && anchor.x) || 20; y = (anchor && anchor.y) || 20; }
         const w = m.offsetWidth || 220, h = m.offsetHeight || 300;
         const vw = window.innerWidth || 1024, vh = window.innerHeight || 768;
+        // not enough room below the anchor → open upwards (the CSS max-height makes long menus scroll)
+        if (above != null && y + h > vh - 6 && above - h >= 6) y = above - h;
         m.style.left = Math.max(6, Math.min(x, vw - w - 6)) + 'px';
         m.style.top = Math.max(6, Math.min(y, vh - h - 6)) + 'px';
         m.addEventListener('click', (e) => {

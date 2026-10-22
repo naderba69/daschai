@@ -2,8 +2,8 @@
 .ai-lab{display:flex;flex-direction:column;gap:12px;min-height:300px}
 .ai-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .ai-chips .fx-link.active{background:var(--primary);color:#0b1020;border-color:transparent}
-.ai-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
-.ai-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fill, minmax(min(170px, 100%), 1fr));gap:10px}
+.ai-grid2{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(180px, 100%), 1fr));gap:8px}
 .ai-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:12px;border:1px solid var(--border-subtle);border-radius:12px;background:var(--bg-card);color:var(--text-main);cursor:pointer;text-align:start;font:inherit;transition:transform .15s,border-color .15s}
 .ai-card:hover,.ai-card:focus-visible{border-color:var(--primary);transform:translateY(-2px)}
 .ai-card.active{border-color:var(--success);box-shadow:0 0 0 1px var(--success) inset}
@@ -46,7 +46,7 @@
 .ai-rx-tests .ok{color:var(--success)}.ai-rx-tests .no{color:var(--text-muted)}
 .ai-rules{display:flex;flex-direction:column;gap:4px}
 .ai-rule{display:flex;align-items:center;gap:8px;font-size:.85rem}
-.ai-tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.ai-tot{display:grid;grid-template-columns:repeat(auto-fit, minmax(min(240px, 100%), 1fr));gap:10px}
 .ai-tot-path{border:1px solid var(--border-subtle);border-radius:10px;padding:10px;background:var(--bg-card);max-height:50vh;overflow:auto}
 .ai-tot-path.best{border-color:var(--success);box-shadow:0 0 0 1px var(--success) inset}
 .ai-tot-path h5{margin:0 0 6px;font-size:.88rem}

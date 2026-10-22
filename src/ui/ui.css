@@ -25,7 +25,7 @@
 .lb-bar button:hover { background: rgba(255, 255, 255, .18); }
 
 /* theme editor (#273) */
-.theme-color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.theme-color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: 8px; }
 .theme-color-field { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border-subtle); border-radius: 10px; font-size: 0.8rem; }
 .theme-color-field input[type="color"] { width: 34px; height: 28px; border: 0; background: none; padding: 0; cursor: pointer; }
 .theme-color-field code { margin-inline-start: auto; font-size: 0.68rem; color: var(--text-dim); }
@@ -57,7 +57,7 @@
 .cm-toolbar { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
 .cm-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px 4px; font-size: 0.78rem; border-bottom: 1px solid var(--border-subtle); margin-bottom: 8px; }
 .cm-check { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; cursor: pointer; }
-.cm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.cm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr)); gap: 10px; }
 .cm-listview { display: flex; flex-direction: column; gap: 6px; }
 .cm-card { position: relative; display: flex; gap: 8px; align-items: flex-start; padding: 10px; border: 1px solid var(--border-subtle); border-radius: 12px; background: var(--bg-card); transition: border-color .15s; }
 .cm-card:hover { border-color: var(--border-light); }

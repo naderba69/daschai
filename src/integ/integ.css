@@ -15,7 +15,7 @@
 @media (max-width: 760px) { .ix-split { grid-template-columns: 1fr; } }
 .ix-frame { width: 100%; min-height: 460px; border: 1px solid var(--border-color, #3334); border-radius: 10px; background: #fff; }
 .ix-frame-wide { min-height: 380px; margin-top: 8px; }
-.ix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin: 8px 0; }
+.ix-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(120px, 100%), 1fr)); gap: 8px; margin: 8px 0; }
 .ix-thumb { margin: 0; border-radius: 8px; overflow: hidden; background: var(--bg-tertiary, #8881); }
 .ix-thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
 .ix-thumb figcaption { font-size: .7rem; padding: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: copy; }
@@ -23,7 +23,7 @@
 .ix-lang-list .gh-chip small { opacity: .6; }
 .ix-level { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
 .ix-level-icon { font-size: 2.4rem; }
-.ix-level .tmx-bar { height: 8px; border-radius: 4px; background: #8883; overflow: hidden; margin: 4px 0; min-width: 200px; }
+.ix-level .tmx-bar { height: 8px; border-radius: 4px; background: #8883; overflow: hidden; margin: 4px 0; min-width: min(200px, 100%); }
 .ix-level .tmx-bar > div { height: 100%; background: linear-gradient(90deg, #6366f1, #22c55e); }
 .ix-champion { display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b22, #6366f122); margin-bottom: 8px; }
 .ix-champion img { width: 56px; height: 56px; border-radius: 50%; }

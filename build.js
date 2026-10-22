@@ -125,10 +125,23 @@ try {
     const minifyCSS = (css) => css
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/\s+/g, ' ')
-        .replace(/\s*([{}:;,])\s*/g, '$1')
+        .replace(/\s*([{};,])\s*/g, '$1')
+        .replace(/:\s+/g, ':')
         .trim();
 
-    const finalCSS = useMinify ? minifyCSS(cssContent) : cssContent;
+    // esbuild is the real CSS minifier (the regex fallback stripped the space in descendant selectors such as
+    // `body.kb-nav :focus-visible`, silently changing their meaning in production).
+    let finalCSS = cssContent;
+    if (useMinify) {
+        try { finalCSS = require('esbuild').transformSync(cssContent, { loader: 'css', minify: true, legalComments: 'none', charset: 'utf8' }).code.trim(); }
+        catch (e) { console.warn('⚠️  esbuild CSS minify failed, using the basic minifier:', e.message); finalCSS = minifyCSS(cssContent); }
+    }
+
+    // Layout HTML: drop comments + collapse whitespace runs to one space (never inside pre/textarea/script/style,
+    // where whitespace is content). Rendering is unchanged — a single space keeps inline gaps intact.
+    const minifyHTML = (html) => html.split(/(<(pre|textarea|script|style)\b[\s\S]*?<\/\2>)/i)
+        .map((p, i) => i % 3 === 2 ? '' : i % 3 === 1 ? p : p.replace(/<!--(?!\[if)[\s\S]*?-->/g, '').replace(/\s+/g, ' ')).join('');
+    const finalLayout = useMinify ? minifyHTML(layoutContent) : layoutContent;
 
     const fullHtml = `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
@@ -212,7 +225,7 @@ ${finalCSS}
     </style>
 </head>
 <body>
-${layoutContent}
+${finalLayout}
 
     <script>window.OX_BUILD = ${JSON.stringify(buildInfo)};</script>
     <!-- Main Application Logic -->

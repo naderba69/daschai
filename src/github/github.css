@@ -124,7 +124,7 @@
 
 /* repo settings */
 .ghx-social { flex-wrap: wrap; }
-.ghx-toggles { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; }
+.ghx-toggles { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: 6px; }
 .ghx-toggle { padding: 6px 8px; background: var(--bg-card); border-radius: var(--radius-xs); }
 .ghx-toggle i { color: var(--text-muted); width: 16px; text-align: center; }
 .ghx-danger { border: 1px solid rgba(248, 113, 113, 0.35); border-radius: var(--radius-sm); overflow: hidden; }
@@ -146,7 +146,7 @@
 .ghx-key { margin-top: 10px; padding: 8px; border: 1px solid rgba(52, 211, 153, 0.3); border-radius: var(--radius-xs); background: rgba(52, 211, 153, 0.05); }
 
 /* community */
-.ghx-health { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 8px; margin-bottom: 10px; }
+.ghx-health { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 8px; margin-bottom: 10px; }
 .ghx-health-item { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px; background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); font-size: 0.78rem; }
 .ghx-health-item > i { color: var(--text-muted); width: 18px; text-align: center; }
 .ghx-health-item.ok > i { color: var(--success); }

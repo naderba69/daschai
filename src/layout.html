@@ -11,7 +11,7 @@
                     <div class="gemini-sparkle-icon" aria-hidden="true">✦</div>
                     <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
                 </div>
-                <button class="nav-icon-btn" id="sidebar-close-btn" onclick="app.toggleSidebar(false)" aria-label="إغلاق القائمة" style="width:28px;height:28px; display:none;">
+                <button class="nav-icon-btn" id="sidebar-close-btn" onclick="app.toggleSidebar(false)" aria-label="إغلاق القائمة">
                     <i class="fa-solid fa-xmark" aria-hidden="true"></i>
                 </button>
             </div>
@@ -142,12 +142,12 @@
                 </div>
 
                 <!-- Dual Arena Button -->
-                <button class="nav-icon-btn" title="حلبة النماذج المتعددة (2–8)" onclick="app.openDualModelArena()">
+                <button class="nav-icon-btn nav-hide-sm" title="حلبة النماذج المتعددة (2–8)" aria-label="حلبة النماذج المتعددة" onclick="app.openDualModelArena()">
                     <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
                 </button>
 
                 <!-- Theme Toggle -->
-                <button class="theme-toggle-btn" id="theme-toggle-btn" title="تبديل المظهر (فاتح/داكن)" onclick="app.toggleTheme()" aria-label="تبديل المظهر">
+                <button class="theme-toggle-btn nav-hide-xs" id="theme-toggle-btn" title="تبديل المظهر (فاتح/داكن)" onclick="app.toggleTheme()" aria-label="تبديل المظهر">
                     <i class="fa-solid fa-moon" id="theme-toggle-icon"></i>
                 </button>
 
@@ -157,12 +157,12 @@
                 </button>
 
                 <!-- New Thread Button -->
-                <button class="nav-icon-btn" title="محادثة جديدة" onclick="app.createNewSession(true)">
+                <button class="nav-icon-btn nav-hide-sm" title="محادثة جديدة" aria-label="محادثة جديدة" onclick="app.createNewSession(true)">
                     <i class="fa-solid fa-pen-to-square"></i>
                 </button>
 
                 <!-- Settings Button -->
-                <button class="nav-icon-btn" title="الإعدادات" onclick="app.openSettingsModal()">
+                <button class="nav-icon-btn" title="الإعدادات" aria-label="الإعدادات" onclick="app.openSettingsModal()">
                     <i class="fa-solid fa-sliders"></i>
                 </button>
             </div>
@@ -238,7 +238,7 @@
                     </div>
 
                     <div class="token-estimate-row"><span id="token-estimate-chip" class="token-estimate-chip" onclick="app.openAIHub()" title="تقدير التوكنات والتكلفة قبل الإرسال — انقر لفتح مركز الذكاء"></span></div>
-                    <div style="font-size:0.68rem; color:var(--text-dim); text-align:center; padding:2px;">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Alt+G</kbd> GitHub Hub • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
+                    <div class="input-kbd-hint">💡 اختصارات: <kbd>Ctrl+Enter</kbd> إرسال • <kbd>Ctrl+K</kbd> الأوامر • <kbd>/</kbd> أوامر سريعة • <kbd>Alt+Z</kbd> وضع التركيز • <kbd>Alt+G</kbd> GitHub Hub • <kbd>Esc</kbd> إغلاق النوافذ • انقر بيمين على 🎙️ لتغيير اللغة</div>
                     <div id="session-mode-badge" class="session-mode-badge" style="display:none" aria-live="polite"></div>
                 <!-- Gemini Input Card -->
                     <div class="gemini-input-card">
@@ -373,7 +373,7 @@
                         <span>اتصال فوري (OAuth)</span>
                     </button>
                 </div>
-                <div style="display: flex; gap: 6px;">
+                <div class="inline-token-row">
                     <input type="password" id="inline-github-token-input" class="form-input-box" style="font-size: 16px; padding: 6px 10px;" placeholder="رمز الوصول PAT: ghp_... / github_pat_...">
                     <button class="btn-new-thread" style="width: auto; padding: 6px 12px; font-size: 0.74rem; white-space: nowrap;" onclick="app.saveInlineGitHubToken()">
                         <span>ربط</span>
@@ -604,7 +604,7 @@
                 <input type="text" id="diff-commit-message" class="form-input-box" placeholder="رسالة الـ Commit (مثال: fix: handle empty input)" dir="auto">
                 <button class="sidebar-btn-util" style="padding:6px 10px; white-space:nowrap;" onclick="app.suggestCommitMessage()" title="اقتراح رسالة بالذكاء الاصطناعي"><i class="fa-solid fa-wand-magic-sparkles text-purple"></i><span>اقتراح</span></button>
             </div>
-            <div style="display:flex; gap:8px;">
+            <div class="modal-footer-actions">
                 <button class="btn-new-thread" style="width: auto; padding: 7px 18px; font-size: 0.8rem;" id="btn-diff-confirm-commit" onclick="app.confirmCommitFromDiff()">
                     <i class="fa-brands fa-github"></i><span>Commit إلى <span id="diff-target-branch">main</span></span>
                 </button>
@@ -781,7 +781,7 @@
             <!-- Tab AI -->
             <div id="tab-ai" class="settings-tab-content">
                 <div class="form-group-item">
-                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div class="form-label-row">
                         <label class="form-label-title">مفتاح OpenRouter API Key</label>
                         <a href="https://openrouter.ai/keys" target="_blank" style="font-size: 0.74rem; color: #38bdf8; text-decoration: none; font-weight: 700;">إنشاء مفتاح مجاني في 10 ثوانٍ ↗</a>
                     </div>
@@ -806,7 +806,7 @@
                     <textarea id="setting-system-prompt" class="form-input-box" rows="3" placeholder="أنت مهندس برمجيات ذكي وخبير في تحليل المشاريع البرمجية الضخمة..."></textarea>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <div class="form-grid-2">
                     <div class="form-group-item">
                         <label class="form-label-title">درجة الإبداع (Temperature)</label>
                         <input type="number" id="setting-temperature" class="form-input-box" min="0" max="2" step="0.1" value="0.7">
@@ -826,7 +826,7 @@
                     <span style="font-size: 0.72rem; color: #34d399;">مطلوب لتحديث وعمل Commit مباشر للملفات من الأداة إلى مستودعاتك.</span>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                <div class="form-grid-2">
                     <div class="form-group-item">
                         <label class="form-label-title">مالك الحساب (Owner / Username)</label>
                         <input type="text" id="setting-github-owner" class="form-input-box" value="naderba69">
@@ -908,12 +908,12 @@
         </div>
 
         <div class="workbench-layout-container">
-            <div style="border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 10px; background: #18191c;" id="repo-file-tree">
+            <div class="wb-tree" id="repo-file-tree">
                 <div style="font-size: 0.78rem; color: var(--text-dim); text-align: center; padding: 20px;">جاري جلب بنية الملفات...</div>
             </div>
-            <div style="display: flex; flex-direction: column; overflow: hidden; background: #121314;">
-                <div style="padding: 8px 12px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
-                    <span id="gh-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.78rem; color: #94a3b8; max-width: 60%;">اختر ملفاً من الشجرة للمعاينة</span>
+            <div class="wb-viewer">
+                <div class="wb-viewer-head">
+                    <span id="gh-file-viewer-title" class="truncate wb-viewer-title">اختر ملفاً من الشجرة للمعاينة</span>
                     <div style="display: flex; gap: 6px;">
                         <button class="sidebar-btn-util" style="padding: 3px 8px; font-size: 0.72rem;" onclick="app.openSelectedGitHubFileInStudio()">
                             <i class="fa-solid fa-columns text-blue"></i>
@@ -925,7 +925,7 @@
                         </button>
                     </div>
                 </div>
-                <pre style="flex: 1; margin: 0; padding: 12px; overflow: auto; font-family: var(--font-mono); font-size: 0.8rem; color: #f1f5f9; direction: ltr; text-align: left;"><code id="repo-file-viewer">// اختر ملفاً لمعاينته هنا</code></pre>
+                <pre class="wb-viewer-pre"><code id="repo-file-viewer">// اختر ملفاً لمعاينته هنا</code></pre>
             </div>
         </div>
 
@@ -954,18 +954,18 @@
         </div>
 
         <div class="workbench-layout-container">
-            <div style="border-left: 1px solid var(--border-subtle); overflow-y: auto; padding: 10px; background: #18191c;" id="zip-file-tree">
+            <div class="wb-tree" id="zip-file-tree">
                 <!-- Populated with extracted zip files -->
             </div>
-            <div style="display: flex; flex-direction: column; overflow: hidden; background: #121314;">
-                <div style="padding: 8px 12px; background: #1e1f20; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between;">
-                    <span id="zip-file-viewer-title" class="truncate" style="font-family: var(--font-mono); font-size: 0.78rem; color: #94a3b8; max-width: 60%;">اختر ملفاً لمعاينة الكود</span>
+            <div class="wb-viewer">
+                <div class="wb-viewer-head">
+                    <span id="zip-file-viewer-title" class="truncate wb-viewer-title">اختر ملفاً لمعاينة الكود</span>
                     <button class="sidebar-btn-util" style="padding: 3px 8px; font-size: 0.72rem;" onclick="app.developSelectedZipFile()">
                         <i class="fa-solid fa-code text-blue"></i>
                         <span>تطوير هذا الملف بالذكاء الاصطناعي</span>
                     </button>
                 </div>
-                <pre style="flex: 1; margin: 0; padding: 12px; overflow: auto; font-family: var(--font-mono); font-size: 0.8rem; color: #f1f5f9; direction: ltr; text-align: left;"><code id="zip-file-viewer">// حدد ملفاً من قائمة المشروع المستخرج على اليمين</code></pre>
+                <pre class="wb-viewer-pre"><code id="zip-file-viewer">// حدد ملفاً من قائمة المشروع المستخرج على اليمين</code></pre>
             </div>
         </div>
 
@@ -1074,7 +1074,7 @@
             <kbd>Esc</kbd>
         </div>
         <div class="cmd-palette-list" id="cmd-palette-list" role="listbox"></div>
-        <div class="cmd-palette-footer">
+        <div class="cmd-palette-footer kbd-only">
             <span><kbd>↑</kbd> <kbd>↓</kbd> تنقل</span>
             <span><kbd>Enter</kbd> تنفيذ</span>
             <span><kbd>Esc</kbd> إغلاق</span>
