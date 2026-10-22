@@ -118,8 +118,8 @@
 .term-link:hover { color: #bfdbfe; }
 .term-stack { margin: 2px 0 2px 1.4em; color: #9ca3af; }
 .term-stack summary { cursor: pointer; color: #d1d5db; }
-.term-fix-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 7px; border: 1px solid rgba(167, 139, 250, 0.5); background: rgba(139, 92, 246, 0.15); color: #ddd6fe; font-size: 0.72rem; cursor: pointer; font-family: var(--font-main, inherit); }
-.term-fix-btn:hover { background: rgba(139, 92, 246, 0.3); }
+.term-fix-btn { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 7px; border: 1px solid rgba(167, 139, 250, 0.5); background: rgba(59, 130, 246, 0.15); color: #ddd6fe; font-size: 0.72rem; cursor: pointer; font-family: var(--font-main, inherit); }
+.term-fix-btn:hover { background: rgba(59, 130, 246, 0.3); }
 [data-theme="light"] .studio-console, [data-theme="light"] .terminal-box.ox-term { background: #f8fafc; }
 [data-theme="light"] .term-line, [data-theme="light"] .term-log { color: #1f2937; }
 [data-theme="light"] .term-info, [data-theme="light"] .term-link { color: #1d4ed8; }

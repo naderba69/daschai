@@ -8,7 +8,7 @@
         <div class="sidebar-header">
             <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div class="brand-row" onclick="app.createNewSession(true)" role="button" tabindex="0" aria-label="إنشاء محادثة جديدة">
-                    <div class="gemini-sparkle-icon" aria-hidden="true">✦</div>
+                    <div class="gemini-sparkle-icon" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
                     <div class="brand-title">OX-Alpha <span class="brand-badge">PRO</span></div>
                 </div>
                 <button class="nav-icon-btn" id="sidebar-close-btn" onclick="app.toggleSidebar(false)" aria-label="إغلاق القائمة">
@@ -44,8 +44,10 @@
 
         <!-- Sidebar Tools & Features Navigation -->
         <div class="sidebar-footer-nav">
-            <div class="nav-section-title">الأدوات والميزات المتقدمة</div>
-            <div class="sidebar-tools-grid">
+            <button type="button" class="nav-section-title nav-tools-toggle" id="tools-toggle" aria-expanded="false" aria-controls="sidebar-tools-grid" onclick="app.toggleSidebarTools()">
+                <i class="fa-solid fa-toolbox" aria-hidden="true"></i><span>الأدوات</span><i class="fa-solid fa-chevron-up tools-chevron" aria-hidden="true"></i>
+            </button>
+            <div class="sidebar-tools-grid" id="sidebar-tools-grid">
                 <button class="tool-grid-btn" onclick="app.openRepositoriesHubModal()" title="مستودعات ومشاريع GitHub">
                     <i class="fa-brands fa-github text-emerald"></i>
                     <span>المشاريع</span>
@@ -123,7 +125,7 @@
                     <i class="fa-solid fa-bars" aria-hidden="true"></i>
                 </button>
                 <div class="nav-brand" onclick="app.createNewSession(true)">
-                    <span class="nav-sparkle">✦</span>
+                    <span class="nav-sparkle" aria-hidden="true"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
                     <span class="nav-brand-text">OX-Alpha</span>
                 </div>
                 <!-- Active Model Dropdown Pill -->
@@ -143,7 +145,7 @@
 
                 <!-- Dual Arena Button -->
                 <button class="nav-icon-btn nav-hide-sm" title="حلبة النماذج المتعددة (2–8)" aria-label="حلبة النماذج المتعددة" onclick="app.openDualModelArena()">
-                    <i class="fa-solid fa-bolt" style="color: #fbbf24;"></i>
+                    <i class="fa-solid fa-bolt"></i>
                 </button>
 
                 <!-- Theme Toggle -->
@@ -178,7 +180,7 @@
                 <span class="truncate">يلزم إدخال مفتاح OpenRouter مجاني (Free API Key) لتشغيل النماذج دون انقطاع.</span>
             </div>
             <div class="banner-actions">
-                <a href="https://openrouter.ai/keys" target="_blank" class="banner-btn-link">إنشاء مفتاح ↗</a>
+                <a href="https://openrouter.ai/keys" target="_blank" class="banner-btn-link" rel="noopener" aria-label="إنشاء مفتاح OpenRouter"><span class="bl-txt">إنشاء مفتاح</span> <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                 <button class="banner-btn-action" onclick="app.openSettingsModal()">إدخال المفتاح</button>
             </div>
         </div>
@@ -256,15 +258,15 @@
                             <div class="action-buttons-group">
                                 <!-- Agent Mode Toggle -->
                                 <button class="action-btn" id="btn-agent-mode" title="وضع الوكيل الذاتي المستقل (Autonomous Agent ReAct Loop)" onclick="app.toggleAutonomousAgent()">
-                                    <i class="fa-solid fa-robot" style="color: #c084fc;"></i>
+                                    <i class="fa-solid fa-robot"></i>
                                 </button>
                                 <!-- Conversation modes (teach / review / planning / …) -->
                                 <button class="action-btn" id="btn-chat-mode" title="وضع المحادثة: تدريس، مراجعة، تخطيط، عصف ذهني، مقابلة…" onclick="app.openModeMenu(this)" aria-label="وضع المحادثة">
-                                    <i class="fa-solid fa-masks-theater" style="color: #fbbf24;"></i>
+                                    <i class="fa-solid fa-masks-theater"></i>
                                 </button>
                                 <!-- Smart Router -->
                                 <button class="action-btn active" id="btn-smart-router" title="التوجيه الذكي التلقائي للنموذج" onclick="app.toggleSmartRouter()">
-                                    <i class="fa-solid fa-brain" style="color: #38bdf8;"></i>
+                                    <i class="fa-solid fa-brain"></i>
                                 </button>
                                 <!-- Web Search -->
                                 <button class="action-btn" id="btn-web-search" title="البحث الحي في الويب" onclick="app.toggleWebSearch()">
@@ -783,7 +785,7 @@
                 <div class="form-group-item">
                     <div class="form-label-row">
                         <label class="form-label-title">مفتاح OpenRouter API Key</label>
-                        <a href="https://openrouter.ai/keys" target="_blank" style="font-size: 0.74rem; color: #38bdf8; text-decoration: none; font-weight: 700;">إنشاء مفتاح مجاني في 10 ثوانٍ ↗</a>
+                        <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" style="font-size: 0.74rem; color: var(--primary); text-decoration: none; font-weight: 600;">إنشاء مفتاح مجاني في 10 ثوانٍ <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                     </div>
                     <input type="password" id="setting-openrouter-key" class="form-input-box" placeholder="sk-or-v1-...">
                     <span style="font-size: 0.72rem; color: var(--text-dim);">يتم حفظ المفتاح بأمان في متصفحك (localStorage) فقط ولا يمر عبر خوادم وسيطة.</span>

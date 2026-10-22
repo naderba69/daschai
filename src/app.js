@@ -2214,6 +2214,7 @@ class OXAlphaApp {
         if (!container) return;
 
         const session = this.sessions.find(s => s.id === this.activeSessionId);
+        document.body.classList.toggle('has-msgs', !!(session && session.messages && session.messages.length));
         if (!session || !session.messages || session.messages.length === 0) {
             container.innerHTML = `
                 <div class="welcome-hero-box">
@@ -2452,9 +2453,9 @@ class OXAlphaApp {
             toolbar.className = 'code-block-toolbar';
             toolbar.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-weight: 700; color: #8ab4f8;">${lang}</span>
+                    <span class="code-lang-label">${lang}</span>
                     ${detectedPath ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">${detectedPath}</span>` : ''}
-                    ${isTestFile ? `<span style="background: rgba(192, 132, 252, 0.18); color: #c084fc; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">🧪 ملف اختبارات ومحاكاة</span>` : ''}
+                    ${isTestFile ? `<span style="background: var(--accent-soft); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">🧪 ملف اختبارات ومحاكاة</span>` : ''}
                 </div>
                 <div class="code-actions-group">
                     <button class="code-tool-btn test-btn" onclick="app.generateTestFromBtn(this, '${lang}')"><i class="fa-solid fa-vial"></i> <span>محاكاة واختبارات</span></button>

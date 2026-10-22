@@ -113,9 +113,10 @@
         let bar = document.getElementById('sess-filter-bar');
         if (!bar) { bar = document.createElement('div'); bar.id = 'sess-filter-bar'; bar.className = 'sess-filter-bar'; host.appendChild(bar); }
         const v = this.getSessionView();
-        const chips = [['all', 'الكل'], ['pinned', '📌'], ['fav', '⭐'], ['code', '</>'], ['today', 'اليوم'], ['archived', '🗄️']];
+        // text chips + icon chips (icons instead of emoji: consistent across platforms and fonts)
+        const chips = [['all', 'الكل'], ['today', 'اليوم'], ['pinned', '', 'fa-thumbtack'], ['fav', '', 'fa-star'], ['code', '', 'fa-code'], ['archived', '', 'fa-box-archive']];
         const tags = this.allTags();
-        bar.innerHTML = `<div class="sess-chips" role="tablist" aria-label="تصفية المحادثات">${chips.map(([id, l]) => `<button role="tab" aria-selected="${v.filter === id}" class="sess-chip ${v.filter === id ? 'active' : ''}" onclick="app.setSessionView({filter:'${id}'})" title="${{ all: 'كل المحادثات', pinned: 'المثبتة', fav: 'بها رسائل مفضلة', code: 'تحتوي كوداً', today: 'نشطة اليوم', archived: 'المؤرشفة' }[id]}">${this.escapeHTML(l)}</button>`).join('')}</div>
+        bar.innerHTML = `<div class="sess-chips" role="tablist" aria-label="تصفية المحادثات">${chips.map(([id, l, ic]) => { const t = { all: 'كل المحادثات', pinned: 'المثبتة', fav: 'بها رسائل مفضلة', code: 'تحتوي كوداً', today: 'نشطة اليوم', archived: 'المؤرشفة' }[id]; return `<button role="tab" aria-selected="${v.filter === id}" class="sess-chip ${ic ? 'sess-chip-ic ' : ''}${v.filter === id ? 'active' : ''}" onclick="app.setSessionView({filter:'${id}'})" title="${t}" aria-label="${t}">${ic ? `<i class="fa-solid ${ic}" aria-hidden="true"></i>` : this.escapeHTML(l)}</button>`; }).join('')}</div>
             <div class="sess-tools">
                 <select class="sess-sort" aria-label="ترتيب" onchange="app.setSessionView({sort:this.value})">${[['updated', 'الأحدث'], ['smart', 'ذكي ✨'], ['created', 'تاريخ الإنشاء'], ['title', 'الاسم'], ['messages', 'الأطول']].map(([id, l]) => `<option value="${id}" ${v.sort === id ? 'selected' : ''}>${l}</option>`).join('')}</select>
                 ${tags.length ? `<select class="sess-sort" aria-label="وسم" onchange="app.setSessionView({tag:this.value})"><option value="">كل الوسوم</option>${tags.map(([t, n]) => `<option value="${this.escapeHTML(t)}" ${v.tag === t ? 'selected' : ''}>#${this.escapeHTML(t)} (${n})</option>`).join('')}</select>` : ''}

@@ -116,6 +116,20 @@ function computed(rules, selector, prop, vp) {
     const gz = zlib.gzipSync(html, { level: 9 }).length / 1024;
     ok(gz < 250, `main page stays under the 250 KB gzip budget (${gz.toFixed(1)} KB)`);
 
+    section('v2.16 design system: tokens, clean chrome, compact phone banners');
+    const rootTok = (css.match(/:root \{([\s\S]*?)\n\}/) || [])[1] || '';
+    ok(/--primary: #5b9bff/.test(rootTok) && /--accent: #2f74f0/.test(rootTok) && /--radius-pill: 8px/.test(rootTok), 'one blue accent + crisp radii are the root tokens');
+    ok(!/#c084fc|155, 114, 207/.test(css), 'no leftover purple accent / glow colours in the main stylesheet');
+    ok(computed(rules, '.sidebar-footer-nav:not(.open) .sidebar-tools-grid', 'display', DESK) === 'none', 'the tools section is collapsible (hidden until opened)');
+    ok(computed(rules, '.input-kbd-hint', 'display', DESK) === 'none' && computed(rules, 'body.has-msgs .quick-suggestions-carousel', 'display', PHONE) === 'none', 'hints are hidden; suggestion chips disappear once the chat has messages');
+    ok(computed(rules, '.ox-banner', 'flex-wrap', PHONE) === 'nowrap' && computed(rules, '.top-tabs-bar.visible', 'display', PHONE) === 'none' && computed(rules, '.top-tabs-bar.visible', 'display', DESK) !== 'none', 'phones: banners stay one compact row; the tabs bar gives way to the drawer');
+    ok(computed(rules, '.top-tabs-bar', 'order', DESK) === '-1' && computed(rules, '.top-navbar', 'order', DESK) === '-2', 'the tabs bar always sits right under the navbar (above banners)');
+    const lay = read('src/layout.html');
+    ok(/id="tools-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="sidebar-tools-grid"/.test(lay) && /id="sidebar-tools-grid"/.test(lay), 'the tools toggle is an accessible disclosure button');
+    ok(!/[✦↗]/.test(lay), 'no font-dependent symbol glyphs in the layout (icons instead)');
+    ok(!/['"](📌|⭐|🗄️)['"]/.test(read('src/features/13-conversations.js')), 'session filter chips use icons, not emoji');
+    ok(/IBM\+Plex\+Sans\+Arabic/.test(read('build.js')), 'IBM Plex Sans Arabic is the UI font');
+
     section('Runtime: menus flip above their anchor; the terminal fits its host');
     const { w, d, app, errors } = loadApp();
     await wait(80);
@@ -139,6 +153,18 @@ function computed(rules, selector, prop, vp) {
     ok(cols(340, 7.8) === 41 && cols(1000, 7.8) === 126 && cols(60, 7.8) === 20, 'columns follow the host width (41 on a phone instead of a fixed, cut-off 80)');
     ok(/new ResizeObserver\(\(\) => fit\(\)\)/.test(termSrc), 'the terminal refits on resize/rotation');
     ok(/Promise\.race\(\[SR\.available/.test(read('src/perf/audio.js')), 'the voice section never waits forever on SpeechRecognition.available()');
+    const tg = d.getElementById('tools-toggle'), fnav = d.querySelector('.sidebar-footer-nav');
+    ok(tg && fnav && !fnav.classList.contains('open') && tg.getAttribute('aria-expanded') === 'false', 'tools start collapsed');
+    app.toggleSidebarTools();
+    ok(fnav.classList.contains('open') && tg.getAttribute('aria-expanded') === 'true' && w.localStorage.getItem('ox_tools_open') === '1', 'toggling opens the tools and remembers the choice');
+    app.toggleSidebarTools(false);
+    const ses = app.sessions.find(x => x.id === app.activeSessionId);
+    if (ses) { ses.messages = [{ role: 'user', content: 'hi', timestamp: Date.now() }]; app.renderMessages(); }
+    ok(d.body.classList.contains('has-msgs'), 'body.has-msgs reflects a non-empty conversation');
+    if (ses) { ses.messages = []; app.renderMessages(); }
+    ok(!d.body.classList.contains('has-msgs'), '…and clears on an empty one');
+    const chipsHTML = (d.getElementById('sess-filter-bar') || {}).innerHTML || '';
+    ok(!chipsHTML || /fa-thumbtack/.test(chipsHTML), 'rendered filter chips carry icons');
     ok(errors.length === 0, `no runtime errors (${errors.slice(0, 2).join(' | ')})`);
 
     console.log(process.exitCode ? '\n❌ responsive test failed' : '\n✅ responsive test passed');
