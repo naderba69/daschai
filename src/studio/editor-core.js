@@ -124,7 +124,7 @@ const PHRASES = {
 };
 
 // ====================================================================== LANGUAGES
-const ALIASES = { jsonc: 'json', json5: 'json', svelte: 'html', astro: 'html', env: 'properties', mdx: 'markdown', h: 'c', hpp: 'cpp', cc: 'cpp', bash: 'sh', zsh: 'sh', ps1: 'powershell', kt: 'kotlin', kts: 'kotlin', rs: 'rust', rb: 'ruby', yml: 'yaml', htm: 'html', mjs: 'js', cjs: 'js' };
+const ALIASES = { jsonc: 'json', json5: 'json', svelte: 'html', astro: 'html', env: 'properties', mdx: 'markdown', h: 'c', hpp: 'cpp', cc: 'cpp', bash: 'sh', zsh: 'sh', ps1: 'powershell', kt: 'kotlin', kts: 'kotlin', rs: 'rust', rb: 'ruby', yml: 'yaml', htm: 'html', mjs: 'js', cjs: 'js', arjs: 'js' };
 export function findLanguage(path) {
     const name = String(path || '').split('/').pop();
     let d = LanguageDescription.matchFilename(languages, name);

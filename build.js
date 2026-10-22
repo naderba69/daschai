@@ -69,7 +69,7 @@ try {
         fs.rmSync(outdir, { recursive: true, force: true });
         const result = await esbuild.build({
             absWorkingDir: __dirname,
-            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js', perf: 'src/perf/perf.js' },
+            entryPoints: { studio: 'src/studio/studio.js', runner: 'src/studio/runner.js', ui: 'src/ui/ui.js', ai: 'src/ai/ai.js', github: 'src/github/github.js', media: 'src/media/media.js', team: 'src/team/team.js', perf: 'src/perf/perf.js', dev: 'src/dev/dev.js' },
             bundle: true, splitting: true, format: 'esm', target: ['es2020'],
             outdir: 'assets/studio', outExtension: { '.js': '.mjs' },
             entryNames: '[name]-[hash]', chunkNames: 'chunk-[hash]',
@@ -96,10 +96,10 @@ try {
             }
             return seen;
         };
-        const NAMED = new Set(['studio', 'runner', 'ui', 'ai', 'github', 'media', 'team', 'perf']);
+        const NAMED = new Set(['studio', 'runner', 'ui', 'ai', 'github', 'media', 'team', 'perf', 'dev']);
         for (const [file, meta] of Object.entries(outputs)) {
             // Only the named entry points go into OX_BUILD (dynamic-import chunks such as CodeMirror languages are reached via imports)
-            if (meta.entryPoint && NAMED.has(path.basename(meta.entryPoint, '.js')) && /src\/(studio|ui|ai|github|media|team|perf)\//.test(meta.entryPoint)) chunks[path.basename(meta.entryPoint, '.js')] = file;
+            if (meta.entryPoint && NAMED.has(path.basename(meta.entryPoint, '.js')) && /src\/(studio|ui|ai|github|media|team|perf|dev)\//.test(meta.entryPoint)) chunks[path.basename(meta.entryPoint, '.js')] = file;
             const buf = fs.readFileSync(path.join(__dirname, file));
             chunkFiles.push({ name: file, size: meta.bytes, gzip: require('zlib').gzipSync(buf, { level: 9 }).length, br: require('zlib').brotliCompressSync(buf).length });
         }

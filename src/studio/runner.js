@@ -15,6 +15,8 @@ import * as intel from './code-intel.js';
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const JS_RUN = ['js', 'mjs', 'cjs', 'jsx', 'ts', 'tsx', 'mts', 'cts'];
+import { transpileArabic } from './arabic.js';
+import { rtExtSource } from './rt-ext.js';
 export const isTestPath = (p) => /(^|\/)__tests__\/|[._-](test|spec)\.(m|c)?[jt]sx?$/.test(p) || /(^|\/)test_[^/]+\.py$|_test\.py$/.test(p);
 const RUN_ARGS = 'exports, require, module, __filename, __dirname, process, console, prompt, input, fetch, setTimeout, setInterval, clearTimeout, clearInterval, describe, it, test, expect, beforeEach, afterEach, beforeAll, afterAll, jest, vi';
 
@@ -44,7 +46,7 @@ export function hasTopLevelAwait(code, path) {
     return false;
 }
 /** Build the worker script: runtime + one __ox.define per module. Returns { script, map, prelude }. */
-export function buildRunBundle({ files, entry, mode = 'run', tests = [], cfg = {} }) {
+export function buildRunBundle({ files, entry, mode = 'run', tests = [], cfg = {}, extensions = [], transform: postTransform = null }) {
     const parts = [], map = [];
     let line = 1;
     const push = (text, path) => {
@@ -54,18 +56,20 @@ export function buildRunBundle({ files, entry, mode = 'run', tests = [], cfg = {
         line += n;
     };
     push(`var __ox = ${runtimeSource}(${JSON.stringify({ ...cfg, entry })}, typeof __oxPost === 'function' ? __oxPost : function (m) { postMessage(m); });`);
+    (extensions || []).forEach((src) => push(`__ox.extend(${src});`));
     const prelude = line - 1;
-    for (const [path, content] of files) {
+    for (const [path, rawContent] of files) {
         const ext = intel.extOf(path);
+        const content = ext === 'arjs' ? transpileArabic(rawContent).code : rawContent;
         if (ext === 'json') {
             let data;
             try { data = JSON.parse(content); } catch (e) { continue; }
             push(`__ox.defineJSON(${JSON.stringify(path)}, ${JSON.stringify(data)});`);
             continue;
         }
-        if (!JS_RUN.includes(ext)) continue;
+        if (!JS_RUN.includes(ext) && ext !== 'arjs') continue;
         let code;
-        try { code = transpileModule(content, path); } catch (e) {
+        try { code = transpileModule(content, ext === 'arjs' ? path.replace(/\.arjs$/, '.js') : path); if (postTransform) code = postTransform(code, path) || code; } catch (e) {
             const loc = e.loc || (/\((\d+):(\d+)\)/.exec(e.message) ? { line: +RegExp.$1, column: +RegExp.$2 } : null);
             const err = new Error(String(e.message).replace(/^Error transforming [^:]+:\s*/, ''));
             err.compile = { path, line: loc ? loc.line : null, column: loc ? loc.column : null };
@@ -102,6 +106,7 @@ const SANDBOX_BOOT = `function (token) {
   addEventListener('message', function (e) {
     var d = e.data; if (!d || d.token !== token) return;
     if (d.stop) { if (worker) worker.terminate(); return; }
+    if (d.req) { if (worker) worker.postMessage(d.req); else if (self.__oxReq) self.__oxReq(d.req); return; }
     if (typeof d.script === 'string') {
       try {
         var url = URL.createObjectURL(new Blob([d.script], { type: 'text/javascript' }));
@@ -190,6 +195,7 @@ export function install(app) {
         document.body.appendChild(iframe);
         return {
             start(script, cb) { onMsg = cb; if (ready) iframe.contentWindow.postMessage({ token, script }, '*'); else queued = script; },
+            send(req) { try { iframe.contentWindow && iframe.contentWindow.postMessage({ token, req }, '*'); } catch (e) { /* gone */ } },
             stop() {
                 onMsg = null;
                 window.removeEventListener('message', listener);
@@ -204,7 +210,7 @@ export function install(app) {
         const out = new Map();
         for (const [p, f] of this.virtualProjectFiles) {
             if (!f || typeof f.content !== 'string' || f.dataUrl) continue;
-            if (filter ? filter(p) : (JS_RUN.includes(intel.extOf(p)) || intel.extOf(p) === 'json')) out.set(p, f.content);
+            if (filter ? filter(p) : (JS_RUN.includes(intel.extOf(p)) || ['json', 'arjs'].includes(intel.extOf(p)))) out.set(p, f.content);
         }
         return out;
     };
@@ -219,6 +225,46 @@ export function install(app) {
             mocks[route.replace(/\.(json|txt)$/i, '')] = v;
         }
         return mocks;
+    };
+    /** #226/#228/#166 — mocks/db.json, mocks/auth.json and __snapshots__/*.snap feed the runtime extension. */
+    P.collectRunServices = function () {
+        const out = {}, F = this.virtualProjectFiles;
+        const json = (p) => { const f = F.get(p); if (!f || typeof f.content !== 'string') return undefined; try { return JSON.parse(f.content); } catch (e) { return undefined; } };
+        const db = json('mocks/db.json') || json('mock/db.json') || json('db.json');
+        if (db && typeof db === 'object') out.db = db;
+        const auth = json('mocks/auth.json') || json('mock/auth.json');
+        if (auth && typeof auth === 'object') out.auth = Array.isArray(auth) ? { users: auth } : auth;
+        const snaps = {};
+        for (const [p, f] of F) {
+            const m = /^(.*?)__snapshots__\/(.+)\.snap$/.exec(p);
+            if (!m || !f || typeof f.content !== 'string') continue;
+            try { snaps[m[1] + m[2]] = JSON.parse(f.content); } catch (e) { /* ignore malformed */ }
+        }
+        out.snapshots = snaps;
+        if (this._updateSnapshots) out.updateSnapshots = true;
+        return out;
+    };
+    P.snapshotPath = function (testFile) { const d = intel.dirName(testFile); return (d ? d + '/' : '') + '__snapshots__/' + intel.baseName(testFile) + '.snap'; };
+    P.recordSnapshot = function (m, w) {
+        this._snapStats = this._snapStats || { new: 0, match: 0, updated: 0, fail: 0 };
+        this._snapStats[m.status] = (this._snapStats[m.status] || 0) + 1;
+        if (m.status !== 'new' && m.status !== 'updated') return;
+        const p = this.snapshotPath(m.file);
+        const f = this.virtualProjectFiles.get(p);
+        let data = {};
+        try { data = f ? JSON.parse(f.content) : {}; } catch (e) { data = {}; }
+        data[m.key] = m.value;
+        const sorted = {};
+        Object.keys(data).sort().forEach(k => { sorted[k] = data[k]; });
+        this.writeProjectFile(p, JSON.stringify(sorted, null, 2) + '\n', 'snapshot');
+        if (w) w.line('info', `📸 ${m.status === 'new' ? 'لقطة جديدة' : 'تحديث لقطة'}: ${m.key}`);
+    };
+    P.renderBench = function (w, st) {
+        if (!st) return;
+        this._benchResults = this._benchResults || [];
+        this._benchResults.push({ ...st, at: Date.now() });
+        const f = (n) => n < 0.01 ? n.toExponential(2) : n.toFixed(3);
+        w.line('info', `⏱ ${st.name}: ${f(st.mean)}ms متوسط • ${Math.round(st.hz).toLocaleString('en')} op/s ±${st.rme.toFixed(1)}% • p99 ${f(st.p99)}ms (${st.n} عينة)`);
     };
     P.getRunEnv = async function () {
         let saved = {};
@@ -258,6 +304,7 @@ export function install(app) {
 
     // ------------------------------------------------------------------ HISTORY (#180, #229)
     P.recordRun = async function (entry) {
+        this._lastRunRecord = { at: Date.now(), ...entry };
         if (!this.idbGet || !this.idbSet) return;
         try {
             const list = (await this.idbGet('run_history_v1')) || [];
@@ -296,7 +343,7 @@ export function install(app) {
         const t0 = Date.now();
         this.updateRunButtons(true);
         let res;
-        try { res = lang === 'py' ? await this.runPython({ ...o, writer: w }) : await this.runJS({ ...o, writer: w }); } catch (e) { res = { success: false, error: e.message, logs: '' }; w.line('error', '❌ ' + e.message); }
+        try { res = lang === 'py' ? await this.runPython({ ...o, writer: w }) : this.dvPolyLang && this.dvPolyLang(o.path || '') && o.code == null ? await this.dvRunPoly({ ...o, writer: w }) : await this.runJS({ ...o, writer: w }); } catch (e) { res = { success: false, error: e.message, logs: '' }; w.line('error', '❌ ' + e.message); }
         finally { this._activeRun = null; this.updateRunButtons(false); }
         res.durationMs = Date.now() - t0;
         if (o.footer !== false && res.error !== 'Stopped') {
@@ -306,7 +353,7 @@ export function install(app) {
         }
         if (!res.success && res.error && !['Stopped', 'Timeout'].includes(res.error) && o.fixable !== false && o.path && this.virtualProjectFiles.has(o.path)) {
             this._lastRunError = { path: o.path, error: res.error };
-            w.html('action', `<button type="button" class="term-fix-btn" onclick="app.fixLastRunError()"><i class="fa-solid fa-wand-magic-sparkles"></i> أصلح بالذكاء الاصطناعي</button>`);
+            w.html('action', `<button type="button" class="term-fix-btn" onclick="app.fixLastRunError()"><i class="fa-solid fa-wand-magic-sparkles"></i> أصلح بالذكاء الاصطناعي</button>${lang === 'js' && this.dvReplayError ? ` <button type="button" class="term-fix-btn" onclick="app.dvReplayError()"><i class="fa-solid fa-film"></i> إعادة تشغيل الخطأ خطوة بخطوة</button>` : ''}`);
         }
         if (o.record !== false) this.recordRun({ path: o.path || null, lang, mode: o.mode || 'run', success: !!res.success, durationMs: res.durationMs, output: res.logs || w.text(), error: res.error || null, source: o.source || 'studio' });
         return res;
@@ -327,9 +374,14 @@ export function install(app) {
             files.set(entry, o.code);
         }
         const tests = o.tests || [];
+        // #165 Playwright-style E2E tests need the Developer Lab driver (lazy chunk)
+        if (o.mode === 'test' && !o.e2eAttached && tests.some(t => /['"](@playwright\/test|playwright)['"]/.test(files.get(t) || ''))) {
+            if (this.dvE2EAttach && !this.dvE2EAttach.__oxLazy) return this.runJS({ ...this.dvE2EAttach(o), files });
+            if (this.ensureDev) return this.ensureDev().then(() => this.runJS(this.dvE2EAttach && !this.dvE2EAttach.__oxLazy ? { ...this.dvE2EAttach(o), files } : { ...o, e2eAttached: true, files }), () => this.runJS({ ...o, e2eAttached: true, files }));
+        }
         let bundle;
         try {
-            bundle = buildRunBundle({ files, entry, mode: o.mode === 'test' ? 'test' : 'run', tests, cfg: { stdin: o.stdin || '', env: o.env || {}, mocks: this.collectMocks() } });
+            bundle = buildRunBundle({ files, entry, mode: o.mode === 'test' ? 'test' : 'run', tests, cfg: { stdin: o.stdin || '', env: o.env || {}, mocks: this.collectMocks(), ...this.collectRunServices(), ...(o.cfg || {}) }, extensions: [rtExtSource, ...(o.extensions || (this.runExtensions ? this.runExtensions(o) : []))], transform: o.transform || null });
         } catch (e) {
             const c = e.compile || {};
             w.line('error', `❌ خطأ في الصياغة: ${c.path || entry}${c.line ? ':' + c.line + (c.column != null ? ':' + (c.column + 1) : '') : ''}\n${e.message}`);
@@ -349,15 +401,21 @@ export function install(app) {
                 resolve({ ...r, logs: logs.join('\n'), tests: summary ? { summary, results } : undefined });
             };
             timer = setTimeout(() => { w.line('warn', `⏱ تجاوز المهلة (${Math.round(timeoutMs / 1000)} ث) — تم إيقاف التنفيذ. هل توجد حلقة لا نهائية؟`); finish({ success: false, error: 'Timeout' }); }, timeoutMs);
-            this._activeRun = { stop: (silent) => { if (!silent) w.line('warn', '⏹ تم إيقاف التنفيذ'); finish({ success: false, error: 'Stopped' }); } };
+            const handle = { stop: (silent) => { if (!silent) w.line('warn', '⏹ تم إيقاف التنفيذ'); finish({ success: false, error: 'Stopped' }); }, send: (msg) => sb.send && sb.send({ __ox: true, ...msg }), bundle };
+            if (!o.detached) this._activeRun = handle;
+            if (o.onStart) o.onStart(handle);
             sb.start(bundle.script, (m) => {
                 if (!m || done) return;
                 switch (m.type) {
+                    case 'listen': clearTimeout(timer); if (o.onMessage) o.onMessage(m, handle); else w.line('info', `🌐 الخادم يستمع على المنفذ ${m.port} — افتح «المنافذ» في مختبر المطور لإرسال الطلبات`); break;
                     case 'out': logs.push(m.text); w.line(m.level, m.text); break;
                     case 'clear': w.clear(); break;
                     case 'stdin': if (m.value == null) w.line('warn', '⌨ البرنامج طلب إدخالاً ولا توجد مدخلات — أضفها من زر «مدخلات» في شريط الطرفية'); break;
                     case 'test': results.push(m.result); this.renderTestResult(w, m.result, bundle); break;
                     case 'tests': summary = m.summary; break;
+                    case 'snapshot': this.recordSnapshot(m, w); if (o.onMessage) o.onMessage(m, handle); break;
+                    case 'bench': this.renderBench(w, m.stats); if (o.onMessage) o.onMessage(m, handle); break;
+                    case 'db': this._lastMockDb = m.data; if (m.changed && o.mode !== 'test') w.line('info', '🗄 تغيّرت قاعدة البيانات الوهمية أثناء التشغيل (لم تُحفظ في mocks/db.json — احفظها من مختبر المطور)'); if (o.onMessage) o.onMessage(m, handle); break;
                     case 'error': {
                         const stack = mapStack(m.error.stack, bundle);
                         const first = /([\w@./-]+\.[a-z]{1,5}):(\d+):\d+/.exec(stack);
@@ -381,7 +439,7 @@ export function install(app) {
                         finish({ success: !error && !m.code && !failed, error: error || (m.code ? `exit code ${m.code}` : failed ? `${summary.fail} اختبار فشل` : undefined), exitCode: m.code || 0 });
                         break;
                     }
-                    default: break;
+                    default: if (o.onMessage) o.onMessage(m, handle); break;
                 }
             });
         });
@@ -509,7 +567,7 @@ export function install(app) {
         if (stop) stop.disabled = !running;
         bar.classList.toggle('running', !!running);
     };
-    P.isRunnablePath = function (p) { const e = intel.extOf(p); return JS_RUN.includes(e) || e === 'py'; };
+    P.isRunnablePath = function (p) { const e = intel.extOf(p); return JS_RUN.includes(e) || e === 'py' || e === 'arjs' || (this.dvPolyLang && !!this.dvPolyLang(p)); };
     P.runStudioCode = async function () {
         const path = this.activeStudioFile || '';
         const ext = intel.extOf(path);

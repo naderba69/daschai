@@ -8,10 +8,13 @@
 'use strict';
 var PRETTIER_VERSION = '3.9.10';
 var ESLINT_VERSION = '10.13.0';
+var TS_VERSION = '6.0.3';
 var CDN = {
     prettier: 'https://cdn.jsdelivr.net/npm/prettier@' + PRETTIER_VERSION + '/standalone.js',
     plugin: function (n) { return 'https://cdn.jsdelivr.net/npm/prettier@' + PRETTIER_VERSION + '/plugins/' + n + '.js'; },
-    eslint: 'https://cdn.jsdelivr.net/npm/eslint-linter-browserify@' + ESLINT_VERSION + '/linter.min.js'
+    eslint: 'https://cdn.jsdelivr.net/npm/eslint-linter-browserify@' + ESLINT_VERSION + '/linter.min.js',
+    typescript: 'https://cdn.jsdelivr.net/npm/typescript@' + TS_VERSION + '/lib/typescript.js',
+    tsLib: function (n) { return 'https://cdn.jsdelivr.net/npm/typescript@' + TS_VERSION + '/lib/' + n; }
 };
 
 var PARSERS = {
@@ -104,20 +107,91 @@ function createTools(opts) {
         });
     }
     function slim(m) { return { line: m.line, column: m.column, endLine: m.endLine, endColumn: m.endColumn, severity: m.severity, message: m.message, ruleId: m.ruleId || null, fatal: !!m.fatal, fix: !!m.fix }; }
+    // ---------------------------------------------------------------- #143 type checking (TypeScript compiler API)
+    var tsP = null, libText = {}, libSF = {}, oldProgram = null;
+    function getTS() { if (!tsP) tsP = Promise.resolve(load('typescript')); return tsP; }
+    function loadLibs(names) {
+        var loadLib = opts.loadLib || function (n) { return Promise.resolve(load('lib:' + n)); };
+        var pending = {};
+        function one(file) {
+            if (libText[file] != null || pending[file]) return pending[file] || Promise.resolve();
+            pending[file] = Promise.resolve(loadLib(file)).then(function (text) {
+                libText[file] = String(text || '');
+                var refs = [], re = /\/\/\/\s*<reference\s+lib="([^"]+)"/g, m;
+                while ((m = re.exec(libText[file]))) refs.push('lib.' + m[1].toLowerCase() + '.d.ts');
+                return Promise.all(refs.map(one));
+            });
+            return pending[file];
+        }
+        return Promise.all(names.map(one));
+    }
+    var IGNORE_BARE = [2307, 7016, 2792];   // npm packages have no type definitions in the browser
+    function typecheck(msg) {
+        var path = String(msg.path || 'index.ts').replace(/^\/+/, '');
+        var ext = extOf(path);
+        if (['ts', 'tsx', 'mts', 'cts', 'js', 'jsx', 'mjs', 'cjs'].indexOf(ext) < 0) return Promise.resolve({ diagnostics: [] });
+        var libs = (msg.lib || ['es2022', 'dom']).map(function (l) { return 'lib.' + String(l).toLowerCase().replace(/^lib\.|\.d\.ts$/g, '') + '.d.ts'; });
+        return getTS().then(function (ts) {
+            return loadLibs(libs).then(function () {
+                var files = {};
+                Object.keys(msg.files || {}).forEach(function (k) { files['/' + k.replace(/^\/+/, '')] = msg.files[k]; });
+                files['/' + path] = msg.code;
+                var co = { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext, moduleResolution: ts.ModuleResolutionKind.Bundler, jsx: ts.JsxEmit.Preserve,
+                    strict: msg.strict !== false, noEmit: true, allowJs: true, checkJs: /^(js|jsx|mjs|cjs)$/.test(ext), skipLibCheck: true, esModuleInterop: true, allowImportingTsExtensions: true,
+                    resolveJsonModule: true, isolatedModules: false, types: [], lib: libs };
+                if (msg.compilerOptions) {
+                    var conv = ts.convertCompilerOptionsFromJson(msg.compilerOptions, '/');
+                    Object.keys(conv.options || {}).forEach(function (k) { if (['lib', 'types', 'noEmit', 'outDir', 'rootDir', 'baseUrl', 'paths', 'typeRoots'].indexOf(k) < 0) co[k] = conv.options[k]; });
+                }
+                var host = {
+                    getSourceFile: function (name, lang) {
+                        var base = name.replace(/^.*\//, '');
+                        if (libText[base] != null && (name === base || name === '/' + base)) return libSF[base] || (libSF[base] = ts.createSourceFile('/' + base, libText[base], lang, true));
+                        var t = files[name];
+                        return t == null ? undefined : ts.createSourceFile(name, t, lang, true);
+                    },
+                    getDefaultLibFileName: function () { return '/' + libs[0]; },
+                    getDefaultLibLocation: function () { return '/'; },
+                    writeFile: function () {}, getCurrentDirectory: function () { return '/'; }, getDirectories: function () { return []; },
+                    getCanonicalFileName: function (f) { return f; }, useCaseSensitiveFileNames: function () { return true; }, getNewLine: function () { return '\n'; },
+                    fileExists: function (f) { return files[f] != null || libText[f.replace(/^\//, '')] != null; },
+                    readFile: function (f) { return files[f] != null ? files[f] : libText[f.replace(/^\//, '')]; },
+                    directoryExists: function () { return true; }
+                };
+                var roots = Object.keys(files).filter(function (f) { return /\.(d\.ts|ts|tsx|mts|cts)$/.test(f) || f === '/' + path; });
+                var program = ts.createProgram({ rootNames: roots, options: co, host: host, oldProgram: oldProgram || undefined });
+                oldProgram = program;
+                var sf = program.getSourceFile('/' + path);
+                var diags = program.getSyntacticDiagnostics(sf).concat(program.getSemanticDiagnostics(sf));
+                var out = [];
+                diags.forEach(function (d) {
+                    var text = ts.flattenDiagnosticMessageText(d.messageText, '\n');
+                    if (IGNORE_BARE.indexOf(d.code) >= 0 && /['"][^.'"/][^'"]*['"]/.test(text) && !/['"]\.{1,2}\//.test(text)) return;
+                    var st = d.file && d.start != null ? d.file.getLineAndCharacterOfPosition(d.start) : { line: 0, character: 0 };
+                    var en = d.file && d.start != null ? d.file.getLineAndCharacterOfPosition(d.start + (d.length || 0)) : st;
+                    out.push({ line: st.line + 1, column: st.character + 1, endLine: en.line + 1, endColumn: en.character + 1, start: d.start || 0, length: d.length || 0,
+                        severity: d.category === ts.DiagnosticCategory.Error ? 2 : 1, message: text, code: d.code });
+                });
+                return { diagnostics: out, version: ts.version };
+            });
+        });
+    }
     function handle(msg) {
-        var job = msg.type === 'format' ? format(msg) : msg.type === 'lint' ? lint(msg) : msg.type === 'ping' ? Promise.resolve({ ok: true }) : Promise.resolve({ error: 'unknown request ' + msg.type });
+        var job = msg.type === 'format' ? format(msg) : msg.type === 'lint' ? lint(msg) : msg.type === 'typecheck' ? typecheck(msg) : msg.type === 'ping' ? Promise.resolve({ ok: true }) : Promise.resolve({ error: 'unknown request ' + msg.type });
         return job.then(null, function (e) { return { error: String(e && e.message || e) }; });
     }
-    return { handle: handle, format: format, lint: lint, parserFor: parserFor };
+    return { handle: handle, format: format, lint: lint, typecheck: typecheck, parserFor: parserFor };
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { createTools: createTools, parserFor: parserFor, PARSERS: PARSERS, PRETTIER_VERSION: PRETTIER_VERSION, ESLINT_VERSION: ESLINT_VERSION };
+    module.exports = { createTools: createTools, parserFor: parserFor, PARSERS: PARSERS, PRETTIER_VERSION: PRETTIER_VERSION, ESLINT_VERSION: ESLINT_VERSION, TS_VERSION: TS_VERSION };
 } else if (typeof importScripts === 'function') {
     var tools = createTools({
         load: function (name) {
             if (name === 'prettier') { importScripts(CDN.prettier); return self.prettier; }
             if (name === 'eslint') { importScripts(CDN.eslint); return self.eslint; }
+            if (name === 'typescript') { importScripts(CDN.typescript); return self.ts; }
+            if (name.indexOf('lib:') === 0) return fetch(CDN.tsLib(name.slice(4))).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); });
             if (name.indexOf('plugin:') === 0) { var n = name.slice(7); importScripts(CDN.plugin(n)); return self.prettierPlugins[n]; }
             throw new Error('unknown library ' + name);
         }

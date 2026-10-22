@@ -1,21 +1,22 @@
 {
  "version": "2.12.0",
  "channel": "stable",
- "builtAt": "2026-10-21T23:25:52.398Z",
+ "builtAt": "2026-10-22T06:02:59.017Z",
  "entries": {
-  "/assets/studio/studio-RWUVTC4D.mjs": "studio",
-  "/assets/studio/runner-O2RHECSP.mjs": "runner",
+  "/assets/studio/dev-OA3DREXO.mjs": "dev",
+  "/assets/studio/studio-2ZMIRG67.mjs": "studio",
+  "/assets/studio/runner-5ZU54D5D.mjs": "runner",
   "/assets/studio/ui-QINGKZB4.mjs": "ui",
   "/assets/studio/ai-OHNEFGOG.mjs": "ai",
   "/assets/studio/github-ZAWNKUZX.mjs": "github",
   "/assets/studio/media-INBJ5E5G.mjs": "media",
-  "/assets/studio/team-H3RJ2U6E.mjs": "team",
-  "/assets/studio/perf-CPCLWIMU.mjs": "perf"
+  "/assets/studio/team-XUWLNUKN.mjs": "team",
+  "/assets/studio/perf-PAU2ATQD.mjs": "perf"
  },
  "files": {
   "/index.html": {
-   "h": "f74dec12e805",
-   "gz": 254711
+   "h": "ca00c029278f",
+   "gz": 256626
   },
   "/sw.js": {
    "h": "d26a5fa90cef",
@@ -25,6 +26,10 @@
    "h": "da8e55eaf90e",
    "gz": 1329
   },
+  "/assets/studio/chunk-UQBVHM5T.mjs": {
+   "h": "1ca17af15c9d",
+   "gz": 14714
+  },
   "/assets/studio/chunk-R22KNISF.mjs": {
    "h": "5103ce759abc",
    "gz": 181226
@@ -32,6 +37,18 @@
   "/assets/studio/chunk-7QZL6F4W.mjs": {
    "h": "584f7efe0c21",
    "gz": 32656
+  },
+  "/assets/studio/chunk-BCFWLJNU.mjs": {
+   "h": "1e23997a40b4",
+   "gz": 88164
+  },
+  "/assets/studio/chunk-NPYUM72L.mjs": {
+   "h": "1f4db2bc11dd",
+   "gz": 1041
+  },
+  "/assets/studio/chunk-GRTCME5R.mjs": {
+   "h": "6fce775ac560",
+   "gz": 838
   },
   "/assets/studio/chunk-O55HZQIF.mjs": {
    "h": "e50da67cac0b",
@@ -61,9 +78,9 @@
    "h": "b25dd4503494",
    "gz": 36803
   },
-  "/assets/studio/chunk-UQBVHM5T.mjs": {
-   "h": "1ca17af15c9d",
-   "gz": 14714
+  "/assets/studio/chunk-URCXWW5L.mjs": {
+   "h": "0302c5d2eca4",
+   "gz": 934
   },
   "/assets/studio/chunk-2G56TSUW.mjs": {
    "h": "c2746e9ca787",
@@ -93,9 +110,9 @@
    "h": "61c5f6e58d76",
    "gz": 1114
   },
-  "/assets/studio/chunk-GRTCME5R.mjs": {
-   "h": "6fce775ac560",
-   "gz": 838
+  "/assets/studio/chunk-UJYZGXUY.mjs": {
+   "h": "2e63a2271e0f",
+   "gz": 1250
   },
   "/assets/studio/chunk-YJOKWRLW.mjs": {
    "h": "cb088350c8b5",
@@ -125,9 +142,9 @@
    "h": "26705d4df423",
    "gz": 1764
   },
-  "/assets/studio/chunk-URCXWW5L.mjs": {
-   "h": "0302c5d2eca4",
-   "gz": 934
+  "/assets/studio/chunk-WJYGE2AV.mjs": {
+   "h": "b5739b2ab523",
+   "gz": 869
   },
   "/assets/studio/chunk-6GWPHI3O.mjs": {
    "h": "ccf466d7d1f6",
@@ -157,9 +174,9 @@
    "h": "d02c288103ed",
    "gz": 3610
   },
-  "/assets/studio/chunk-UJYZGXUY.mjs": {
-   "h": "2e63a2271e0f",
-   "gz": 1250
+  "/assets/studio/chunk-TUXYTPZ4.mjs": {
+   "h": "68ffb28f39ec",
+   "gz": 1699
   },
   "/assets/studio/chunk-DJJJKJDB.mjs": {
    "h": "c41858d784a6",
@@ -189,9 +206,9 @@
    "h": "c5aabd582aaf",
    "gz": 798
   },
-  "/assets/studio/chunk-WJYGE2AV.mjs": {
-   "h": "b5739b2ab523",
-   "gz": 869
+  "/assets/studio/chunk-R2CVFSEN.mjs": {
+   "h": "5f1d0935d352",
+   "gz": 1219
   },
   "/assets/studio/chunk-OBQQUO2N.mjs": {
    "h": "9ecd3cbce64a",
@@ -221,9 +238,9 @@
    "h": "8bd328513c6c",
    "gz": 1223
   },
-  "/assets/studio/chunk-TUXYTPZ4.mjs": {
-   "h": "68ffb28f39ec",
-   "gz": 1699
+  "/assets/studio/chunk-ZVXM34SW.mjs": {
+   "h": "9813926b49a6",
+   "gz": 1312
   },
   "/assets/studio/chunk-XNKJEDP7.mjs": {
    "h": "05ce28b461f5",
@@ -253,9 +270,9 @@
    "h": "324ea4cce33c",
    "gz": 1307
   },
-  "/assets/studio/chunk-R2CVFSEN.mjs": {
-   "h": "5f1d0935d352",
-   "gz": 1219
+  "/assets/studio/chunk-MPIRDEKJ.mjs": {
+   "h": "df2a251294a3",
+   "gz": 437
   },
   "/assets/studio/chunk-GZM5Z5AX.mjs": {
    "h": "c42888061e68",
@@ -289,9 +306,9 @@
    "h": "ba1f3d07fa13",
    "gz": 842
   },
-  "/assets/studio/chunk-ZVXM34SW.mjs": {
-   "h": "9813926b49a6",
-   "gz": 1312
+  "/assets/studio/chunk-E6WHB7LU.mjs": {
+   "h": "38f38cb1d16c",
+   "gz": 1350
   },
   "/assets/studio/chunk-I52GOOY5.mjs": {
    "h": "28731267ee8e",
@@ -321,9 +338,9 @@
    "h": "4e205ed0480d",
    "gz": 2969
   },
-  "/assets/studio/chunk-MPIRDEKJ.mjs": {
-   "h": "df2a251294a3",
-   "gz": 437
+  "/assets/studio/chunk-VY4QDBKB.mjs": {
+   "h": "8128784fa4fe",
+   "gz": 833
   },
   "/assets/studio/chunk-7BBPMEOB.mjs": {
    "h": "55c2661a480d",
@@ -353,9 +370,9 @@
    "h": "ff35f6d6683d",
    "gz": 974
   },
-  "/assets/studio/chunk-E6WHB7LU.mjs": {
-   "h": "38f38cb1d16c",
-   "gz": 1350
+  "/assets/studio/chunk-S7RK7DKT.mjs": {
+   "h": "1818f839f614",
+   "gz": 1541
   },
   "/assets/studio/chunk-DMFOXUBZ.mjs": {
    "h": "9d5115d4ccd2",
@@ -389,9 +406,9 @@
    "h": "1e1a54ad2714",
    "gz": 1680
   },
-  "/assets/studio/chunk-VY4QDBKB.mjs": {
-   "h": "8128784fa4fe",
-   "gz": 833
+  "/assets/studio/chunk-GSUCEDBJ.mjs": {
+   "h": "24d566a3aebc",
+   "gz": 348
   },
   "/assets/studio/chunk-YUW6VAKC.mjs": {
    "h": "5a031a6fd765",
@@ -421,9 +438,9 @@
    "h": "797aa84b5ee8",
    "gz": 1126
   },
-  "/assets/studio/chunk-S7RK7DKT.mjs": {
-   "h": "1818f839f614",
-   "gz": 1541
+  "/assets/studio/chunk-3UDKHOHK.mjs": {
+   "h": "9db5f59666f1",
+   "gz": 10388
   },
   "/assets/studio/chunk-GHYLDCBD.mjs": {
    "h": "9f9cfc2fca1a",
@@ -453,9 +470,9 @@
    "h": "ab4384c7bee7",
    "gz": 1807
   },
-  "/assets/studio/chunk-GSUCEDBJ.mjs": {
-   "h": "24d566a3aebc",
-   "gz": 348
+  "/assets/studio/chunk-I3ITOFCJ.mjs": {
+   "h": "d4de03e01e4a",
+   "gz": 9367
   },
   "/assets/studio/chunk-O4ACZYVH.mjs": {
    "h": "6b69fc9806cc",
@@ -485,9 +502,9 @@
    "h": "87f2868ce2e4",
    "gz": 30368
   },
-  "/assets/studio/chunk-3UDKHOHK.mjs": {
-   "h": "9db5f59666f1",
-   "gz": 10388
+  "/assets/studio/dev-OA3DREXO.mjs": {
+   "h": "b1dbc9470271",
+   "gz": 128141
   },
   "/assets/studio/chunk-NAYT2QE5.mjs": {
    "h": "b24eb1f8c141",
@@ -513,14 +530,6 @@
    "h": "666c5f3d4dd8",
    "gz": 197
   },
-  "/assets/studio/chunk-3BIT74PB.mjs": {
-   "h": "0d0aeed575d7",
-   "gz": 19358
-  },
-  "/assets/studio/chunk-I3ITOFCJ.mjs": {
-   "h": "d4de03e01e4a",
-   "gz": 9367
-  },
   "/assets/studio/chunk-25BXWXT5.mjs": {
    "h": "896230b3bf01",
    "gz": 11648
@@ -533,13 +542,17 @@
    "h": "8b26d40454c2",
    "gz": 34453
   },
+  "/assets/studio/chunk-3BIT74PB.mjs": {
+   "h": "0d0aeed575d7",
+   "gz": 19358
+  },
   "/assets/studio/chunk-4AXDEU5H.mjs": {
    "h": "b0548b86e397",
    "gz": 8923
   },
-  "/assets/studio/studio-RWUVTC4D.mjs": {
-   "h": "496ee0fc2021",
-   "gz": 44040
+  "/assets/studio/studio-2ZMIRG67.mjs": {
+   "h": "b42b2417df2a",
+   "gz": 44795
   },
   "/assets/studio/chunk-W7FP2L2O.mjs": {
    "h": "dddbbac7b0c9",
@@ -553,6 +566,10 @@
    "h": "8a66292ec975",
    "gz": 8130
   },
+  "/assets/studio/chunk-OKGMY7XS.mjs": {
+   "h": "bd7f8121cd9d",
+   "gz": 4999
+  },
   "/assets/studio/chunk-YSTU5W3L.mjs": {
    "h": "98bf8c8cfbb9",
    "gz": 13178
@@ -561,9 +578,13 @@
    "h": "de7773386c23",
    "gz": 104596
   },
-  "/assets/studio/runner-O2RHECSP.mjs": {
-   "h": "126685c466cd",
-   "gz": 66781
+  "/assets/studio/runner-5ZU54D5D.mjs": {
+   "h": "cbd3cfc55d4e",
+   "gz": 75528
+  },
+  "/assets/studio/chunk-2EPK7E37.mjs": {
+   "h": "ed17fb190be8",
+   "gz": 3137
   },
   "/assets/studio/chunk-3LU2HVRM.mjs": {
    "h": "48b6083f4752",
@@ -589,21 +610,25 @@
    "h": "dcdcb5166145",
    "gz": 137859
   },
-  "/assets/studio/team-H3RJ2U6E.mjs": {
-   "h": "ab2d48470a41",
-   "gz": 91866
+  "/assets/studio/team-XUWLNUKN.mjs": {
+   "h": "b9250c2ecd29",
+   "gz": 91867
   },
   "/assets/studio/chunk-G3Z4YPVX.mjs": {
    "h": "3565a6715e05",
    "gz": 6680
   },
-  "/assets/studio/perf-CPCLWIMU.mjs": {
-   "h": "6db51a371364",
-   "gz": 79171
+  "/assets/studio/perf-PAU2ATQD.mjs": {
+   "h": "2bc32c51517b",
+   "gz": 75686
   },
-  "/assets/studio/chunk-ARLA72JL.mjs": {
-   "h": "355cba03eb42",
-   "gz": 1917
+  "/assets/studio/chunk-4BXLPI6B.mjs": {
+   "h": "203dbe92edf9",
+   "gz": 4038
+  },
+  "/assets/studio/chunk-FXZBG52Y.mjs": {
+   "h": "cc3f5510f247",
+   "gz": 1921
   },
   "/assets/studio/chunk-3Y75S7YE.mjs": {
    "h": "5dff72ae2c6c",
@@ -617,13 +642,17 @@
    "h": "baaa8518b463",
    "gz": 1724
   },
+  "/workers/polyglot.js": {
+   "h": "4fa8505f872b",
+   "gz": 2733
+  },
   "/workers/python.js": {
    "h": "d9ce32c41864",
    "gz": 6026
   },
   "/workers/tools.js": {
-   "h": "608149c19ba0",
-   "gz": 3417
+   "h": "eff5a9df9524",
+   "gz": 5209
   },
   "/icons/apple-touch-icon.png": {
    "h": "7f3add8ec63f",

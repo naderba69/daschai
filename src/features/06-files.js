@@ -772,7 +772,7 @@
             if (r.kind === 'folder') {
                 const count = all.filter(p => p.startsWith(r.path + '/')).length;
                 return `<div class="fx-row folder ${sel.has(r.path) ? 'selected' : ''}" role="treeitem" aria-expanded="${!r.collapsed}" tabindex="-1" draggable="true" data-i="${i}" data-path="${esc(r.path)}" data-kind="folder" style="--depth:${r.depth}">
-                    <i class="fa-solid fa-chevron-${r.collapsed ? 'left' : 'down'} fx-caret"></i><i class="fa-solid fa-folder${r.collapsed ? '' : '-open'} fx-icon" style="color:#fbbf24"></i>
+                    <i class="fa-solid fa-chevron-${r.collapsed ? 'left' : 'down'} fx-caret"></i>${(() => { const fi = this.folderIcon ? this.folderIcon(r.path, !r.collapsed) : ['fa-solid fa-folder' + (r.collapsed ? '' : '-open'), '#fbbf24']; return `<i class="${fi[0]} fx-icon" style="color:${fi[1]}"></i>`; })()}
                     <span class="fx-name">${esc(baseName(r.path))}</span><span class="fx-meta">${count || ''}</span><button class="fx-more" data-more="1" aria-label="خيارات">⋯</button></div>`;
             }
             const f = this.virtualProjectFiles.get(r.path) || {};

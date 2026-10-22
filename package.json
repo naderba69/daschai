@@ -45,6 +45,7 @@
     "@replit/codemirror-indentation-markers": "^6.5.3",
     "@replit/codemirror-minimap": "^0.5.2",
     "@replit/codemirror-vim": "^6.4.0",
+    "@xterm/xterm": "^6.0.0",
     "acorn": "^8.19.0",
     "blakejs": "^1.2.1",
     "dexie": "^4.4.6",
@@ -63,7 +64,8 @@
     "serve": "^14.2.0",
     "sucrase": "^3.35.1",
     "terser": "^5.51.2",
-    "tweetnacl": "^1.0.3"
+    "tweetnacl": "^1.0.3",
+    "typescript": "^6.0.3"
   },
   "browserslist": [
     "> 1%",

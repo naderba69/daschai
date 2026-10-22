@@ -9,6 +9,7 @@
    constructors (#186, #187) • JSON → interfaces / models (#188, #189) •
    CommonJS → ESM (#145) • fake data (#170) • Prettier formatting (#140)
    ============================================================================== */
+import { lintCss } from './css-lint.js';
 const KIND_ICON = { function: 'fa-code', method: 'fa-cube', class: 'fa-shapes', interface: 'fa-diagram-project', type: 'fa-font', enum: 'fa-list-ol', variable: 'fa-tag', struct: 'fa-shapes', trait: 'fa-shapes', module: 'fa-box' };
 const IMG_RE = /([\w@./-]+\.(?:png|jpe?g|gif|svg|webp|avif|ico|bmp))(?:[?#].*)?$/i;
 
@@ -87,6 +88,25 @@ export function installRefactor(P, ctx) {
     };
 
     // ------------------------------------------------------------------ LINT
+    const globRe = (g) => new RegExp('^' + String(g).replace(/[.+^$()|[\]\\]/g, '\\$&').replace(/\{([^}]+)\}/g, (m, a) => '(' + a.split(',').join('|') + ')').replace(/\*\*\/?/g, '\u0000').replace(/\*/g, '[^/]*').replace(/\?/g, '[^/]').replace(/\u0000/g, '(.*/)?') + '$');
+    /** #209 lint rules declared by enabled editor extensions → diagnostics. */
+    const extLint = (exts, doc, path) => {
+        const out = [];
+        exts.forEach(x => (x.lint || []).forEach(r => {
+            if (!r || !r.pattern) return;
+            try {
+                if (r.files && !globRe(r.files).test(path) && !globRe('**/' + r.files.replace(/^\*\*\//, '')).test(path)) return;
+                const re = new RegExp(r.pattern, 'g' + String(r.flags || '').replace(/g/g, ''));
+                let m, n = 0;
+                while ((m = re.exec(doc)) && n++ < 200) {
+                    if (!m[0]) { re.lastIndex++; continue; }
+                    out.push({ from: m.index, to: m.index + m[0].length, severity: ['error', 'warning', 'info'].includes(r.severity) ? r.severity : 'warning', message: r.message + ' (' + x.name + ')', source: 'ext' });
+                }
+            } catch (e) { /* bad rule */ }
+        }));
+        return out;
+    };
+    P.dvExtLint = function (doc, path) { return extLint(this.dvExtActiveList ? this.dvExtActiveList() : [], doc, path); };
     P.lintForEditor = async function (doc, path) {
         const out = [];
         const s = this.getEditorSettings();
@@ -111,8 +131,36 @@ export function installRefactor(P, ctx) {
                 });
             } catch (e) { /* worker unavailable — keep local diagnostics */ }
         }
+        // #142 stylelint-style CSS rules (local)
+        const ext = intel.extOf(path);
+        if (s.stylelint !== false && /^(css|scss|less)$/.test(ext) && doc.length < 300000) {
+            try { out.push(...lintCss(doc, { lang: ext, rules: this.stylelintRules() }).map(d => ({ from: d.from, to: Math.min(doc.length, d.to), severity: d.severity, message: d.message, source: 'stylelint' }))); } catch (e) { /* best effort */ }
+        }
+        // #143 TypeScript type checking (tools worker, opt-in or // @ts-check)
+        if ((/^(ts|tsx|mts|cts)$/.test(ext) ? s.typecheck : /^(js|jsx|mjs|cjs)$/.test(ext) && /^\s*\/\/\s*@ts-check/.test(doc)) && this.toolsRequest && navigator.onLine !== false && doc.length < 200000) {
+            try {
+                const res = await this.toolsRequest('typecheck', this.typecheckPayload(doc, path), { timeout: 60000 });
+                (res && res.diagnostics || []).forEach(d => out.push({ from: Math.min(doc.length, d.start), to: Math.min(doc.length, d.start + Math.max(1, d.length)), severity: d.severity === 2 ? 'error' : 'warning', message: `${d.message} (TS${d.code})`, source: 'typescript' }));
+            } catch (e) { /* worker / CDN unavailable */ }
+        }
+        // #209 declarative lint rules from editor extensions
+        if (doc.length < 500000) { try { out.push(...extLint(this.dvExtActiveList ? this.dvExtActiveList() : [], doc, path)); } catch (e) { /* bad rule */ } }
         if (this._aiDiags && this._aiDiags.path === path && this._aiDiags.doc === doc) out.push(...this._aiDiags.list);
         return out;
+    };
+    P.stylelintRules = function () {
+        const f = this.virtualProjectFiles.get('.stylelintrc.json') || this.virtualProjectFiles.get('.stylelintrc');
+        try { return f ? (JSON.parse(f.content).rules || {}) : {}; } catch (e) { return {}; }
+    };
+    P.typecheckPayload = function (doc, path) {
+        const extra = {};
+        let compilerOptions = null;
+        for (const [p, f] of files(this)) {
+            if (!f || typeof f.content !== 'string' || p === path) continue;
+            if (/\.(ts|tsx|mts|cts|d\.ts)$/.test(p) || (/\.(js|jsx|mjs)$/.test(p) && f.content.length < 100000)) extra[p] = f.content;
+            if (p === 'tsconfig.json') { try { compilerOptions = JSON.parse(f.content.replace(/\/\/.*$/gm, '').replace(/,\s*([}\]])/g, '$1')).compilerOptions || null; } catch (e) { /* ignore */ } }
+        }
+        return { code: doc, path, files: extra, compilerOptions };
     };
 
     // ------------------------------------------------------------------ NAVIGATION

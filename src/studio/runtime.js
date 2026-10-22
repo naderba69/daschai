@@ -145,8 +145,18 @@ export function oxRuntime(cfg, post) {
 
     // ------------------------------------------------------------------ fetch with mocks (#227)
     var mocks = cfg.mocks || {};
+    var fetchHandlers = [], msgHandlers = [], doneHooks = [], extraMatchers = {};
+    var makeRes = function (status, body, headers, url) {
+        var text = body == null ? '' : typeof body === 'string' ? body : JSON.stringify(body);
+        var h = headers || {}; var hk = {}; Object.keys(h).forEach(function (k) { hk[k.toLowerCase()] = String(h[k]); });
+        if (!hk['content-type']) hk['content-type'] = typeof body === 'string' ? 'text/plain' : 'application/json';
+        var res = { ok: status >= 200 && status < 300, status: status, statusText: String(status), url: url || '', headers: { get: function (k) { return hk[String(k).toLowerCase()] || null; }, has: function (k) { return String(k).toLowerCase() in hk; }, forEach: function (f) { Object.keys(hk).forEach(function (k) { f(hk[k], k); }); } },
+            json: function () { return Promise.resolve(text ? JSON.parse(text) : null); }, text: function () { return Promise.resolve(text); }, clone: function () { return res; } };
+        return res;
+    };
     var mockFetch = function (input, init) {
         var url = typeof input === 'string' ? input : (input && input.url) || String(input);
+        for (var hi = 0; hi < fetchHandlers.length; hi++) { var hr = fetchHandlers[hi](url, init || {}); if (hr) return Promise.resolve(hr); }
         var key = url.replace(/^https?:\/\/(localhost|mock|api\.mock)(:\d+)?/, '').split('?')[0];
         var hit = mocks[key] != null ? mocks[key] : mocks[key.replace(/\/$/, '')] != null ? mocks[key.replace(/\/$/, '')] : mocks[key + '.json'];
         if (hit != null) {
@@ -219,7 +229,7 @@ export function oxRuntime(cfg, post) {
             var id = resolve(from, String(spec));
             if (!id) {
                 var bare = !/^[./]/.test(spec);
-                throw new Error("Cannot find module '" + spec + "'" + (bare ? ' — الحزم الخارجية (npm) غير متاحة في مشغل المتصفح؛ المتاح: assert, util, events, path, readline' : ' من ' + from));
+                throw new Error("Cannot find module '" + spec + "'" + (bare ? ' — الحزم الخارجية (npm) غير متاحة في مشغل المتصفح؛ المتاح: ' + Object.keys(BUILTIN).join(', ') : ' من ' + from));
             }
             return load(id);
         };
@@ -289,6 +299,7 @@ export function oxRuntime(cfg, post) {
                 toHaveBeenCalledWith: function () { var args = Array.prototype.slice.call(arguments); p(actual && actual.mock && actual.mock.calls.some(function (c) { return deepEqual(c, args, false); }), 'expected mock to have been called with ' + fmt(args, 2, [], true)); }
             };
             m.toThrowError = m.toThrow; m.toBeCalled = m.toHaveBeenCalled; m.toBeCalledWith = m.toHaveBeenCalledWith;
+            Object.keys(extraMatchers).forEach(function (k) { m[k] = function () { var r = extraMatchers[k].apply({ actual: actual, negate: negate, fmt: fmt, deepEqual: deepEqual, test: T.current }, arguments) || {}; p(!!r.pass, r.message || k, r.expected); }; });
             return m;
         }
         function expect(actual) {
@@ -356,7 +367,7 @@ export function oxRuntime(cfg, post) {
                         var hooks = chainHooks(node, 'before'), after = chainHooks(node, 'after');
                         var p = Promise.resolve();
                         hooks.forEach(function (h) { p = p.then(function () { return callFn(h, 'beforeEach'); }); });
-                        p = p.then(function () { return callFn(t.fn, t.name, t.timeout); });
+                        p = p.then(function () { T.current = full.join(' › '); T.currentFile = t.file; T.counter = 0; return callFn(t.fn, t.name, t.timeout); });
                         return p.then(function () { return null; }, function (e) { return e; }).then(function (err) {
                             var q = Promise.resolve();
                             after.forEach(function (h) { q = q.then(function () { return callFn(h, 'afterEach'); }); });
@@ -386,9 +397,11 @@ export function oxRuntime(cfg, post) {
     })();
 
     // ------------------------------------------------------------------ lifecycle
+    var runDone = function () { doneHooks.forEach(function (h) { try { h(exitCode); } catch (e) { /* ignore */ } }); };
     function check() {
         if (finished || !mainDone || pending > 0) return;
         finished = true;
+        runDone();
         send({ type: 'done', code: exitCode });
     }
     function fail(e) {
@@ -402,13 +415,22 @@ export function oxRuntime(cfg, post) {
         finished = true;
         live.forEach(function (id) { nativeCT(id); nativeCI(id); });
         live.clear(); pending = 0;
+        runDone();
         send({ type: 'done', code: exitCode });
     }
     if (typeof G.addEventListener === 'function') {
+        G.addEventListener('message', function (ev) { var d = ev && ev.data; if (d && d.req && d.req.__ox) d = d.req; if (d && d.__ox) msgHandlers.forEach(function (f) { try { f(d); } catch (e) { fail(e); } }); });
         G.addEventListener('unhandledrejection', function (ev) { if (ev && ev.preventDefault) ev.preventDefault(); fail(ev.reason); });
     }
     return {
         define: function (id, fn) { modules[id] = { fn: fn }; },
+        /** Extensions (debugger, coverage, express/http, mock DB/auth, snapshots, bench) get the runtime internals. */
+        extend: function (fn) {
+            fn({ G: G, cfg: cfg, send: send, fmt: fmt, format: format, deepEqual: deepEqual, BUILTIN: BUILTIN, mocks: mocks, T: T, makeRes: makeRes, fail: fail, sT: sT, cT: cT, console: konsole,
+                keep: function () { pending++; }, release: function () { pending--; check(); },
+                onFetch: function (h) { fetchHandlers.push(h); }, onMessage: function (h) { msgHandlers.push(h); }, beforeDone: function (h) { doneHooks.push(h); }, matcher: function (n, f) { extraMatchers[n] = f; },
+                exitCode: function () { return exitCode; }, fetch: function (u, i) { return mockFetch(u, i); } });
+        },
         defineJSON: function (id, data) { modules[id] = { json: data }; },
         fail: fail,
         start: function (entry) {
