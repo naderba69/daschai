@@ -2421,8 +2421,8 @@ class OXAlphaApp {
                             <span>المخطط المعماري التفاعلي (System Architecture Diagram)</span>
                         </div>
                         <div style="display: flex; gap: 6px;">
-                            <button class="code-tool-btn" onclick="app.exportMermaidSvg('${diagramId}')"><i class="fa-solid fa-download"></i> <span>تصدير SVG</span></button>
-                            <button class="code-tool-btn" onclick="app.copyToClipboard(decodeURIComponent('${encodeURIComponent(codeText)}'), this)"><i class="fa-regular fa-copy"></i> <span>نسخ الكود</span></button>
+                            <button class="code-tool-btn" title="تصدير SVG" onclick="app.exportMermaidSvg('${diagramId}')"><i class="fa-solid fa-download"></i> <span>تصدير SVG</span></button>
+                            <button class="code-tool-btn" title="نسخ الكود" onclick="app.copyToClipboard(decodeURIComponent('${encodeURIComponent(codeText)}'), this)"><i class="fa-regular fa-copy"></i> <span>نسخ الكود</span></button>
                         </div>
                     </div>
                     <div class="mermaid-svg-box" id="${diagramId}">${this.escapeHTML(codeText)}</div>
@@ -2458,16 +2458,16 @@ class OXAlphaApp {
                     ${isTestFile ? `<span style="background: var(--accent-soft); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">🧪 ملف اختبارات ومحاكاة</span>` : ''}
                 </div>
                 <div class="code-actions-group">
-                    <button class="code-tool-btn test-btn" onclick="app.generateTestFromBtn(this, '${lang}')"><i class="fa-solid fa-vial"></i> <span>محاكاة واختبارات</span></button>
+                    <button class="code-tool-btn test-btn" title="محاكاة واختبارات" onclick="app.generateTestFromBtn(this, '${lang}')"><i class="fa-solid fa-vial"></i> <span>محاكاة واختبارات</span></button>
                     ${detectedPath ? `
-                        <button class="code-tool-btn" onclick="app.openDiffModal('${detectedPath}', '', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-solid fa-code-compare"></i> <span>Diff</span></button>
-                        <button class="code-tool-btn commit-btn" onclick="app.commitFileToGitHub('${detectedPath}', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-brands fa-github"></i> <span>رفع لـ GitHub</span></button>
+                        <button class="code-tool-btn" title="Diff" onclick="app.openDiffModal('${detectedPath}', '', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-solid fa-code-compare"></i> <span>Diff</span></button>
+                        <button class="code-tool-btn commit-btn" title="رفع لـ GitHub" onclick="app.commitFileToGitHub('${detectedPath}', this.closest('.code-block-box').querySelector('pre code').innerText)"><i class="fa-brands fa-github"></i> <span>رفع لـ GitHub</span></button>
                     ` : ''}
-                    ${lang === 'python' || lang === 'py' ? `<button class="code-tool-btn run-btn" onclick="app.runPythonCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-python"></i> <span>تشغيل بايثون Wasm</span></button>` : ''}
-                    ${lang === 'javascript' || lang === 'js' ? `<button class="code-tool-btn run-btn" onclick="app.runJavaScriptCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-js"></i> <span>تشغيل JS</span></button>` : ''}
-                    ${lang === 'html' || lang === 'svg' ? `<button class="code-tool-btn" onclick="app.toggleLiveArtifact(this)"><i class="fa-solid fa-eye"></i> <span>معاينة</span></button>` : ''}
-                    <button class="code-tool-btn" onclick="app.formatCodeBlock(this.closest('.code-block-box').querySelector('pre code'), '${lang}')"><i class="fa-solid fa-align-left"></i> <span>تنسيق</span></button>
-                    <button class="code-tool-btn" onclick="app.copyToClipboard(this.closest('.code-block-box').querySelector('pre code').innerText, this)"><i class="fa-regular fa-copy"></i> <span>نسخ</span></button>
+                    ${lang === 'python' || lang === 'py' ? `<button class="code-tool-btn run-btn" title="تشغيل بايثون Wasm" onclick="app.runPythonCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-python"></i> <span>تشغيل بايثون Wasm</span></button>` : ''}
+                    ${lang === 'javascript' || lang === 'js' ? `<button class="code-tool-btn run-btn" title="تشغيل JS" onclick="app.runJavaScriptCode(this.closest('.code-block-box').querySelector('pre code').innerText, this.closest('.code-block-box').querySelector('.terminal-box'))"><i class="fa-brands fa-js"></i> <span>تشغيل JS</span></button>` : ''}
+                    ${lang === 'html' || lang === 'svg' ? `<button class="code-tool-btn" title="معاينة" onclick="app.toggleLiveArtifact(this)"><i class="fa-solid fa-eye"></i> <span>معاينة</span></button>` : ''}
+                    <button class="code-tool-btn" title="تنسيق" onclick="app.formatCodeBlock(this.closest('.code-block-box').querySelector('pre code'), '${lang}')"><i class="fa-solid fa-align-left"></i> <span>تنسيق</span></button>
+                    <button class="code-tool-btn" title="نسخ" onclick="app.copyToClipboard(this.closest('.code-block-box').querySelector('pre code').innerText, this)"><i class="fa-regular fa-copy"></i> <span>نسخ</span></button>
                 </div>
             `;
 

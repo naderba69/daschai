@@ -714,6 +714,7 @@ html, body {
 
 /* Code Blocks */
 .code-block-box {
+    container-type: inline-size;
     margin: 14px 0;
     border: 1px solid rgba(255, 255, 255, 0.12);
     overflow: hidden;
@@ -737,6 +738,8 @@ html, body {
     direction: ltr !important;
 }
 
+/* narrow code blocks (phone, or chat squeezed beside the studio): icon-only tools; names stay in title */
+@container (max-width: 520px) { .code-tool-btn > span { display: none; } }
 .code-tool-btn {
     display: flex;
     align-items: center;

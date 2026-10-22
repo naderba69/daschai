@@ -1,7 +1,7 @@
 {
  "version": "2.16.0",
  "channel": "stable",
- "builtAt": "2026-10-22T20:13:35.299Z",
+ "builtAt": "2026-10-22T20:18:16.950Z",
  "entries": {
   "/assets/studio/dev-OILRFCD3.mjs": "dev",
   "/assets/studio/integ-WWRV7DE5.mjs": "integ",
@@ -17,8 +17,8 @@
  },
  "files": {
   "/index.html": {
-   "h": "c289c3e82d25",
-   "gz": 256711
+   "h": "25042b192d45",
+   "gz": 256801
   },
   "/sw.js": {
    "h": "9ed92acb724b",
