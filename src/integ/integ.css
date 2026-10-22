@@ -20,7 +20,7 @@
 .ix-thumb img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
 .ix-thumb figcaption { font-size: .7rem; padding: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: copy; }
 .ix-lang-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
-.ix-lang-list .gh-chip small { opacity: .6; }
+.ix-lang-list .gh-chip:not(.active) small { color: var(--text-muted); }
 .ix-level { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
 .ix-level-icon { font-size: 2.4rem; }
 .ix-level .tmx-bar { height: 8px; border-radius: 4px; background: #8883; overflow: hidden; margin: 4px 0; min-width: min(200px, 100%); }

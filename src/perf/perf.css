@@ -6,14 +6,14 @@
 .pfx-gauges { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; text-align: center; }
 .pfx-gauges small { display: block; margin-top: 6px; color: var(--text-muted); font-size: .75rem; }
 .pfx-gauge { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; border: 6px solid currentColor; margin: auto; font-size: 1.5rem; }
-.pfx-good { color: #0cce6b; } .pfx-ni { color: #ffa400; } .pfx-poor { color: #ff4e42; } .pfx-na { color: var(--text-muted); }
+.pfx-good { color: var(--success); } .pfx-ni { color: var(--warning); } .pfx-poor { color: var(--danger); } .pfx-na { color: var(--text-muted); }
 .pfx-rate { font-weight: 700; }
 .pfx-checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
 .pfx-checks li { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; align-items: center; }
 .pfx-checks li small { grid-column: 2; color: var(--text-muted); }
-.pfx-checks li.ok i { color: #0cce6b; } .pfx-checks li.bad i { color: #ff4e42; }
+.pfx-checks li.ok i { color: var(--success); } .pfx-checks li.bad i { color: var(--danger); }
 .pfx-verdict { padding: 10px 12px; border-radius: 10px; font-weight: 600; margin-bottom: 8px; }
-.pfx-verdict.ok { background: #0cce6b1f; color: #0cce6b; } .pfx-verdict.bad { background: #ff4e421f; color: #ff4e42; }
+.pfx-verdict.ok { background: #0cce6b1f; color: var(--success); } .pfx-verdict.bad { background: #ff4e421f; color: var(--danger); }
 .pfx-warn { color: var(--warning); font-weight: 600; }
 .pfx-bars { display: grid; gap: 6px; }
 .pfx-barrow { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin: 4px 0; }
@@ -43,7 +43,7 @@
 .pfx-sug:hover, .pfx-sug:focus { background: var(--bg-card-hover); }
 .pfx-sug small { color: var(--text-muted); }
 .pfx-meta { font-size: .75rem; color: var(--text-muted); margin: 6px 0; display: flex; gap: 10px; }
-.pfx-live { color: #0cce6b; }
+.pfx-live { color: var(--success); }
 .pfx-group { margin-bottom: 10px; }
 .pfx-group-h { font-weight: 700; font-size: .8rem; color: var(--text-muted); margin: 6px 0; }
 .pfx-hit { display: flex; gap: 10px; align-items: flex-start; width: 100%; text-align: start; padding: 8px 10px; border: 0; border-radius: 10px; background: none; color: inherit; cursor: pointer; }

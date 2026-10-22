@@ -83,6 +83,10 @@ html, body {
     text-align: right;
     -webkit-font-smoothing: antialiased;
 }
+/* Base: un-styled buttons/links follow the theme instead of UA black / #0000ee (zero specificity, so every component rule still wins) */
+:where(button) { color: inherit; }
+:where(a:not([class])) { color: var(--primary); }
+
 
 /* Custom Scrollbars */
 ::-webkit-scrollbar {

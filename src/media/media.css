@@ -86,8 +86,8 @@
 .fmx-r { display: flex; gap: 6px; align-items: center; }
 .fmx-scan .bad { color: var(--danger); } .fmx-scan .ok { color: var(--success); }
 .fmx-tpl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: 8px; }
-.fmx-tpl { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; cursor: pointer; }
-.fmx-tpl:hover { border-color: #38bdf8; }
+.fmx-tpl { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; cursor: pointer; text-align: start; }
+.fmx-tpl:hover { border-color: var(--primary); }
 .fmx-figma, .fmx-fig-pick { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr)); gap: 6px; }
 .fmx-fig-frame { background: var(--bg-card); border-radius: 6px; padding: 4px; font-size: 0.72rem; text-align: center; }
 .fmx-fig-frame img { max-width: 100%; border-radius: 4px; }

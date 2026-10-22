@@ -11,17 +11,17 @@
       "assets/studio/chunk-W7FP2L2O.mjs",
       "assets/studio/chunk-YSTU5W3L.mjs"
     ],
-    "dev": "assets/studio/dev-443VXYDG.mjs",
-    "integ": "assets/studio/integ-EOH2MPEX.mjs",
+    "dev": "assets/studio/dev-OILRFCD3.mjs",
+    "integ": "assets/studio/integ-WWRV7DE5.mjs",
     "widgets": "assets/studio/widgets-ND27DT5U.mjs",
     "studio": "assets/studio/studio-JMOIRDYP.mjs",
     "runner": "assets/studio/runner-IFD6F6TL.mjs",
     "ui": "assets/studio/ui-CHOCEMEU.mjs",
     "ai": "assets/studio/ai-SD3TAAS5.mjs",
     "github": "assets/studio/github-BBF4U7B7.mjs",
-    "media": "assets/studio/media-5L73MVAT.mjs",
-    "team": "assets/studio/team-SKYHSKA6.mjs",
-    "perf": "assets/studio/perf-KX5BDWZY.mjs"
+    "media": "assets/studio/media-V5CQJDNX.mjs",
+    "team": "assets/studio/team-6VK24V2I.mjs",
+    "perf": "assets/studio/perf-Z7UZEOYO.mjs"
   },
   "files": [
     {
@@ -757,22 +757,22 @@
       "br": 10137
     },
     {
-      "name": "assets/studio/dev-443VXYDG.mjs",
+      "name": "assets/studio/dev-OILRFCD3.mjs",
       "size": 255890,
-      "gzip": 88964,
-      "br": 75045
+      "gzip": 88961,
+      "br": 74991
     },
     {
-      "name": "assets/studio/integ-EOH2MPEX.mjs",
-      "size": 292540,
-      "gzip": 106577,
-      "br": 88044
+      "name": "assets/studio/integ-WWRV7DE5.mjs",
+      "size": 292566,
+      "gzip": 106587,
+      "br": 87971
     },
     {
-      "name": "assets/studio/chunk-ENJSZIDG.mjs",
+      "name": "assets/studio/chunk-P7JJYJOH.mjs",
       "size": 129387,
       "gzip": 39241,
-      "br": 32479
+      "br": 32461
     },
     {
       "name": "assets/studio/widgets-ND27DT5U.mjs",
@@ -919,16 +919,16 @@
       "br": 2158
     },
     {
-      "name": "assets/studio/media-5L73MVAT.mjs",
+      "name": "assets/studio/media-V5CQJDNX.mjs",
       "size": 382314,
-      "gzip": 137737,
-      "br": 112055
+      "gzip": 137736,
+      "br": 112002
     },
     {
-      "name": "assets/studio/team-SKYHSKA6.mjs",
+      "name": "assets/studio/team-6VK24V2I.mjs",
       "size": 271285,
-      "gzip": 91733,
-      "br": 75679
+      "gzip": 91732,
+      "br": 75761
     },
     {
       "name": "assets/studio/chunk-G3Z4YPVX.mjs",
@@ -937,28 +937,28 @@
       "br": 6050
     },
     {
-      "name": "assets/studio/perf-KX5BDWZY.mjs",
+      "name": "assets/studio/perf-Z7UZEOYO.mjs",
       "size": 208353,
-      "gzip": 75643,
-      "br": 63272
+      "gzip": 75641,
+      "br": 63299
     },
     {
-      "name": "assets/studio/chunk-QLUKN4VI.mjs",
-      "size": 10513,
+      "name": "assets/studio/chunk-EF2OW6QA.mjs",
+      "size": 10566,
       "gzip": 4049,
-      "br": 3556
+      "br": 3569
     },
     {
-      "name": "assets/studio/chunk-R7W2X2YB.mjs",
+      "name": "assets/studio/chunk-U2EUMTM7.mjs",
       "size": 3596,
-      "gzip": 1920,
-      "br": 1706
+      "gzip": 1919,
+      "br": 1698
     },
     {
-      "name": "assets/studio/chunk-F3QZBMF5.mjs",
-      "size": 22532,
-      "gzip": 7557,
-      "br": 6709
+      "name": "assets/studio/chunk-MCUGONDY.mjs",
+      "size": 22556,
+      "gzip": 7559,
+      "br": 6687
     },
     {
       "name": "assets/studio/chunk-M6LJ4BNZ.mjs",

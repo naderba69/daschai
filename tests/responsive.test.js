@@ -136,6 +136,8 @@ function computed(rules, selector, prop, vp) {
     ok(/\[data-theme="light"\] :is\(\.hljs-keyword/.test(css) && /\[data-theme="light"\] \.hljs \{/.test(css), 'highlight.js gets a light palette in the light theme');
     ok(!/background: #121314/.test(lay) && !/style="[^"]*color: #fff;[^"]*min-width: 0;/.test(read('src/app.js')), 'no hard-coded dark panels / white text in app templates');
     ok(!/(^|[\s,}])\.cm-line\b/.test(css) && /id="cmt-list"/.test(read('src/features/08-collab.js')) && !/getElementById\('cm-list'\)/.test(read('src/features/08-collab.js')), 'code comments no longer reuse CodeMirror\'s .cm-line (which restyled every editor line) nor the conversation manager\'s #cm-list');
+    ok(/:where\(button\)\s*\{\s*color:\s*inherit/.test(css) && /:where\(a:not\(\[class\]\)\)\s*\{\s*color:\s*var\(--primary\)/.test(css), 'unstyled buttons/links follow the theme (no UA black text on dark cards, no #0000ee links)');
+    { const perf = read('src/perf/perf.css'), integ = read('src/integ/integ.css'); ok(!/(^|[^-])color:\s*#(0cce6b|ffa400|ff4e42)/.test(perf) && !/ix-lang-list[^{]*small\s*\{\s*opacity/.test(integ), 'perf ratings use semantic tokens and language codes use --text-muted (readable in the light theme)'); }
     ok(computed(rules, '.cmd-palette-input', 'min-width', SMALL) === '0' && computed(rules, '.cmd-palette-footer', 'flex-wrap', SMALL) === 'wrap', '320px: the palette search field shrinks (Esc hint no longer clipped) and its footer wraps');
     ok(/\.modal-header-bar > :not\(\.modal-title-heading\):not\(button\)/.test(css), 'header-group alignment no longer pushes icon buttons (close ×) off-centre');
 
