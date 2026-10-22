@@ -413,13 +413,13 @@
         if (!c) return null;
         c.resolved = resolved; c.resolvedAt = resolved ? Date.now() : null;
         this.saveCodeComments();
-        if (document.getElementById('cm-list')) this.renderComments();
+        if (document.getElementById('cmt-list')) this.renderComments();
         return c;
     };
     P.deleteCodeComment = function (id) {
         this.codeComments = (this.codeComments || []).filter(x => x.id !== id);
         this.saveCodeComments();
-        if (document.getElementById('cm-list')) this.renderComments();
+        if (document.getElementById('cmt-list')) this.renderComments();
     };
     P.moveCodeComments = function (from, to, isFolder) {
         let moved = 0;
@@ -451,12 +451,12 @@
             title: 'تعليقات الكود', icon: 'fa-comments',
             tabs: [['open', 'fa-circle-dot', 'مفتوحة'], ['resolved', 'fa-circle-check', 'محلولة'], ['all', 'fa-list', 'الكل']].map(([id, icon, label]) => ({ id, icon, label, onclick: `app.openComments('${id}')` })), activeTab: filter,
             actions: `<button class="sidebar-btn-util gh-btn" onclick="app.addCommentAtCaret()"><i class="fa-solid fa-plus"></i><span class="hide-sm">تعليق على السطر الحالي</span></button>`,
-            body: '<div id="cm-list" class="cm-list"></div>'
+            body: '<div id="cmt-list" class="cmt-list"></div>'
         });
         this.renderComments();
     };
     P.renderComments = function () {
-        const el = document.getElementById('cm-list');
+        const el = document.getElementById('cmt-list');
         if (!el) return [];
         const esc = (x) => this.escapeHTML(x);
         const f = this._cmFilter || 'open';
@@ -464,11 +464,11 @@
         list.forEach(c => this.locateComment(c));
         const groups = {};
         list.sort((a, b) => a.path.localeCompare(b.path) || a.line - b.line).forEach(c => (groups[c.path] = groups[c.path] || []).push(c));
-        el.innerHTML = Object.keys(groups).length ? Object.entries(groups).map(([path, cs]) => `<div class="cm-file"><div class="cm-file-head" dir="ltr"><i class="fa-solid fa-file-code"></i> ${esc(path)}${this.virtualProjectFiles.has(path) ? '' : ' <span class="text-red">(محذوف)</span>'}</div>
-            ${cs.map(c => `<div class="cm-item ${c.resolved ? 'resolved' : ''}">
-                <div class="cm-line" onclick="app.jumpToComment('${c.id}')" title="انتقال"><span class="ln">${c.line}</span><code dir="ltr">${esc((c.anchor || '').trim().slice(0, 140))}</code></div>
-                <div class="cm-text">${esc(c.text)}</div>
-                <div class="cm-actions"><span class="text-dim">${new Date(c.created).toLocaleString('ar')}</span><span class="gh-spacer"></span>
+        el.innerHTML = Object.keys(groups).length ? Object.entries(groups).map(([path, cs]) => `<div class="cm-file"><div class="cmt-file-head" dir="ltr"><i class="fa-solid fa-file-code"></i> ${esc(path)}${this.virtualProjectFiles.has(path) ? '' : ' <span class="text-red">(محذوف)</span>'}</div>
+            ${cs.map(c => `<div class="cmt-item ${c.resolved ? 'resolved' : ''}">
+                <div class="cmt-line" onclick="app.jumpToComment('${c.id}')" title="انتقال"><span class="ln">${c.line}</span><code dir="ltr">${esc((c.anchor || '').trim().slice(0, 140))}</code></div>
+                <div class="cmt-text">${esc(c.text)}</div>
+                <div class="cmt-actions"><span class="text-dim">${new Date(c.created).toLocaleString('ar')}</span><span class="gh-spacer"></span>
                     <button class="fx-link" onclick="app.askAIAboutComment('${c.id}')"><i class="fa-solid fa-wand-magic-sparkles"></i> عالجه بالذكاء</button>
                     <button class="fx-link" onclick="app.setCommentResolved('${c.id}', ${!c.resolved})"><i class="fa-solid ${c.resolved ? 'fa-rotate-left' : 'fa-check'}"></i> ${c.resolved ? 'إعادة فتح' : 'حل'}</button>
                     <button class="fx-link" onclick="app.deleteCodeComment('${c.id}')"><i class="fa-solid fa-trash"></i></button></div></div>`).join('')}</div>`).join('')

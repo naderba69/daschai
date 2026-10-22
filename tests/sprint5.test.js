@@ -175,7 +175,7 @@ let W = null;
     app.setCommentResolved(c.id, false);
     ok(!c.resolved, 'comment reopened (#750)');
     app.openComments('open');
-    ok(d.querySelectorAll('.cm-item').length === 2, 'comments panel lists open comments');
+    ok(d.querySelectorAll('.cmt-item').length === 2, 'comments panel lists open comments');
     ok(($('btn-studio-comments').querySelector('.cm-badge') || {}).textContent === '2', 'studio button shows open-comment badge');
     const aiPrompt = app.askAIAboutComment(c.id);
     ok(aiPrompt.includes('4 >>') && $('user-input').value.includes('هل 42 رقم سحري'), 'send comment + context to AI');

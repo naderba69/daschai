@@ -135,6 +135,8 @@ function computed(rules, selector, prop, vp) {
     ok(/--success: #047857/.test(lightTok) && /--warning: #b45309/.test(lightTok) && /--danger: #dc2626/.test(lightTok), 'light theme darkens the semantic colours for contrast on white');
     ok(/\[data-theme="light"\] :is\(\.hljs-keyword/.test(css) && /\[data-theme="light"\] \.hljs \{/.test(css), 'highlight.js gets a light palette in the light theme');
     ok(!/background: #121314/.test(lay) && !/style="[^"]*color: #fff;[^"]*min-width: 0;/.test(read('src/app.js')), 'no hard-coded dark panels / white text in app templates');
+    ok(!/(^|[\s,}])\.cm-line\b/.test(css) && /id="cmt-list"/.test(read('src/features/08-collab.js')) && !/getElementById\('cm-list'\)/.test(read('src/features/08-collab.js')), 'code comments no longer reuse CodeMirror\'s .cm-line (which restyled every editor line) nor the conversation manager\'s #cm-list');
+    ok(computed(rules, '.cmd-palette-input', 'min-width', SMALL) === '0' && computed(rules, '.cmd-palette-footer', 'flex-wrap', SMALL) === 'wrap', '320px: the palette search field shrinks (Esc hint no longer clipped) and its footer wraps');
     ok(/\.modal-header-bar > :not\(\.modal-title-heading\):not\(button\)/.test(css), 'header-group alignment no longer pushes icon buttons (close ×) off-centre');
 
     section('Runtime: menus flip above their anchor; the terminal fits its host');

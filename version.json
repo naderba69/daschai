@@ -1,7 +1,7 @@
 {
  "version": "2.16.0",
  "channel": "stable",
- "builtAt": "2026-10-22T17:53:43.890Z",
+ "builtAt": "2026-10-22T18:14:25.157Z",
  "entries": {
   "/assets/studio/dev-443VXYDG.mjs": "dev",
   "/assets/studio/integ-EOH2MPEX.mjs": "integ",
@@ -17,8 +17,8 @@
  },
  "files": {
   "/index.html": {
-   "h": "bd122f309c12",
-   "gz": 256604
+   "h": "1ff1c3f5b0cd",
+   "gz": 256616
   },
   "/sw.js": {
    "h": "9ed92acb724b",
