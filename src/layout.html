@@ -106,7 +106,7 @@
                 </button>
                 <button class="tool-grid-btn" onclick="app.openPlatform()" title="المنصة: الصحة، النسخ الاحتياطي، الشبكة، الجهاز، التكاملات">
                     <i class="fa-solid fa-gauge-high text-emerald"></i>
-                    <span>المنصة</span><span id="health-error-badge" class="cm-badge" style="display:none"></span>
+                    <span>المنصة</span><span id="health-error-badge" class="cmt-badge" style="display:none"></span>
                 </button>
                 <button class="tool-grid-btn" onclick="app.openSettingsModal()" title="الإعدادات والمفاتيح">
                     <i class="fa-solid fa-gear text-blue"></i>
@@ -320,9 +320,9 @@
                         <button class="studio-action-btn" id="btn-studio-explorer" onclick="app.toggleStudioExplorer()" title="مستكشف الملفات (Ctrl+B)"><i class="fa-solid fa-folder-tree text-blue"></i><span>الملفات</span></button>
                         <button class="studio-action-btn" onclick="app.openFileHistory()" title="سجل إصدارات الملف"><i class="fa-solid fa-clock-rotate-left text-purple"></i><span>السجل</span></button>
                         <button class="studio-action-btn" id="btn-studio-comments" onclick="app.openComments()" oncontextmenu="event.preventDefault(); app.addCommentAtCaret()" title="تعليقات الكود — Ctrl+Alt+M لإضافة تعليق على السطر الحالي"><i class="fa-solid fa-comments text-blue"></i><span>تعليقات</span></button>
-                        <button class="studio-action-btn" onclick="app.runStudioCode()"><i class="fa-solid fa-play text-emerald"></i><span>تشغيل</span></button>
-                        <button class="studio-action-btn" onclick="app.openDiffViewerForActiveStudioFile()"><i class="fa-solid fa-code-compare text-amber"></i><span>Diff</span></button>
-                        <button class="studio-action-btn" onclick="app.commitStudioFile()"><i class="fa-brands fa-github text-emerald"></i><span>Commit</span></button>
+                        <button class="studio-action-btn" onclick="app.runStudioCode()" title="تشغيل الكود"><i class="fa-solid fa-play text-emerald"></i><span>تشغيل</span></button>
+                        <button class="studio-action-btn" onclick="app.openDiffViewerForActiveStudioFile()" title="مقارنة التغييرات (Diff)"><i class="fa-solid fa-code-compare text-amber"></i><span>Diff</span></button>
+                        <button class="studio-action-btn" onclick="app.commitStudioFile()" title="Commit إلى GitHub"><i class="fa-brands fa-github text-emerald"></i><span>Commit</span></button>
                         <button class="studio-close-btn" id="btn-toggle-studio" onclick="app.toggleCodeStudio(false)" aria-label="إغلاق استوديو الأكواد"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
                     </div>
                 </div>

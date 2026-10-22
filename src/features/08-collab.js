@@ -433,7 +433,7 @@
     P.updateCommentBadge = function () {
         const open = (this.codeComments || []).filter(c => !c.resolved).length;
         const b = document.getElementById('btn-studio-comments');
-        if (b) b.innerHTML = `<i class="fa-solid fa-comments text-blue"></i><span>تعليقات</span>${open ? `<span class="cm-badge">${open}</span>` : ''}`;
+        if (b) b.innerHTML = `<i class="fa-solid fa-comments text-blue"></i><span>تعليقات</span>${open ? `<span class="cmt-badge">${open}</span>` : ''}`;
     };
     P.addCommentAtCaret = async function () {
         const path = this.activeStudioFile;
