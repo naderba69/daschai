@@ -38,6 +38,7 @@
 
 ### 🛠 إصلاحات
 - **النشر على Vercel:** أُزيلت الخاصية القديمة `public` من `vercel.json`، فمخطط Vercel الحالي يرفضها ويُفشل كل نشر قبل أن يبدأ. وأُضيف فحص `tests/vercel-config.test.js` إلى `npm test` حتى لا تعود مفاتيح مرفوضة
+- **مجلد مخرجات Vercel:** وجود `package.json` جعل Vercel يشغّل البناء ثم يبحث عن مجلد `public` غير موجود (`STATIC_BUILD_NO_OUT_DIR`). صار `vercel.json` يحدد `npm run vercel-build` (بناء مضغوط ثم `scripts/stage-public.cjs`) و`outputDirectory: public`، فيُنشر الموقع المضغوط (248.6 KB بدل 314.6 KB) دون المصادر والاختبارات. تحققتُ بأداة `vercel build` الرسمية
 - `require` للوحدات المدمجة في بيئة التشغيل صار يُخزَّن مؤقتاً (كان `express.Router` يفشل)
 - أسماء الملفات متعددة الكلمات في الأوامر الصوتية، وماسح TODO مع `TODO(name):`، وتبديل اللغات يعيد النصوص غير المترجمة للعربية
 

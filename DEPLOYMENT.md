@@ -2,9 +2,12 @@
 
 ## النشر على Vercel (موصى به)
 1. اربط المستودع `naderba69/daschai` في https://vercel.com/new
-2. اترك الإعدادات افتراضية (Static, Output: `index.html`)
+2. اترك الإعدادات افتراضية — `vercel.json` يحدد كل شيء ويتقدّم على إعدادات اللوحة:
+   - أمر البناء `npm run vercel-build` = `node build.js --minify` ثم `scripts/stage-public.cjs`
+   - مجلد المخرجات `public/`: ينسخ إليه السكربت ملفات الموقع فقط (index.html وsw.js وmanifest.json وversion.json وCHANGELOG.md ومجلدات assets وworkers وicons وwidgets)، فلا تُنشر المصادر ولا الاختبارات ولا package.json
 3. أضف متغيرات البيئة إن وجدت (لا حاجة — المفاتيح في localStorage)
 4. اضغط Deploy — سيعمل `vercel.json` تلقائياً (Security Headers + Rewrites)
+5. للتحقق محلياً قبل الدفع: `npm run vercel-build` ثم `npx serve public`. و`npm test` يفحص أن `vercel.json` لا يحوي مفاتيح يرفضها Vercel وأن مجلد المخرجات كامل
 
 ## النشر عبر Termux (آمن محدث)
 ```bash

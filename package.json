@@ -27,6 +27,7 @@
   "scripts": {
     "build": "node build.js",
     "build:minify": "node build.js --minify",
+    "vercel-build": "node build.js --minify && node scripts/stage-public.cjs",
     "dev": "node build.js && npx serve . -l 3000 --cors",
     "preview": "npx serve . -l 3000",
     "audit": "node --check src/app.js && for f in src/features/*.js workers/*.js sw.js; do node --check \"$f\" || exit 1; done && node tests/undef-check.cjs src/ai/*.js src/ui/*.js src/studio/*.js src/github/*.js src/media/*.js src/team/*.js src/perf/*.js && echo '✅ JS syntax OK'",
