@@ -449,7 +449,7 @@
             const months = Array.from(new Set(recs.map(r => new Date(r.t).toISOString().slice(0, 7)).concat([new Date().toISOString().slice(0, 7)]))).sort().reverse();
             root.innerHTML = `<div class="hub-stats-grid">
                     <div class="hub-stat-card"><div class="hub-stat-title">هذا الشهر حتى الآن</div><div class="hub-stat-value">${usd(f.mtd)}</div><div class="hub-stat-sub">متوسط يومي ${usd(f.daily)}</div></div>
-                    <div class="hub-stat-card"><div class="hub-stat-title">التوقع لنهاية الشهر</div><div class="hub-stat-value" style="color:${f.overBudget ? '#f87171' : 'inherit'}">${usd(f.projected)}</div><div class="hub-stat-sub">${f.budget ? `الميزانية $${f.budget}${f.overBudget ? ' — ستتجاوزها ⚠️' : ' ✅'}` : `${f.daysLeft} يوماً متبقية`}</div></div>
+                    <div class="hub-stat-card"><div class="hub-stat-title">التوقع لنهاية الشهر</div><div class="hub-stat-value" style="color:${f.overBudget ? 'var(--danger)' : 'inherit'}">${usd(f.projected)}</div><div class="hub-stat-sub">${f.budget ? `الميزانية $${f.budget}${f.overBudget ? ' — ستتجاوزها ⚠️' : ' ✅'}` : `${f.daysLeft} يوماً متبقية`}</div></div>
                     <div class="hub-stat-card"><div class="hub-stat-title">إجمالي الطلبات</div><div class="hub-stat-value">${recs.length.toLocaleString('en')}</div><div class="hub-stat-sub">${this.formatTokens ? this.formatTokens(recs.reduce((n, r) => n + (r.pt || 0) + (r.ct || 0), 0)) : ''} رمز</div></div></div>
                 <div class="hub-section"><div class="hub-section-title"><i class="fa-solid fa-chart-column"></i> الاستهلاك ${unit === 'month' ? 'الشهري' : 'الأسبوعي'}
                     <span class="gh-spacer"></span><button class="fx-link ${unit === 'week' ? 'active' : ''}" onclick="app._insUnit='week'; app.renderInsights()">أسبوعي</button><button class="fx-link ${unit === 'month' ? 'active' : ''}" onclick="app._insUnit='month'; app.renderInsights()">شهري</button></div>
@@ -489,7 +489,7 @@
         } else if (tab === 'quality') {
             const r = this.projectQualityReport();
             this._qualityReport = r;
-            const color = r.score >= 75 ? '#34d399' : r.score >= 50 ? '#fbbf24' : '#f87171';
+            const color = r.score >= 75 ? 'var(--success)' : r.score >= 50 ? 'var(--warning)' : 'var(--danger)';
             const worst = r.analyses.filter(a => !a.isTest).sort((a, b) => (b.complexity + b.longFunctions.length * 10) - (a.complexity + a.longFunctions.length * 10)).slice(0, 12);
             root.innerHTML = r.files ? `<div class="hub-stats-grid">
                     <div class="hub-stat-card"><div class="hub-stat-title">درجة الجودة</div><div class="hub-stat-value" style="color:${color}">${r.score} <small>${r.grade}</small></div><div class="hub-stat-sub">من 100</div></div>

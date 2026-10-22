@@ -1,8 +1,8 @@
 /* Sprint 12 — Performance & Mobile hub (pfx-*) */
 .tmx-bar { flex: 1; min-width: 60px; height: 8px; border-radius: 99px; background: var(--bg-card); overflow: hidden; }
-.tmx-bar > div { height: 100%; background: var(--accent, #7c3aed); border-radius: 99px; transition: width .3s; }
+.tmx-bar > div { height: 100%; background: var(--accent, #2f74f0); border-radius: 99px; transition: width .3s; }
 .tmx-sev { font-size: .66rem; padding: 1px 6px; border-radius: 99px; font-weight: 600; white-space: nowrap; }
-.tmx-sev-high { background: #ef444426; color: #ef4444; } .tmx-sev-medium { background: #f59e0b26; color: #d97706; } .tmx-sev-low { background: #22c55e22; color: #16a34a; } .tmx-sev-info { background: #0ea5e922; color: #0284c7; }
+.tmx-sev-high { background: #ef444426; color: var(--danger); } .tmx-sev-medium { background: #f59e0b26; color: #d97706; } .tmx-sev-low { background: #22c55e22; color: #16a34a; } .tmx-sev-info { background: #0ea5e922; color: #0284c7; }
 .pfx-gauges { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; text-align: center; }
 .pfx-gauges small { display: block; margin-top: 6px; color: var(--text-muted); font-size: .75rem; }
 .pfx-gauge { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; border: 6px solid currentColor; margin: auto; font-size: 1.5rem; }
@@ -14,7 +14,7 @@
 .pfx-checks li.ok i { color: #0cce6b; } .pfx-checks li.bad i { color: #ff4e42; }
 .pfx-verdict { padding: 10px 12px; border-radius: 10px; font-weight: 600; margin-bottom: 8px; }
 .pfx-verdict.ok { background: #0cce6b1f; color: #0cce6b; } .pfx-verdict.bad { background: #ff4e421f; color: #ff4e42; }
-.pfx-warn { color: #f59e0b; font-weight: 600; }
+.pfx-warn { color: var(--warning); font-weight: 600; }
 .pfx-bars { display: grid; gap: 6px; }
 .pfx-barrow { display: flex; align-items: center; gap: 8px; font-size: .82rem; margin: 4px 0; }
 .pfx-barrow > span { flex: 0 0 38%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

@@ -988,15 +988,15 @@ class OXAlphaApp {
             return `
                 <div class="repo-select-card ${isActive ? 'active' : ''}" onclick="app.selectActiveProject('${r.name}', '${r.full_name || owner + '/' + r.name}', '${r.default_branch || 'main'}')">
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff; min-width: 0;">
+                        <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--text-strong); min-width: 0;">
                             <i class="fa-brands fa-github ${r.private ? 'text-warning' : 'text-success'}"></i>
                             <span class="truncate">${this.escapeHTML(r.name)}</span>
                         </div>
-                        <span class="badge-pill" style="background: rgba(255,255,255,0.06); color: #94a3b8;">${r.language || 'Code'}</span>
+                        <span class="badge-pill" style="background: var(--bg-card); color: var(--text-muted);">${r.language || 'Code'}</span>
                     </div>
                     <div class="model-desc-text">${this.escapeHTML(r.description || 'مستودع برمجي على GitHub')}</div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.74rem; color: var(--text-dim); margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
-                        <span>الفرع: <strong style="color: #cbd5e1;">${r.default_branch || 'main'}</strong></span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.74rem; color: var(--text-dim); margin-top: 4px; border-top: 1px solid var(--border-subtle); padding-top: 8px;">
+                        <span>الفرع: <strong style="color: var(--text-soft);">${r.default_branch || 'main'}</strong></span>
                         ${isActive ? '<span class="btn-select-model-trigger active">🟢 المستودع النشط</span>' : '<span class="btn-select-model-trigger inactive">تحديد ↵</span>'}
                     </div>
                 </div>
@@ -1127,15 +1127,15 @@ class OXAlphaApp {
                             <div class="model-badges-row">
                                 ${m.is_free ? '<span class="badge-pill free">🟢 مجاني 100% (0.00$)</span>' : '<span class="badge-pill pro">PRO</span>'}
                                 <span class="badge-pill context">⚡ ${contextText} سياق</span>
-                                ${m.is_reasoning ? '<span class="badge-pill" style="background: rgba(192, 132, 252, 0.16); color: #c084fc;">🧠 تفكير</span>' : ''}
-                                ${m.is_vision ? '<span class="badge-pill" style="background: rgba(56, 189, 248, 0.16); color: #38bdf8;">👁️ رؤية</span>' : ''}
+                                ${m.is_reasoning ? '<span class="badge-pill" style="background: var(--accent-soft); color: var(--primary);">🧠 تفكير</span>' : ''}
+                                ${m.is_vision ? '<span class="badge-pill" style="background: rgba(56, 189, 248, 0.16); color: var(--primary);">👁️ رؤية</span>' : ''}
                             </div>
                             <div class="model-name-text">${this.escapeHTML(m.name)}</div>
                         </div>
                     </div>
                     <div class="model-desc-text">${this.escapeHTML(m.description || m.id)}</div>
                     <div class="model-footer-row">
-                        <span>المزود: <strong style="color: #cbd5e1;">${m.provider}</strong></span>
+                        <span>المزود: <strong style="color: var(--text-soft);">${m.provider}</strong></span>
                         ${isActive ? '<span class="btn-select-model-trigger active">🟢 النموذج المفعل حالياً</span>' : '<span class="btn-select-model-trigger inactive">اختيار النموذج ↵</span>'}
                     </div>
                 </div>
@@ -1328,7 +1328,7 @@ class OXAlphaApp {
 
         treeContainer.innerHTML = zipAtt.zipEntries.map(f => `
             <div class="session-item-row" style="padding: 6px 10px;" onclick="app.previewZipFile('${f.path}')">
-                <i class="fa-solid fa-file-code" style="font-size: 0.75rem; color: #38bdf8;"></i>
+                <i class="fa-solid fa-file-code" style="font-size: 0.75rem; color: var(--primary);"></i>
                 <span class="truncate" style="font-family: var(--font-mono); font-size: 0.76rem;">${f.path}</span>
             </div>
         `).join('');
@@ -1470,7 +1470,7 @@ class OXAlphaApp {
 
         if (btnElement) {
             this._currentPlayingBtn = btnElement;
-            btnElement.innerHTML = '<i class="fa-solid fa-stop" style="color: #ef4444;"></i> <span>إيقاف الصوت</span>';
+            btnElement.innerHTML = '<i class="fa-solid fa-stop" style="color: var(--danger);"></i> <span>إيقاف الصوت</span>';
         }
 
         utterance.onend = () => {
@@ -1597,12 +1597,12 @@ class OXAlphaApp {
 
             treeContainer.innerHTML = files.map(f => `
                 <div class="session-item-row" style="padding: 6px 10px;" onclick="app.previewGitHubFile('${f.path}')">
-                    <i class="fa-solid fa-file-code" style="font-size: 0.75rem; color: #34d399;"></i>
+                    <i class="fa-solid fa-file-code" style="font-size: 0.75rem; color: var(--success);"></i>
                     <span class="truncate" style="font-family: var(--font-mono); font-size: 0.76rem;">${f.path}</span>
                 </div>
             `).join('');
         } catch (err) {
-            treeContainer.innerHTML = `<div style="font-size: 0.78rem; color: #ef4444; padding: 10px;">تعذر جلب الشجرة: ${err.message}</div>`;
+            treeContainer.innerHTML = `<div style="font-size: 0.78rem; color: var(--danger); padding: 10px;">تعذر جلب الشجرة: ${err.message}</div>`;
         }
     }
 
@@ -1659,7 +1659,7 @@ class OXAlphaApp {
         // 1. Check OpenRouter Key
         const apiKey = this.settings.apiKey?.trim();
         if (!apiKey) {
-            if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: #f59e0b; font-size: 0.8rem;">⚠️ بدون مفتاح</span>';
+            if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: var(--warning); font-size: 0.8rem;">⚠️ بدون مفتاح</span>';
             if (openRouterDetails) openRouterDetails.innerText = 'يلزم إنشاء مفتاح مجاني من openrouter.ai/keys';
             allGood = false;
         } else {
@@ -1668,15 +1668,15 @@ class OXAlphaApp {
                     headers: { 'Authorization': `Bearer ${apiKey}` }
                 });
                 if (testRes.ok) {
-                    if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: #34d399; font-size: 0.8rem;">سليم وموثق 🟢</span>';
+                    if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: var(--success); font-size: 0.8rem;">سليم وموثق 🟢</span>';
                     if (openRouterDetails) openRouterDetails.innerText = 'الاتصال نشط والرصيد/المجاني متاح';
                 } else {
-                    if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: #ef4444; font-size: 0.8rem;">❌ غير صالح</span>';
+                    if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: var(--danger); font-size: 0.8rem;">❌ غير صالح</span>';
                     if (openRouterDetails) openRouterDetails.innerText = 'تحقق من صحة المفتاح في الإعدادات';
                     allGood = false;
                 }
             } catch (e) {
-                if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: #34d399; font-size: 0.8rem;">جاهز 🟢</span>';
+                if (openRouterStatus) openRouterStatus.innerHTML = '<span style="color: var(--success); font-size: 0.8rem;">جاهز 🟢</span>';
             }
         }
 
@@ -1686,20 +1686,20 @@ class OXAlphaApp {
         try {
             const ghRes = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
             if (ghRes.ok) {
-                if (githubStatus) githubStatus.innerHTML = '<span style="color: #34d399; font-size: 0.8rem;">متصل وجاهز 🟢</span>';
+                if (githubStatus) githubStatus.innerHTML = '<span style="color: var(--success); font-size: 0.8rem;">متصل وجاهز 🟢</span>';
                 if (githubDetails) githubDetails.innerText = `المستودع (${owner}/${repo}) متاح ومفهرس`;
             } else {
-                if (githubStatus) githubStatus.innerHTML = '<span style="color: #f59e0b; font-size: 0.8rem;">⚠️ مستودع خاص / محدود</span>';
+                if (githubStatus) githubStatus.innerHTML = '<span style="color: var(--warning); font-size: 0.8rem;">⚠️ مستودع خاص / محدود</span>';
                 if (githubDetails) githubDetails.innerText = 'أدخل رمز GitHub PAT للوصول الكامل';
             }
         } catch (e) {
-            if (githubStatus) githubStatus.innerHTML = '<span style="color: #ef4444; font-size: 0.8rem;">خطأ اتصال</span>';
+            if (githubStatus) githubStatus.innerHTML = '<span style="color: var(--danger); font-size: 0.8rem;">خطأ اتصال</span>';
         }
 
         if (summaryBox) {
             summaryBox.innerHTML = allGood
-                ? '<strong style="color: #34d399;">✅ كافة الأنظمة تعمل بكفاءة 100%!</strong> المنظومة جاهزة لاستقبال المشاريع وتوليد الأكواد وعمل Commit.'
-                : '<strong style="color: #f59e0b;">⚠️ تم اكتشاف بعض الملاحظات أعلاه:</strong> يرجى إدخال مفتاح OpenRouter في الإعدادات لتجنب أخطاء المزود.';
+                ? '<strong style="color: var(--success);">✅ كافة الأنظمة تعمل بكفاءة 100%!</strong> المنظومة جاهزة لاستقبال المشاريع وتوليد الأكواد وعمل Commit.'
+                : '<strong style="color: var(--warning);">⚠️ تم اكتشاف بعض الملاحظات أعلاه:</strong> يرجى إدخال مفتاح OpenRouter في الإعدادات لتجنب أخطاء المزود.';
         }
         this.showToast('اكتمل فحص الأنظمة والتشخيص 🩺', 'info');
     }
@@ -2319,7 +2319,7 @@ class OXAlphaApp {
                         <div class="agent-live-steps-tray">
                             ${m.steps.map(s => `
                                 <div class="live-step-item">
-                                    ${s.done ? '<i class="fa-solid fa-check" style="color: #34d399;"></i>' : '<span class="live-step-spinner"></span>'}
+                                    ${s.done ? '<i class="fa-solid fa-check" style="color: var(--success);"></i>' : '<span class="live-step-spinner"></span>'}
                                     <span>${s.text}</span>
                                 </div>
                             `).join('')}
@@ -2359,7 +2359,7 @@ class OXAlphaApp {
                         <div class="msg-content-column">
                             <div class="msg-meta-bar">
                                 <span class="msg-sender-name">OX-Alpha Pro</span>
-                                <span style="font-size: 0.7rem; color: #8ab4f8;">(${m.model || 'AI'})</span>
+                                <span style="font-size: 0.7rem; color: var(--primary);">(${m.model || 'AI'})</span>
                                 <span>${new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </div>
                             <div class="msg-card bot" dir="auto">
@@ -2370,11 +2370,11 @@ class OXAlphaApp {
                                 <div class="msg-footer-bar">
                                     <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                                         <button class="msg-sub-action-btn" onclick="app.downloadProjectAsZip()" title="تصدير وتحميل كامل ملفات المشروع المستخرج والمعدل كملف ZIP">
-                                            <i class="fa-solid fa-file-zipper" style="color: #fbbf24;"></i>
+                                            <i class="fa-solid fa-file-zipper" style="color: var(--warning);"></i>
                                             <span>تصدير ZIP للمشروع</span>
                                         </button>
                                         <button class="msg-sub-action-btn" onclick="app.continueGeneration('${m.id}')" title="متابعة وإكمال الإجابة">
-                                            <i class="fa-solid fa-forward" style="color: #38bdf8;"></i>
+                                            <i class="fa-solid fa-forward" style="color: var(--primary);"></i>
                                             <span>إكمال التوليد</span>
                                         </button>
                                         <button class="msg-sub-action-btn" onclick="app.speakText(this.closest('.msg-card').innerText, this)">
@@ -2454,7 +2454,7 @@ class OXAlphaApp {
             toolbar.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="code-lang-label">${lang}</span>
-                    ${detectedPath ? `<span style="background: rgba(56, 189, 248, 0.15); color: #38bdf8; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">${detectedPath}</span>` : ''}
+                    ${detectedPath ? `<span style="background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">${detectedPath}</span>` : ''}
                     ${isTestFile ? `<span style="background: var(--accent-soft); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">🧪 ملف اختبارات ومحاكاة</span>` : ''}
                 </div>
                 <div class="code-actions-group">
@@ -2659,7 +2659,7 @@ class OXAlphaApp {
                 this.showToast('تم النسخ بنجاح 📋', 'success');
                 if (btnElement) {
                     const original = btnElement.innerHTML;
-                    btnElement.innerHTML = '<i class="fa-solid fa-check" style="color: #34d399;"></i> <span>تم النسخ</span>';
+                    btnElement.innerHTML = '<i class="fa-solid fa-check" style="color: var(--success);"></i> <span>تم النسخ</span>';
                     setTimeout(() => { btnElement.innerHTML = original; }, 2000);
                 }
             }).catch(() => {});

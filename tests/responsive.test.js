@@ -129,6 +129,13 @@ function computed(rules, selector, prop, vp) {
     ok(!/[✦↗]/.test(lay), 'no font-dependent symbol glyphs in the layout (icons instead)');
     ok(!/['"](📌|⭐|🗄️)['"]/.test(read('src/features/13-conversations.js')), 'session filter chips use icons, not emoji');
     ok(/IBM\+Plex\+Sans\+Arabic/.test(read('build.js')), 'IBM Plex Sans Arabic is the UI font');
+    const allCSS = [css, ...['ai', 'dev', 'integ', 'media', 'perf', 'studio', 'team', 'ui'].map(d => read(`src/${d}/${d}.css`)), read('src/integ/widgets.css')].join('\n');
+    ok(!/(?<![-\w])color:\s*(#34d399|#4ade80|#fbbf24|#f87171|#ef4444|#8ab4f8|#38bdf8|#93c5fd|#94a3b8|#cbd5e1|#e2e8f0|#64748b)\b/i.test(allCSS), 'status/text colours go through theme tokens (readable in light and dark), no fixed light-on-dark hex text');
+    const lightTok = (css.match(/\[data-theme="light"\] \{([\s\S]*?)\n\}/) || [])[1] || '';
+    ok(/--success: #047857/.test(lightTok) && /--warning: #b45309/.test(lightTok) && /--danger: #dc2626/.test(lightTok), 'light theme darkens the semantic colours for contrast on white');
+    ok(/\[data-theme="light"\] :is\(\.hljs-keyword/.test(css) && /\[data-theme="light"\] \.hljs \{/.test(css), 'highlight.js gets a light palette in the light theme');
+    ok(!/background: #121314/.test(lay) && !/style="[^"]*color: #fff;[^"]*min-width: 0;/.test(read('src/app.js')), 'no hard-coded dark panels / white text in app templates');
+    ok(/\.modal-header-bar > :not\(\.modal-title-heading\):not\(button\)/.test(css), 'header-group alignment no longer pushes icon buttons (close ×) off-centre');
 
     section('Runtime: menus flip above their anchor; the terminal fits its host');
     const { w, d, app, errors } = loadApp();

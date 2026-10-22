@@ -231,8 +231,8 @@
                     <!-- Multi-File Attachment Preview Bar -->
                     <div class="attachment-tray" id="attachment-preview-bar">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
-                            <span style="font-size: 0.74rem; font-weight: 700; color: #38bdf8;" id="attachment-summary-text">المرفقات</span>
-                            <button style="background: transparent; border: none; color: #ef4444; font-size: 0.72rem; cursor: pointer;" onclick="app.clearAllAttachments()">إلغاء الكل ✖</button>
+                            <span style="font-size: 0.74rem; font-weight: 700; color: var(--primary);" id="attachment-summary-text">المرفقات</span>
+                            <button style="background: transparent; border: none; color: var(--danger); font-size: 0.72rem; cursor: pointer;" onclick="app.clearAllAttachments()">إلغاء الكل ✖</button>
                         </div>
                         <div class="attachment-chips-list" id="attachment-chips-list">
                             <!-- Populated with multiple files -->
@@ -364,7 +364,7 @@
             </div>
 
             <!-- GitHub Inline Auth Bar -->
-            <div style="padding: 8px 12px; background: #121314; border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-subtle);">
+            <div style="padding: 8px 12px; background: var(--bg-elevated); border-radius: var(--radius-md); display: flex; flex-direction: column; gap: 6px; border: 1px solid var(--border-subtle);">
                 <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                     <div style="font-size: 0.78rem; color: var(--text-muted);">
                         <span>الحساب: </span>
@@ -722,19 +722,19 @@
             <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 12px;">انقر على أي أمر لنسخه ولصقه مباشرة في تطبيق Termux على الهاتف:</p>
             
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o /sdcard/Download/ox-alpha-workbench-pro.zip -d . && git init && git branch -M main && git add . && git commit -m \'feat: update\' && git remote add origin https://github.com/naderba69/daschai.git && git push -u origin main --force', this)">
-                    <div style="font-weight: 700; color: #34d399; font-size: 0.82rem; margin-bottom: 4px;">🚀 أمر فك الضغط والرفع الإجباري الشامل إلى GitHub</div>
-                    <code style="font-size: 0.72rem; color: #94a3b8; word-break: break-all;">cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o ...</code>
+                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: var(--bg-elevated);" onclick="app.copyToClipboard('cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o /sdcard/Download/ox-alpha-workbench-pro.zip -d . && git init && git branch -M main && git add . && git commit -m \'feat: update\' && git remote add origin https://github.com/naderba69/daschai.git && git push -u origin main --force', this)">
+                    <div style="font-weight: 700; color: var(--success); font-size: 0.82rem; margin-bottom: 4px;">🚀 أمر فك الضغط والرفع الإجباري الشامل إلى GitHub</div>
+                    <code style="font-size: 0.72rem; color: var(--text-muted); word-break: break-all;">cd /sdcard/Download && mkdir -p ~/daschai && cd ~/daschai && unzip -o ...</code>
                 </div>
 
-                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('pkg update -y && pkg install git nodejs -y', this)">
-                    <div style="font-weight: 700; color: #38bdf8; font-size: 0.82rem; margin-bottom: 4px;">📦 تثبيت وتحديث Git و Node.js في Termux</div>
-                    <code style="font-size: 0.75rem; color: #94a3b8;">pkg update -y && pkg install git nodejs -y</code>
+                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: var(--bg-elevated);" onclick="app.copyToClipboard('pkg update -y && pkg install git nodejs -y', this)">
+                    <div style="font-weight: 700; color: var(--primary); font-size: 0.82rem; margin-bottom: 4px;">📦 تثبيت وتحديث Git و Node.js في Termux</div>
+                    <code style="font-size: 0.75rem; color: var(--text-muted);">pkg update -y && pkg install git nodejs -y</code>
                 </div>
 
-                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: #121314;" onclick="app.copyToClipboard('git status', this)">
-                    <div style="font-weight: 700; color: #fbbf24; font-size: 0.82rem; margin-bottom: 4px;">🔍 فحص حالة الملفات المعدلة (Git Status)</div>
-                    <code style="font-size: 0.75rem; color: #94a3b8;">git status</code>
+                <div class="session-item-row" style="flex-direction: column; align-items: flex-start; padding: 10px 14px; background: var(--bg-elevated);" onclick="app.copyToClipboard('git status', this)">
+                    <div style="font-weight: 700; color: var(--warning); font-size: 0.82rem; margin-bottom: 4px;">🔍 فحص حالة الملفات المعدلة (Git Status)</div>
+                    <code style="font-size: 0.75rem; color: var(--text-muted);">git status</code>
                 </div>
             </div>
         </div>
@@ -825,7 +825,7 @@
                 <div class="form-group-item">
                     <label class="form-label-title">رمز الوصول الشخصي (GitHub PAT مع صلاحية repo للكتابة والتعديل)</label>
                     <input type="password" id="setting-github-token" class="form-input-box" placeholder="ghp_... أو github_pat_...">
-                    <span style="font-size: 0.72rem; color: #34d399;">مطلوب لتحديث وعمل Commit مباشر للملفات من الأداة إلى مستودعاتك.</span>
+                    <span style="font-size: 0.72rem; color: var(--success);">مطلوب لتحديث وعمل Commit مباشر للملفات من الأداة إلى مستودعاتك.</span>
                 </div>
 
                 <div class="form-grid-2">
@@ -1050,7 +1050,7 @@
                 </div>
             </div>
 
-            <div id="diag-summary-box" style="padding: 10px 14px; background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.25); border-radius: var(--radius-md); font-size: 0.8rem; color: #93c5fd; line-height: 1.55;">
+            <div id="diag-summary-box" style="padding: 10px 14px; background: rgba(66, 133, 244, 0.08); border: 1px solid rgba(66, 133, 244, 0.25); border-radius: var(--radius-md); font-size: 0.8rem; color: var(--primary); line-height: 1.55;">
                 انقر على زر "بدء الفحص الشامل" للتحقق من كافة المكونات وحل أي مشاكل مزود تلقائياً.
             </div>
         </div>

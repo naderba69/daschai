@@ -937,7 +937,7 @@
         const rec = this.buildRecommendations(s, storage);
         const score = Math.max(0, 100 - rec.length * 8 - Math.min(30, s.longTasks) - errorLog.length * 2);
         root.innerHTML = `<div class="hub-stats-grid">
-                <div class="hub-stat-card"><div class="hub-stat-title">مؤشر الصحة</div><div class="hub-stat-value" style="color:${score >= 80 ? '#34d399' : score >= 60 ? '#fbbf24' : '#f87171'}">${score}</div><div class="hub-stat-sub">من 100</div></div>
+                <div class="hub-stat-card"><div class="hub-stat-title">مؤشر الصحة</div><div class="hub-stat-value" style="color:${score >= 80 ? 'var(--success)' : score >= 60 ? 'var(--warning)' : 'var(--danger)'}">${score}</div><div class="hub-stat-sub">من 100</div></div>
                 <div class="hub-stat-card"><div class="hub-stat-title">زمن الإقلاع</div><div class="hub-stat-value">${s.bootMs ? s.bootMs + 'ms' : '—'}</div><div class="hub-stat-sub">DOM ${s.domContentLoaded ? s.domContentLoaded + 'ms' : '—'}</div></div>
                 <div class="hub-stat-card"><div class="hub-stat-title">مهام طويلة</div><div class="hub-stat-value">${s.longTasks}</div><div class="hub-stat-sub">${s.longTaskMs}ms إجمالاً</div></div>
                 <div class="hub-stat-card"><div class="hub-stat-title">الذاكرة</div><div class="hub-stat-value">${s.heapUsed ? fmtBytes(s.heapUsed) : '—'}</div><div class="hub-stat-sub">${s.domNodes.toLocaleString('en')} عنصر DOM</div></div>
