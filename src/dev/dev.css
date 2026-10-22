@@ -6,8 +6,8 @@
 .dvx-wide { grid-column: 1 / -1; }
 .dvx-good { color: #22c55e; } .dvx-bad { color: #ef4444; }
 .dvx-off { opacity: .55; }
-.dvx-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin: 6px 0; }
-.dvx-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px; margin: 6px 0; }
+.dvx-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 8px; margin: 6px 0; }
+.dvx-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr)); gap: 8px; margin: 6px 0; }
 .dvx-flags { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0; }
 .dvx-flags.dvx-col { flex-direction: column; }
 .dvx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
@@ -37,7 +37,7 @@
 /* quality */
 .dvx-sev { font-size: .7rem; padding: 1px 6px; border-radius: 4px; background: rgba(148, 163, 184, .2); }
 .dvx-sev.dvx-error { background: rgba(239, 68, 68, .25); } .dvx-sev.dvx-warning { background: rgba(245, 158, 11, .25); }
-.dvx-rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+.dvx-rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 6px; }
 
 /* terminal + run */
 .dvx-term { white-space: pre-wrap; word-break: break-word; }
@@ -95,15 +95,15 @@
 .dvx-bl-meta small { color: #94a3b8; margin-inline-start: 4px; }
 
 /* refactor + custom */
-.dvx-pal { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 12px; max-height: 360px; overflow: auto; margin-top: 6px; }
+.dvx-pal { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 0 12px; max-height: 360px; overflow: auto; margin-top: 6px; }
 .dvx-pal .pfx-toggle { margin: 2px 0; font-size: .8rem; }
-.dvx-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+.dvx-themes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); gap: 8px; }
 .dvx-theme { text-align: start; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 10px; border: 1px solid rgba(148, 163, 184, .25); background: transparent; color: inherit; cursor: pointer; }
 .dvx-theme.active { border-color: var(--accent, #6366f1); box-shadow: 0 0 0 2px rgba(99, 102, 241, .25); }
 .dvx-theme small { color: #94a3b8; }
 .dvx-icrow { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
 .dvx-ic { font-size: 1rem; }
-.dvx-icprev { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 4px 12px; font-size: .82rem; }
+.dvx-icprev { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: 4px 12px; font-size: .82rem; }
 
 @media (max-width: 760px) {
     .dvx-dbg-grid, .dvx-cmp, .dvx-e2e { grid-template-columns: 1fr; }

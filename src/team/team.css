@@ -2,7 +2,7 @@
 .tmx-root { gap: 0; }
 .tmx-note { font-size: .74rem; color: var(--text-muted); line-height: 1.6; }
 .tmx-ai-out { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 8px 10px; font-size: .82rem; max-height: 420px; overflow: auto; }
-.tmx-grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.tmx-grid2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: 8px; }
 .tmx-bar { flex: 1; min-width: 60px; height: 8px; border-radius: 99px; background: var(--bg-card); overflow: hidden; }
 .tmx-bar > div { height: 100%; background: var(--accent, #7c3aed); border-radius: 99px; transition: width .3s; }
 .tmx-add { color: #22c55e; } .tmx-del { color: #ef4444; }
@@ -71,7 +71,7 @@
 .tmx-mood { display: flex; align-items: center; gap: 2px; height: 70px; }
 .tmx-mood > span { flex: 1; background: #94a3b8; border-radius: 2px; min-height: 3px; } .tmx-mood > span.pos { background: #22c55e; } .tmx-mood > span.neg { background: #ef4444; }
 .tmx-langs { display: flex; flex-wrap: wrap; gap: 4px; }
-.tmx-paths { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.tmx-paths { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(140px, 100%), 1fr)); gap: 8px; }
 .tmx-path-card { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: inherit; cursor: pointer; font: inherit; }
 .tmx-path-card span { font-size: 1.5rem; } .tmx-path-card.active { border-color: var(--accent, #7c3aed); box-shadow: 0 0 0 2px #7c3aed33; }
 .tmx-steps { display: flex; flex-direction: column; gap: 4px; }

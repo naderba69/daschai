@@ -215,11 +215,30 @@ export function installTerm(P) {
                 if (!document.getElementById('dvx-xterm-css')) { const st = document.createElement('style'); st.id = 'dvx-xterm-css'; st.textContent = cssMod.default || ''; document.head.appendChild(st); }
                 term = new mod.Terminal({ convertEol: true, cursorBlink: true, fontFamily: '"JetBrains Mono", ui-monospace, monospace', fontSize: 13, rows: 20, theme: { background: '#0b0f17', foreground: '#d6deeb', cursor: '#7fdbca' }, allowProposedApi: false });
                 term.open(host);
+                this.dvFitTerm(term, host);
             } catch (e) { term = null; host.innerHTML = ''; }
         }
         this._dvTerm = term ? this.dvXtermUI(term, sh, host) : this.dvPlainTermUI(host, sh);
         this._dvStop = () => { try { if (term) term.dispose(); } catch (e) { /* ignore */ } this._dvTerm = null; };
         return this._dvTerm;
+    };
+    /** Size the terminal's columns to its host (xterm defaults to 80 cols ≈ 625px, which was cut off on phones). */
+    P.dvTermCols = function (width, cellW) { return Math.max(20, Math.min(240, Math.floor((width - 14) / (cellW || 7.8)))); };
+    P.dvFitTerm = function (term, host) {
+        let ro = null;
+        const fit = () => {
+            if (!host.isConnected) { if (ro) ro.disconnect(); return; }
+            if (!host.clientWidth) return;
+            const probe = document.createElement('span');
+            probe.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;font:13px "JetBrains Mono", ui-monospace, monospace';
+            probe.textContent = 'W'.repeat(20); document.body.appendChild(probe);
+            const cellW = probe.getBoundingClientRect().width / 20 || 7.8; probe.remove();
+            const cols = this.dvTermCols(host.clientWidth, cellW);
+            if (cols !== term.cols) { try { term.resize(cols, term.rows); } catch (e) { /* disposed */ } }
+        };
+        fit();
+        if (typeof ResizeObserver === 'function') { ro = new ResizeObserver(() => fit()); ro.observe(host); }
+        return fit;
     };
     /** xterm line editor: history, Tab completion, Ctrl+C/L/U, cursor keys. */
     P.dvXtermUI = function (term, sh, host) {

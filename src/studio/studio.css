@@ -57,11 +57,11 @@
 .ref-ln { color: var(--text-dim); min-width: 3ch; text-align: right; font-family: var(--font-mono); }
 /* settings */
 .ed-settings { display: flex; flex-direction: column; gap: 12px; }
-.ed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px 14px; }
+.ed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); gap: 10px 14px; }
 .ed-field { display: flex; flex-direction: column; gap: 4px; font-size: 0.78rem; color: var(--text-muted); }
 .ed-field input[type="range"] { width: 100%; accent-color: var(--primary); }
 .ed-check { font-size: 0.8rem; }
-.ed-themes, .ed-presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.ed-themes, .ed-presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr)); gap: 8px; }
 .ed-theme, .ed-preset { padding: 8px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-card); color: var(--text-main); cursor: pointer; text-align: start; font-size: 0.78rem; }
 .ed-theme.active, .ed-preset.active { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
 .ed-theme-dots { display: flex; gap: 3px; margin-top: 6px; }
