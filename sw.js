@@ -1,4 +1,4 @@
-// OX-Alpha Workbench Pro — Service Worker (v2.12)
+// OX-Alpha Workbench Pro — Service Worker (v2.13)
 // • App shell (index.html): network-first, falls back to cache when offline (#815)
 // • CDN libraries & fonts: stale-while-revalidate (#825)
 // • Editor/runner chunks (/assets/, content-hashed): cache-first; workers (/workers/): network-first
@@ -11,7 +11,7 @@
 // • Update channels (#869): a stable client refuses to install a beta build (install fails → old SW stays)
 // • Background Sync (#826): queued requests (IndexedDB "ox-alpha-bg") are replayed on `sync`
 // • Push (#949) + notification actions for watches (#972, #973) + PWA widgets (#964)
-const VERSION = 'v2.12';
+const VERSION = 'v2.13';
 const SHELL_CACHE = 'ox-alpha-shell-' + VERSION;
 const PREV_CACHE = 'ox-alpha-shell-prev';
 const CDN_CACHE = 'ox-alpha-cdn-' + VERSION;

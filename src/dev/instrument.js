@@ -35,7 +35,7 @@ const isStmtList = (parent, key) => (key === 'body' && (parent.type === 'Program
 const SKIP_STMT = new Set(['FunctionDeclaration', 'ClassDeclaration', 'EmptyStatement']);
 const fnName = (n, parent) => (n.id && n.id.name) || (parent && parent.type === 'VariableDeclarator' && parent.id && parent.id.name) || (parent && (parent.type === 'Property' || parent.type === 'MethodDefinition' || parent.type === 'PropertyDefinition') && parent.key && (parent.key.name || parent.key.value)) || (parent && parent.type === 'AssignmentExpression' && parent.left && (parent.left.property ? parent.left.property.name : parent.left.name)) || '(anonymous)';
 /** Wrap a non-block statement position (if/loop bodies) so we can insert before it. */
-const wrapBody = (edits, node, pre) => { edits.push({ at: node.start, text: '{' + pre }); edits.push({ at: node.end, text: '}', end: true }); };
+const wrapBody = (edits, node, pre, post = '') => { edits.push({ at: node.start, text: '{' + pre }); edits.push({ at: node.end, text: '}' + post, end: true }); };
 
 // ------------------------------------------------------------------ #164 COVERAGE
 /** Returns { code, meta: { s:[line], f:[{name,line}], b:[{line,type,n}] } }. Counters live in G.__oxc[file]. */
@@ -55,11 +55,12 @@ export function instrumentCoverage(code, file) {
         if (n.type === 'IfStatement') {
             meta.b.push({ line: n.loc.start.line, type: 'if', n: 2 });
             const id = meta.b.length - 1;
-            const arm = (node, k) => node.type === 'BlockStatement' ? edits.push({ at: node.start + 1, text: `__oxc.b(${F},${id},${k});`, pr: 2 })
-                : wrapBody(edits, node, `__oxc.b(${F},${id},${k});` + (node.type === 'IfStatement' ? '' : S(node.loc.start.line)));
-            arm(n.consequent, 0);
+            // a missing else arm is emitted together with the consequent's closer so nested closers stay balanced
+            const els = n.alternate ? '' : ` else {__oxc.b(${F},${id},1);}`;
+            const arm = (node, k, post) => node.type === 'BlockStatement' ? (edits.push({ at: node.start + 1, text: `__oxc.b(${F},${id},${k});`, pr: 2 }), post && edits.push({ at: node.end, text: post, end: true }))
+                : wrapBody(edits, node, `__oxc.b(${F},${id},${k});` + (node.type === 'IfStatement' ? '' : S(node.loc.start.line)), post);
+            arm(n.consequent, 0, els);
             if (n.alternate) arm(n.alternate, 1);
-            else edits.push({ at: n.end, text: ` else {__oxc.b(${F},${id},1);}`, end: true, pr: 1 });
         }
         if (n.type === 'ConditionalExpression') {
             meta.b.push({ line: n.loc.start.line, type: 'cond', n: 2 });

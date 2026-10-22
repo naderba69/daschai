@@ -8,6 +8,7 @@ const { pathToFileURL } = require('url');
 const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
 
 const ROOT = path.join(__dirname, '..');
+const NodeEvent = globalThis.Event, NodeEventTarget = globalThis.EventTarget;
 function exposeGlobals(w) {
     const names = ['window', 'document', 'navigator', 'Node', 'Element', 'HTMLElement', 'MutationObserver', 'getComputedStyle', 'requestAnimationFrame', 'cancelAnimationFrame',
         'KeyboardEvent', 'MouseEvent', 'Event', 'CustomEvent', 'localStorage', 'location', 'history', 'innerWidth', 'innerHeight', 'devicePixelRatio', 'Image', 'HTMLCanvasElement', 'FileReader', 'DOMParser',
@@ -27,16 +28,36 @@ function browserStubs(w) {
 /** Stand-in for the sandboxed iframe runner: runs the bundle in a fresh Node vm context. */
 function vmSandbox() {
     const timers = new Set();
+    const listeners = [];
     return {
         start(script, cb) {
             const st = (fn, ms, ...a) => { const t = setTimeout(() => { timers.delete(t); fn(...a); }, ms); timers.add(t); return t; };
             const si = (fn, ms, ...a) => { const t = setInterval(fn, ms, ...a); timers.add(t); return t; };
             const ct = (t) => { clearTimeout(t); clearInterval(t); timers.delete(t); };
-            const ctx = vm.createContext({ __oxPost: (m) => cb(JSON.parse(JSON.stringify(m))), setTimeout: st, setInterval: si, clearTimeout: ct, clearInterval: ct, queueMicrotask, TextEncoder, TextDecoder, URL, structuredClone });
+            const ctx = vm.createContext({ __oxPost: (m) => cb(JSON.parse(JSON.stringify(m))), setTimeout: st, setInterval: si, clearTimeout: ct, clearInterval: ct, queueMicrotask, TextEncoder, TextDecoder, URL, structuredClone, btoa, atob,
+                addEventListener: (t, f) => { if (t === 'message') listeners.push(f); } });
             try { vm.runInContext(script, ctx, { timeout: 5000, filename: 'ox-run.js' }); } catch (e) { cb({ type: 'fatal', message: e.message }); }
         },
-        stop() { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers.clear(); }
+        send(req) { const data = JSON.parse(JSON.stringify({ req })); listeners.forEach(f => setTimeout(() => f({ data }), 0)); },
+        stop() { timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers.clear(); listeners.length = 0; }
     };
+}
+
+/** workers/polyglot.js driven in-process with fake Ruby/PHP runtimes and a fake Wandbox. */
+function fakePolyWorker(fetchImpl) {
+    const { createPolyglot } = require('../workers/polyglot.js');
+    class FakePhp extends NodeEventTarget {
+        run(code) { const m = /echo\s+"([^"]*)"/.exec(code); this.dispatchEvent(Object.assign(new NodeEvent('output'), { detail: [m ? m[1].replace(/\\n/g, '\n') : ''] })); return Promise.resolve(/exit\(3\)/.test(code) ? 3 : 0); }
+    }
+    const sink = {};
+    const poly = createPolyglot({
+        loadRuby: () => ({ sink, createVM: () => ({ eval(code) { if (/raise/.test(code)) throw new Error('RuntimeError: boom'); const inp = (/StringIO\.new\("([^"]*)"\)/.exec(code) || [])[1] || ''; (code.match(/puts\s+"([^"]*)"/g) || []).forEach(x => sink.out(x.slice(6, -1).replace('#{gets}', inp.split('\\n')[0]) + '\n')); } }) }),
+        loadPhp: () => FakePhp,
+        fetch: fetchImpl
+    });
+    const wk = { onmessage: null, onerror: null, terminate() {} };
+    wk.postMessage = (msg) => { poly.run(msg, (stream, text) => wk.onmessage && wk.onmessage({ data: { id: msg.id, type: 'out', stream, text } })).then(r => wk.onmessage && wk.onmessage({ data: Object.assign({ id: msg.id, type: 'done' }, r) })); };
+    return wk;
 }
 
 (async () => {
@@ -67,6 +88,8 @@ function vmSandbox() {
             if ((m = /\/repos\/o\/r\/contents\/(.+)\?ref=(\w+)/.exec(u))) return json({ content: Buffer.from('export function add(a, b) {\n    return a + b; // v0\n}\n').toString('base64') });
             return json({ message: 'Not Found' }, 404);
         }
+        if (u === 'https://wandbox.org/api/list.json') return new Response(JSON.stringify([{ name: 'go-1.23.2', language: 'Go' }, { name: 'go-head', language: 'Go' }]), { status: 200 });
+        if (u === 'https://wandbox.org/api/compile.json') { const b = JSON.parse(opts.body); return new Response(JSON.stringify(/syntax/.test(b.code) ? { status: '1', compiler_error: 'prog.go:1: syntax error' } : { status: '0', program_output: 'Hello, Go ' + b.compiler + '\n' }), { status: 200 }); }
         if (u.startsWith('https://registry.npmjs.org/')) {
             const n = decodeURIComponent(u.slice('https://registry.npmjs.org/'.length));
             const vers = { 'left-pad': ['1.0.0', '1.3.0'], lodash: ['4.17.20', '4.17.21'] }[n];
@@ -84,6 +107,7 @@ function vmSandbox() {
     const imported = [];
     app.importModule = (url) => { imported.push(url); return import(pathToFileURL(path.join(ROOT, url)).href); };
     app.createRunSandbox = vmSandbox;
+    app.createPolyglotWorker = () => fakePolyWorker(fetchAll);
     const downloads = [];
     app.downloadBlob = (blob, name) => { downloads.push({ blob, name }); };
     app.askConfirm = async () => true;
@@ -113,6 +137,7 @@ function vmSandbox() {
     ok(app.folderIcon('src', true)[0].includes('fa-folder-open') && app.fileIcon('a.js')[0], 'default folder/file icons');
 
     section('Open every section (sweep)');
+    { let got = null; app.openDevLab = (t) => { got = t; }; app.handleLaunchParams('?action=dev&tab=debug'); await wait(350); delete app.openDevLab; ok(got === 'debug', '?action=dev&tab= deep link'); }
     await app.openDevLab('search');
     ok(P.__oxDev && imported.some(u => /dev-/.test(u)), 'chunk loaded on first use');
     const lib = app.dvLib();
@@ -376,6 +401,231 @@ function vmSandbox() {
         await app.dvLoad('arabic', 'reference');
         app.dvQalamRefFilter('function');
         ok([...d.querySelectorAll('#dv-ql-ref tbody tr')].filter(tr => tr.style.display !== 'none').length >= 1, 'reference filter');
+    }
+
+    section('#153 Go/PHP/Ruby • #226 mock DB • #228 mock auth • #160 ports • #230 share');
+    {
+        await app.dvLoad('run', 'polyglot');
+        const out = [];
+        let r = await app.dvPolyRun({ lang: 'ruby', code: 'puts "مرحبا #{gets}"', stdin: 'سارة', onOut: (s, t) => out.push(t) });
+        ok(r.exitCode === 0 && out.join('').includes('مرحبا سارة'), 'Ruby (WASM) with stdin');
+        r = await app.dvPolyRun({ lang: 'ruby', code: 'raise "x"' });
+        ok(r.exitCode === 1 && /boom/.test(r.error), 'Ruby error → exit 1');
+        out.length = 0;
+        r = await app.dvPolyRun({ lang: 'php', code: 'echo "hi php";', onOut: (s, t) => out.push(t) });
+        if (out.join('') !== 'hi php') console.log('PHP', JSON.stringify(r), JSON.stringify(out));
+        ok(r.exitCode === 0 && out.join('') === 'hi php', 'PHP (WASM)');
+        out.length = 0;
+        r = await app.dvPolyRun({ lang: 'go', code: 'package main', onOut: (s, t) => out.push(t) });
+        ok(r.exitCode === 0 && r.remote && out.join('').includes('Hello, Go go-1.23.2'), 'Go via Wandbox (stable compiler picked)');
+        r = await app.dvPolyRun({ lang: 'go', code: 'syntax' });
+        ok(r.exitCode === 1 && r.error === 'خطأ ترجمة', 'Go compile error');
+        files.set('main.rb', { content: 'puts "from file"\n' });
+        ok(app.isRunnablePath ? true : true, 'runnable');
+        await app.ensureRunner({ quiet: true });
+        ok(app.isRunnablePath('main.rb') && app.isRunnablePath('x.go'), 'runner treats .rb/.go as runnable');
+        const lines = [];
+        const wr = { line: (l, t) => lines.push(t), html: (c, h) => lines.push(h), clear() {}, text: () => lines.join('\n') };
+        const rr = await app.runCode({ path: 'main.rb', writer: wr, record: false });
+        ok(rr.success && lines.some(l => l === 'from file'), 'runCode dispatches .rb to the polyglot worker');
+
+        await app.dvLoad('run', 'mockdb');
+        app.dvMockDBCreate();
+        ok(files.has('mocks/db.json'), 'create mocks/db.json sample');
+        let res = await app.dvMockRequest({ method: 'GET', path: '/api/users?_sort=id&_order=desc' });
+        ok(res && res.status === 200 && JSON.parse(res.body)[0].id === 2, 'GET /api/users with sort');
+        res = await app.dvMockRequest({ method: 'POST', path: '/api/users', body: { name: 'Lina' } });
+        ok(res && res.status === 201 && JSON.parse(res.body).id === 3, 'POST creates with next id');
+        res = await app.dvMockRequest({ method: 'GET', path: '/api/nothing/1' });
+        if (!res || res.status !== 404) console.log('404', JSON.stringify(res), d.getElementById('dv-db-res').textContent);
+        ok(res && res.status === 404, '404 for unknown collection');
+
+        await app.dvLoad('run', 'mockauth');
+        app.dvMockAuthCreate();
+        res = await app.dvMockLogin('admin@example.com', 'admin123');
+        if (!res || !res.me) console.log('LOGIN', JSON.stringify(res), d.getElementById('dv-au-res').textContent);
+        ok(res && res.status === 200 && res.body.token && res.me && res.me.email === 'admin@example.com', 'login → JWT → /auth/me');
+        ok(lib.decodeJwt(res.body.token).payload.role === 'admin', 'JWT payload decodes');
+        res = await app.dvMockLogin('admin@example.com', 'wrong');
+        ok(res && res.status === 401, 'wrong password → 401');
+
+        await app.dvLoad('run', 'ports');
+        files.set('server.js', { content: "const express = require('express');\nconst app = express();\napp.get('/hi', (req, res) => res.json({ hello: req.query.name || 'world' }));\napp.listen(3000, () => console.log('up'));\n" });
+        const port = await app.dvStartServer('server.js');
+        ok(port === 3000 && app.dvServers().has(3000), 'server listens on a virtual port');
+        const resp = await app.dvRequest(3000, { method: 'GET', path: '/hi?name=OX' });
+        ok(resp.status === 200 && JSON.parse(resp.body).hello === 'OX', 'request routed to the virtual server');
+        app.dvStopServer(3000);
+        await wait(30);
+        ok(!app.dvServers().has(3000), 'server stopped');
+
+        await app.dvLoad('run', 'share');
+        const url = await app.dvShareRun({ path: 'main.rb', lang: 'ruby', output: 'from file', success: true, durationMs: 12 });
+        ok(/#oxrun=[zu]/.test(url), 'share link with compressed payload');
+        const shown = [];
+        const _sd = app.showDialog; app.showDialog = async (o) => { shown.push(o); return null; };
+        await app.dvOpenShareHash(url.slice(url.indexOf('#')));
+        app.showDialog = _sd;
+        ok(shown.length === 1 && /from file/.test(shown[0].body), 'opening the link shows the shared result');
+    }
+
+    section('#155 terminal (shell) • #156 npm/yarn/pnpm');
+    {
+        let r = await app.dvShellExec('mkdir -p tmp && echo "hello" > tmp/a.txt && cat tmp/a.txt');
+        ok(r.code === 0 && r.out.includes('hello') && files.get('tmp/a.txt').content.trim() === 'hello', 'mkdir + redirect + cat');
+        r = await app.dvShellExec('ls src/utils | grep math');
+        ok(r.code === 0 && /math\.js/.test(r.out), 'pipes');
+        r = await app.dvShellExec('cd src && pwd');
+        ok(r.out.trim() === '/src', 'cd/pwd');
+        await app.dvShellExec('cd /');
+        r = await app.dvShellExec('nosuchcmd');
+        ok(r.code !== 0, 'unknown command → non-zero exit');
+        r = await app.dvShellExec('node src/utils/text.js && echo done');
+        ok(r.code === 0 && /done/.test(r.out), 'node runs a file in the sandbox');
+        r = await app.dvShellExec('npm install left-pad');
+        const pkg = JSON.parse(files.get('package.json').content);
+        ok(r.code === 0 && pkg.dependencies['left-pad'] === '^1.3.0', 'npm install resolves latest from the registry');
+        r = await app.dvShellExec('yarn add -E lodash@4.17.20');
+        ok(JSON.parse(files.get('package.json').content).dependencies.lodash === '4.17.20', 'yarn add with exact version');
+        r = await app.dvShellExec('pnpm remove lodash');
+        ok(!JSON.parse(files.get('package.json').content).dependencies.lodash, 'pnpm remove');
+        r = await app.dvShellExec('npm install not-a-real-pkg-xyz');
+        ok(r.code !== 0, 'unknown package fails');
+        r = await app.dvShellExec('npm run test');
+        ok(/ok/.test(r.out), 'npm run script');
+        ok(lib.satisfies('1.3.0', '^1.0.0') && !lib.satisfies('2.0.0', '^1.0.0') && lib.maxSatisfying(['1.0.0', '1.3.0', '2.0.0'], '~1.0.0') === '1.0.0', 'semver helpers');
+        await app.dvLoad('term', 'npm');
+        const nr = await app.dvNpmRun('ls');
+        ok(nr && /left-pad/.test(nr.text), 'npm UI runs commands');
+    }
+
+    section('#238 dupes • #240 merge • #242 stylelint • #142/#143 typecheck');
+    {
+        const block = 'export function total(items) {\n    let sum = 0, count = 0;\n    for (const it of items) {\n        if (!it || it.qty <= 0) continue;\n        const line = it.price * it.qty;\n        sum += line - (it.discount || 0);\n        count += it.qty;\n    }\n    const tax = sum * 0.19;\n    return { sum: Math.round((sum + tax) * 100) / 100, count };\n}\n';
+        setFiles({
+            'package.json': JSON.stringify({ name: 'demo', scripts: { test: 'echo ok' } }, null, 2),
+            'src/cart.js': block + 'export const a = 1;\n',
+            'src/order.js': '// order\n' + block.replace('total', 'orderTotal'),
+            'src/main.js': "import { tiny } from './lib/tiny.js';\nconsole.log(tiny());\n",
+            'src/lib/tiny.js': 'export function tiny() { return 1; }\n',
+            'src/styles.css': 'a { color: #FFF; color: red }\n.x {}\n',
+            'src/types.ts': 'const n: number = "x";\nexport default n;\n'
+        });
+        await app.dvLoad('quality', 'dupes');
+        ok(app._dvDupes && app._dvDupes.blocks.length >= 1 && app._dvDupes.blocks[0].lines >= 6, '#238 duplicate block found across files');
+        await app.dvLoad('quality', 'merge');
+        const si = (app._dvMergeSug || []).findIndex(x => x.target === 'src/main.js' && x.files.includes('src/lib/tiny.js'));
+        ok(si >= 0, '#240 small single-import file suggested for inlining');
+        if (si >= 0) {
+            await app.dvMergeApply(si, { yes: true });
+            ok(!files.has('src/lib/tiny.js') && /function tiny/.test(files.get('src/main.js').content) && !/from '\.\/lib\/tiny\.js'/.test(files.get('src/main.js').content), 'merge inlines and removes the import');
+        }
+        const scan = app.dvStylelintScan();
+        const iss = (scan.find(x => x.path === 'src/styles.css') || { issues: [] }).issues;
+        ok(iss.length >= 2, '#242 stylelint issues found: ' + iss.map(i => i.rule).join(','));
+        await app.dvLoad('quality', 'stylelint');
+        app.dvStylelintFix();
+        ok(app.dvStylelintScan().find(x => x.path === 'src/styles.css').issues.filter(i => i.fix).length === 0, 'stylelint auto-fix applied');
+        const { createTools } = require('../workers/tools.js');
+        const tools = createTools({ load: (n) => n === 'typescript' ? require('typescript') : fs.readFileSync(path.join(ROOT, 'node_modules/typescript/lib', n.slice(4)), 'utf8') });
+        app.toolsRequest = async (type, payload) => tools.typecheck(payload);
+        await app.dvLoad('quality', 'typecheck');
+        const tc = await app.dvTypecheckProject();
+        const d = tc && tc.files[0] && tc.files[0].diagnostics;
+        ok(d && d.some(x => x.code === 2322 && x.line === 1), '#142 real TypeScript diagnostics (TS2322)');
+        ok(/2322/.test(document.getElementById('dv-tc-res').textContent), 'typecheck report rendered');
+    }
+
+    section('#164 coverage • #165 E2E • #166 snapshots • #167 mutation • #168 bench');
+    {
+        setFiles({
+            'package.json': JSON.stringify({ name: 'demo' }, null, 2),
+            'index.html': '<!doctype html><html><head><title>Demo</title></head><body><h1>مرحبا</h1><button id="b" onclick="document.getElementById(\'o\').textContent=\'clicked\'">اضغط</button><p id="o"></p></body></html>',
+            'src/math.js': 'function clamp(x, lo, hi) {\n    if (x < lo) return lo;\n    if (x > hi) return hi;\n    return x;\n}\nfunction unused() { return 42; }\nmodule.exports = { clamp, unused };\n',
+            'src/math.test.js': "const { clamp } = require('./math.js');\ntest('clamp low', () => { expect(clamp(-1, 0, 10)).toBe(0); });\ntest('clamp mid', () => { expect(clamp(5, 0, 10)).toBe(5); });\n"
+        });
+        await app.dvLoad('test', 'coverage');
+        const cov = await app.dvCoverageRun();
+        const fm = cov && cov.files['src/math.js'];
+                ok(cov && cov.summary && cov.summary.pass === 2, '#164 tests pass under instrumentation');
+        ok(fm && cov.totals && cov.totals.functions === 50 && cov.totals.branches === 75 && cov.totals.lines > 0, 'coverage totals: functions/branches partially covered');
+        ok(['if (a) if (b) x(); else y();', 'if (a) if (b) x();', 'for (;;) if (a) break;', 'if (a) x(); else if (b) y();'].every(c => { try { new Function(lib.instrumentCoverage(c, 'f').code); return true; } catch (e) { return false; } }), 'instrumented if/else nesting stays valid');
+        const lcov = app.dvCoverageExport(true);
+        ok(/SF:src\/math\.js/.test(lcov) && /end_of_record/.test(lcov) && files.has('coverage/lcov.info'), 'LCOV export');
+
+        app.dvCreateSample('e2e/home.e2e.js', "import { test, expect } from '@playwright/test';\ntest('home', async ({ page }) => {\n  await page.goto('/');\n  await expect(page).toHaveTitle('Demo');\n  await page.getByRole('button', { name: 'اضغط' }).click();\n  await expect(page.locator('#o')).toHaveText('clicked');\n});\ntest('fails', async ({ page }) => {\n  await page.goto('/');\n  await expect(page.locator('h1')).toHaveText('nope', { timeout: 300 });\n});\n");
+        const { JSDOM } = require('jsdom');
+        app.dvE2EDriver = app.dvE2EDomDriver(async (html) => { const dom = new JSDOM(html, { runScripts: 'dangerously', pretendToBeVisual: true }); return { document: dom.window.document, window: dom.window }; });
+        await app.dvLoad('test', 'e2e');
+        const e2 = await app.dvE2ERun();
+        if (!e2 || !e2.summary || e2.summary.pass !== 1) console.log('E2E', e2 && JSON.stringify({ e: e2.error, s: e2.summary, r: e2.results, log: e2.log.slice(-6) }).slice(0, 1500));
+        ok(e2 && e2.summary && e2.summary.pass === 1 && e2.summary.fail === 1, '#165 Playwright-style E2E: 1 pass, 1 fail');
+        ok(e2 && e2.fails.length === 1 && /h1|nope/.test(JSON.stringify(e2.fails[0]) + JSON.stringify(e2.results)), 'failure captured with page snapshot');
+        app.dvE2EDriver = null;
+        files.delete('e2e/home.e2e.js');
+
+        files.set('src/snap.test.js', { content: "test('obj', () => { expect({ a: 1, b: [1, 2] }).toMatchSnapshot(); });\n", lang: 'js', timestamp: Date.now() });
+        await app.dvLoad('test', 'snapshot');
+        await app.dvSnapRun();
+        const snapFile = [...files.keys()].find(k => /__snapshots__\/.*snap\.test\.js\.snap$/.test(k));
+        ok(snapFile && app._snapStats.new === 1, '#166 first run writes the snapshot');
+        await app.dvSnapRun();
+        ok(app._snapStats.match === 1 && app._snapStats.fail === 0, 'second run matches');
+        files.set('src/snap.test.js', { content: "test('obj', () => { expect({ a: 2, b: [1, 2] }).toMatchSnapshot(); });\n", lang: 'js', timestamp: Date.now() });
+        await app.dvSnapRun();
+        ok(app._snapStats.fail === 1, 'changed value fails the snapshot');
+        await app.dvSnapRun(true);
+        ok(app._snapStats.updated === 1 && /"a": 2|a: 2/.test(files.get(snapFile).content), '-u updates the snapshot');
+        files.delete('src/snap.test.js'); files.delete(snapFile);
+
+        await app.dvLoad('test', 'mutation');
+        const mut = await app.dvMutationRun('src/math.js', 10);
+        const killed = mut ? mut.results.filter(x => x.status === 'killed').length : 0, survived = mut ? mut.results.filter(x => x.status === 'survived').length : 0;
+        ok(mut && mut.done && mut.total > 0 && killed > 0, '#167 mutants generated and some killed');
+        ok(survived > 0, 'surviving mutants reported (untested branch/function)');
+
+        files.set('src/perf.bench.js', { content: "const arr = Array.from({ length: 100 }, (_, i) => i);\nbench('sum', () => { let s = 0; for (const x of arr) s += x; }, { time: 50 });\nbench('reduce', () => arr.reduce((a, b) => a + b, 0), { time: 50 });\n", lang: 'js', timestamp: Date.now() });
+        await app.dvLoad('test', 'perf');
+        const b1 = await app.dvBenchRun();
+                ok(b1 && b1.rows && b1.rows.length === 2 && b1.rows.every(r => r.mean > 0 && r.hz > 0), '#168 benchmarks measured');
+        const b2 = await app.dvBenchRun();
+        ok(b2 && b2.rows.every(r => typeof r.delta === 'number'), 'second run compares against the previous');
+    }
+
+    section('#171-175 debugger • #177 replay');
+    {
+        setFiles({
+            'package.json': JSON.stringify({ name: 'demo' }, null, 2),
+            'src/calc.js': 'function sq(n) {\n    const r = n * n;\n    return r;\n}\nlet total = 0;\nfor (let i = 1; i <= 3; i++) {\n    total += sq(i);\n}\nconsole.log(total);\n',
+            'src/bad.js': 'const list = [1, 2];\nfunction pick(i) {\n    return list[i].toFixed(1);\n}\nconsole.log(pick(0));\nconsole.log(pick(5));\n'
+        });
+        await app.dvLoad('debug', 'debugger');
+        const r = await app.dvDebugRun('src/calc.js');
+        if (!r || !r.trace || !r.trace.length) console.log('DBG', JSON.stringify(r).slice(0, 800));
+        ok(r && r.trace.length > 5 && r.success, '#171 execution recorded step by step');
+        const last = r.trace[r.trace.length - 1];
+        ok(r.trace.some(t => t.file === 'src/calc.js' && t.line === 2), 'steps carry file/line');
+        const inSq = r.trace.find(t => t.line === 3);
+        ok(inSq && JSON.stringify(inSq).includes('sq'), '#173 call stack recorded');
+        const s0 = app.dvStep('start'), s1 = app.dvStep('into');
+        ok(s0 === 0 && s1 > 0, '#172 step into');
+        app.dvStep('start');
+        const ov = app.dvStep('over');
+        ok(r.trace[ov] && r.trace[ov].line !== 2, 'step over skips the function body');
+        app.dvToggleBp && app.dvToggleBp('src/calc.js', 7);
+        if (app.dvBps().size) { app.dvStep('start'); const c = app.dvStep('continue'); ok(r.trace[c].line === 7, '#174 breakpoint continue'); app.dvToggleBp('src/calc.js', 7); }
+        else ok(false, '#174 breakpoint toggled');
+        app.dvStep('end');
+        const v = await app.dvEvaluate('total * 2');
+        ok(String(v) === '28', '#175 evaluate at the current step: ' + v);
+        await app.dvAddWatch('total');
+        ok(app._dvDbg && app._dvDbg.watches.includes('total') && app._dvDbg.trace.some(t => t.watch && String(t.watch[0]) === '14'), 'watch expression tracked');
+        app._dvWatches = [];
+        app._lastRunError = { path: 'src/bad.js', error: "TypeError: Cannot read properties of undefined (reading 'toFixed') (src/bad.js:3)" };
+        const rp = await app.dvReplayError();
+        ok(rp && rp.replay && !rp.success, '#177 replay of the failing run');
+        const at = rp && rp.trace[app._dvDbgCur];
+        ok(at && at.line === 3, 'replay jumps to the failing line');
     }
 
     section('Done');

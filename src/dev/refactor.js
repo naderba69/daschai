@@ -432,9 +432,10 @@ export function installRefactor(P) {
     };
     /** Build a ZIP for a folder (Blob). Exposed for tests (needs JSZip). */
     P.dvZipFolder = async function (dir, { exclude = true, relative = true } = {}) {
-        if (typeof JSZip === 'undefined' && this.ensureJSZip) await this.ensureJSZip();
-        if (typeof JSZip === 'undefined') throw new Error('مكتبة ZIP غير محملة');
-        const zip = new JSZip();
+        if (!globalThis.JSZip && this.ensureJSZip) await this.ensureJSZip();
+        const Z = globalThis.JSZip;
+        if (!Z) throw new Error('مكتبة ZIP غير محملة');
+        const zip = new Z();
         const paths = this.projectPaths().filter(p => (!dir || p.startsWith(dir + '/')) && !(exclude && SKIP_DIRS.test(p)));
         paths.forEach(p => {
             const f = this.virtualProjectFiles.get(p);

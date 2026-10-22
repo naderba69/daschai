@@ -1,5 +1,5 @@
 {
-  "version": "2.12.0",
+  "version": "2.13.0",
   "chunks": {
     "shared": [
       "assets/studio/chunk-3LU2HVRM.mjs",
@@ -11,9 +11,9 @@
       "assets/studio/chunk-W7FP2L2O.mjs",
       "assets/studio/chunk-YSTU5W3L.mjs"
     ],
-    "dev": "assets/studio/dev-OA3DREXO.mjs",
+    "dev": "assets/studio/dev-OBER7Q47.mjs",
     "studio": "assets/studio/studio-2ZMIRG67.mjs",
-    "runner": "assets/studio/runner-5ZU54D5D.mjs",
+    "runner": "assets/studio/runner-5D3J6XHR.mjs",
     "ui": "assets/studio/ui-QINGKZB4.mjs",
     "ai": "assets/studio/ai-OHNEFGOG.mjs",
     "github": "assets/studio/github-ZAWNKUZX.mjs",
@@ -737,10 +737,10 @@
       "br": 24202
     },
     {
-      "name": "assets/studio/dev-OA3DREXO.mjs",
-      "size": 384379,
+      "name": "assets/studio/dev-OBER7Q47.mjs",
+      "size": 384369,
       "gzip": 127797,
-      "br": 106504
+      "br": 106627
     },
     {
       "name": "assets/studio/chunk-NAYT2QE5.mjs",
@@ -851,10 +851,10 @@
       "br": 90046
     },
     {
-      "name": "assets/studio/runner-5ZU54D5D.mjs",
-      "size": 284239,
-      "gzip": 75152,
-      "br": 65027
+      "name": "assets/studio/runner-5D3J6XHR.mjs",
+      "size": 284390,
+      "gzip": 75209,
+      "br": 65035
     },
     {
       "name": "assets/studio/chunk-2EPK7E37.mjs",

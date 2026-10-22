@@ -340,6 +340,8 @@ export function oxRuntimeExt(x) {
             var r2 = dbRequest(method, m[1], m[2] != null ? decodeURIComponent(m[2]) : null, u.query, readBody(init));
             if (r2) return x.makeRes(r2.status, r2.body, r2.headers, url);
         }
+        // json-server semantics: with a mock DB, unknown /api/* routes are a local 404 (not a network call)
+        if (cfg.db && /^\/api\//.test(p)) return x.makeRes(404, { error: 'لا توجد مجموعة بهذا الاسم في mocks/db.json', collections: Object.keys(db) }, null, url);
         return null;
     });
 

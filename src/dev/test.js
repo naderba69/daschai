@@ -327,7 +327,7 @@ if(document.readyState==='complete')post({ready:1});else window.addEventListener
         const used = {};
         this._updateSnapshots = !!update;
         try {
-            const r = await this.dvRunTests(tests, { onMessage: (m) => { if (m.type === 'snapshot') this.recordSnapshot(m, null); if (m.type === 'snapshots-used') Object.entries(m.used || {}).forEach(([f, keys]) => { used[f] = (used[f] || []).concat(keys); }); } });
+            const r = await this.dvRunTests(tests, { onMessage: (m) => { if (m.type === 'snapshots-used') Object.entries(m.used || {}).forEach(([f, keys]) => { used[f] = (used[f] || []).concat(keys); }); } });
             this._dvSnapUsed = used;
             this._dvSnapLast = r;
             await this.dvRefresh();

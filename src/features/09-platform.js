@@ -388,7 +388,8 @@
             ask: () => { const i = document.getElementById('user-input'); if (i) { i.value = q.get('q') || ''; i.dispatchEvent(new Event('input')); i.focus(); } },
             agent: () => this.startVoiceAgent && this.startVoiceAgent(),
             drive: () => this.openPerfHub && this.openPerfHub('modes', 'driving'),
-            perf: () => this.openPerfHub && this.openPerfHub(q.get('tab') || undefined)
+            perf: () => this.openPerfHub && this.openPerfHub(q.get('tab') || undefined),
+            dev: () => this.openDevLab(q.get('tab') || undefined)
         };
         if (map[action]) setTimeout(() => map[action](), 300);
         return { kind: 'action', action };

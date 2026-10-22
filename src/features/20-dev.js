@@ -42,7 +42,7 @@
 
     // ------------------------------------------------------------------ #270 file icon themes
     P.iconTheme = function () {
-        if (this._iconTheme === undefined) { const t = ls('ox_icon_theme_v1', null); this._iconTheme = t && typeof t === 'object' && t.ext ? t : null; }
+        if (this._iconTheme === undefined) { const t = ls('ox_icon_theme_v1', null); this._iconTheme = t && typeof t === 'object' && t.ext && t.names ? t : null; }
         return this._iconTheme;
     };
     const _fileIcon = P.fileIcon;

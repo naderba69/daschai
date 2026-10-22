@@ -1,11 +1,11 @@
 {
- "version": "2.12.0",
+ "version": "2.13.0",
  "channel": "stable",
- "builtAt": "2026-10-22T06:02:59.017Z",
+ "builtAt": "2026-10-22T06:13:26.028Z",
  "entries": {
-  "/assets/studio/dev-OA3DREXO.mjs": "dev",
+  "/assets/studio/dev-OBER7Q47.mjs": "dev",
   "/assets/studio/studio-2ZMIRG67.mjs": "studio",
-  "/assets/studio/runner-5ZU54D5D.mjs": "runner",
+  "/assets/studio/runner-5D3J6XHR.mjs": "runner",
   "/assets/studio/ui-QINGKZB4.mjs": "ui",
   "/assets/studio/ai-OHNEFGOG.mjs": "ai",
   "/assets/studio/github-ZAWNKUZX.mjs": "github",
@@ -15,11 +15,11 @@
  },
  "files": {
   "/index.html": {
-   "h": "ca00c029278f",
-   "gz": 256626
+   "h": "fed2e9a332d6",
+   "gz": 256643
   },
   "/sw.js": {
-   "h": "d26a5fa90cef",
+   "h": "84202c7625f5",
    "gz": 5230
   },
   "/manifest.json": {
@@ -502,9 +502,9 @@
    "h": "87f2868ce2e4",
    "gz": 30368
   },
-  "/assets/studio/dev-OA3DREXO.mjs": {
-   "h": "b1dbc9470271",
-   "gz": 128141
+  "/assets/studio/dev-OBER7Q47.mjs": {
+   "h": "931367c1bcc3",
+   "gz": 128136
   },
   "/assets/studio/chunk-NAYT2QE5.mjs": {
    "h": "b24eb1f8c141",
@@ -578,9 +578,9 @@
    "h": "de7773386c23",
    "gz": 104596
   },
-  "/assets/studio/runner-5ZU54D5D.mjs": {
-   "h": "cbd3cfc55d4e",
-   "gz": 75528
+  "/assets/studio/runner-5D3J6XHR.mjs": {
+   "h": "d22b0a106d4e",
+   "gz": 75583
   },
   "/assets/studio/chunk-2EPK7E37.mjs": {
    "h": "ed17fb190be8",
