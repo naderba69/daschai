@@ -9,17 +9,16 @@
 4. اضغط Deploy — سيعمل `vercel.json` تلقائياً (Security Headers + Rewrites)
 5. للتحقق محلياً قبل الدفع: `npm run vercel-build` ثم `npx serve public`. و`npm test` يفحص أن `vercel.json` لا يحوي مفاتيح يرفضها Vercel وأن مجلد المخرجات كامل
 
-## النشر عبر Termux (آمن محدث)
+## التطوير على Termux
 ```bash
 pkg update -y && pkg install git nodejs -y
-cd ~/storage/downloads || cd /sdcard/Download
-unzip -o ox-alpha-workbench-pro.zip -d ~/daschai && cd ~/daschai
-node build.js --minify
-git init && git branch -M main
-git add . && git commit -m "feat: OX-Alpha Pro v2 — audited & secured"
-git remote add origin https://github.com/naderba69/daschai.git
-git push -u origin main --force
+git clone https://github.com/naderba69/daschai.git ~/daschai
+cd ~/daschai
+npm ci
+npm run build:minify
 ```
+
+لتحديث نسخة مستنسخة موجودة، استخدم `git pull --ff-only` بعد الانتقال إلى الفرع المقصود. لا تُنشئ نسخة مستقلة ثم تدفعها قسراً إلى `main`؛ افتح Pull Request للتغييرات.
 
 ## التحقق المحلي
 ```bash

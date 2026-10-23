@@ -228,7 +228,9 @@ let W = null, teardown = () => {};
     const before = imported.length;
     app.setEditorSettings({ keymap: 'vim' });
     await waitFor(() => app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode'));
-    ok(app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode') && imported.length === before, 'vim keymap: its chunk loads on demand (not part of the editor chunk) and activates');
+    // Sprint 14 may idle-load the unrelated widgets chunk after 4s; don't mistake that background import for a Vim dependency.
+    const vimAppChunks = imported.slice(before).filter(url => /vim/i.test(url));
+    ok(app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode') && vimAppChunks.length === 0, `vim keymap loads on demand outside app chunks and activates${vimAppChunks.length ? ': ' + vimAppChunks.join(', ') : ''}`);
     app.setEditorSettings({ keymap: 'default' });
     await wait(20);
     ok(!app.codeEditor.view.scrollDOM.classList.contains('cm-vimMode'), 'back to the default keymap');
