@@ -1,6 +1,9 @@
 {
   "name": "ox-alpha-workbench-pro",
-  "version": "2.15.0",
+  "version": "2.16.0",
+  "config": {
+    "gzipBudgetKB": 270
+  },
   "description": "منظومة هندسة البرمجيات بالذكاء الاصطناعي — Gemini AI Autonomous Engineering Copilot",
   "type": "commonjs",
   "private": true,

@@ -190,12 +190,12 @@ try {
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
 
     <!-- Critical libraries (loaded sync) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
     <!-- JSZip and Mermaid are lazy-loaded on first use (src/features/09-platform.js) -->
@@ -284,9 +284,10 @@ ${appJsContent}
     // What actually travels over the network: Vercel serves index.html compressed (gzip/brotli)
     const gzipKB = (require('zlib').gzipSync(fullHtml, { level: 9 }).length / 1024).toFixed(1);
     const brKB = (require('zlib').brotliCompressSync(fullHtml, { params: { [require('zlib').constants.BROTLI_PARAM_QUALITY]: 11 } }).length / 1024).toFixed(1);
-    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget 250 KB) • brotli: ${brKB} KB`);
-    if (parseFloat(gzipKB) > 250) {
-        console.warn(`⚠️  Warning: compressed bundle >250KB (${gzipKB}KB) — consider code splitting`);
+    const budgetKB = (JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8')).config || {}).gzipBudgetKB || 270; // single source: package.json config.gzipBudgetKB
+    console.log(`   🗜️  gzip: ${gzipKB} KB transferred (budget ${budgetKB} KB) • brotli: ${brKB} KB`);
+    if (parseFloat(gzipKB) > budgetKB) {
+        console.warn(`⚠️  Warning: compressed bundle >${budgetKB}KB (${gzipKB}KB) — consider code splitting`);
     }
 
 } catch (err) {

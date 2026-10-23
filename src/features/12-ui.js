@@ -136,7 +136,7 @@
         const ws = document.getElementById('content-workspace');
         if (ws) { if (u.studioWidth) ws.style.setProperty('--studio-width', clamp(u.studioWidth, 20, 80) + '%'); else ws.style.removeProperty('--studio-width'); }
         if (u.sidebarWidth) root.style.setProperty('--sidebar-width', clamp(u.sidebarWidth, 200, 440) + 'px'); else root.style.removeProperty('--sidebar-width');
-        if (u.fontUI) { this.loadWebFont(u.fontUI); root.style.setProperty('--font-arabic', `${u.fontUI === 'system-ui' ? 'system-ui' : `'${u.fontUI}'`}, 'Cairo', system-ui, sans-serif`); } else root.style.removeProperty('--font-arabic');
+        if (u.fontUI) { this.loadWebFont(u.fontUI); root.style.setProperty('--font-arabic', `${u.fontUI === 'system-ui' ? 'system-ui' : `'${u.fontUI}'`}, 'IBM Plex Sans Arabic', system-ui, sans-serif`); } else root.style.removeProperty('--font-arabic');
         if (u.fontCode) { this.loadWebFont(u.fontCode); root.style.setProperty('--font-mono', `'${u.fontCode}', 'Fira Code', ui-monospace, monospace`); } else root.style.removeProperty('--font-mono');
         this.applyBrand();
         this.applyQuickSuggestions();
@@ -197,6 +197,8 @@
             }
             const r = _origApplyTheme.call(this, name, silent);
             this.applyBrand();
+            // redraw on-screen Mermaid diagrams in the new palette (rare event; only when diagrams exist)
+            if (typeof mermaid !== 'undefined' && document.querySelector('.mermaid-diagram-container') && this.renderMessages) { try { this.renderMessages(); } catch (e) { } }
             return r;
         };
     }
@@ -204,6 +206,30 @@
         const cs = getComputedStyle(document.documentElement);
         const get = (v, d) => { const c = parseColor(cs.getPropertyValue(v)); return c ? toHex(c) : d; };
         return { bg: get('--bg-base', '#131314'), surface: get('--bg-surface', '#1e1f20'), card: get('--bg-card', '#282a2c'), text: get('--text-main', '#e3e3e3'), accent: get('--primary', '#8ab4f8') };
+    };
+    /** Mermaid config that follows the active theme: 'base' theme fed with the live design tokens
+     *  (so diagrams match Obsidian, Light, Dracula, custom…), instead of a fixed dark palette. */
+    P.mermaidConfig = function () {
+        const cs = getComputedStyle(document.documentElement);
+        const light = document.documentElement.getAttribute('data-theme') === 'light';
+        const c = this.readCurrentThemeColors();
+        const muted = (() => { const x = parseColor(cs.getPropertyValue('--text-muted')); return x ? toHex(x) : (light ? '#5b606b' : '#a0a3ab'); })();
+        return {
+            startOnLoad: false, securityLevel: 'strict', htmlLabels: false, theme: 'base',
+            // natural-size SVGs: CSS fits them on wide screens and lets narrow ones scroll (readable text)
+            ...Object.fromEntries(['flowchart', 'sequence', 'class', 'state', 'er', 'gantt', 'journey', 'pie', 'mindmap', 'timeline', 'gitGraph', 'quadrantChart', 'requirement'].map(k => [k, { useMaxWidth: false }])),
+            themeVariables: {
+                darkMode: !light, fontFamily: 'Inter, "IBM Plex Sans Arabic", sans-serif', fontSize: '14px',
+                background: c.surface, mainBkg: c.card, textColor: c.text, titleColor: c.text, lineColor: muted,
+                primaryColor: c.card, primaryTextColor: c.text, primaryBorderColor: c.accent, nodeBorder: c.accent,
+                secondaryColor: c.surface, secondaryTextColor: c.text, secondaryBorderColor: muted,
+                tertiaryColor: c.bg, tertiaryTextColor: c.text, tertiaryBorderColor: muted,
+                clusterBkg: c.surface, clusterBorder: muted, edgeLabelBackground: c.surface,
+                noteBkgColor: c.surface, noteTextColor: c.text, noteBorderColor: muted,
+                actorBkg: c.card, actorBorder: c.accent, actorTextColor: c.text, actorLineColor: muted,
+                signalColor: muted, signalTextColor: c.text, labelBoxBkgColor: c.card, labelBoxBorderColor: muted, labelTextColor: c.text,
+            },
+        };
     };
     P.setCustomThemeColor = function (key, value) {
         if (!HEX.test(value || '')) return false;
@@ -230,10 +256,10 @@
     };
 
     // ------------------------------------------------------------------ FONTS (#274)
-    P.UI_FONTS = [['', 'Cairo (افتراضي)'], ['Tajawal', 'Tajawal'], ['IBM Plex Sans Arabic', 'IBM Plex Sans Arabic'], ['Noto Kufi Arabic', 'Noto Kufi Arabic'], ['Almarai', 'Almarai'], ['Readex Pro', 'Readex Pro'], ['Inter', 'Inter'], ['system-ui', 'خط النظام']];
+    P.UI_FONTS = [['', 'IBM Plex Sans Arabic (افتراضي)'], ['Cairo', 'Cairo'], ['Tajawal', 'Tajawal'], ['Noto Kufi Arabic', 'Noto Kufi Arabic'], ['Almarai', 'Almarai'], ['Readex Pro', 'Readex Pro'], ['Inter', 'Inter'], ['system-ui', 'خط النظام']];
     P.CODE_FONTS = [['', 'افتراضي'], ['Fira Code', 'Fira Code'], ['JetBrains Mono', 'JetBrains Mono'], ['Source Code Pro', 'Source Code Pro'], ['IBM Plex Mono', 'IBM Plex Mono'], ['Roboto Mono', 'Roboto Mono']];
     P.loadWebFont = function (name) {
-        if (!name || name === 'system-ui' || name === 'Cairo') return false;
+        if (!name || name === 'system-ui' || name === 'IBM Plex Sans Arabic' || name === 'Inter' || name === 'JetBrains Mono') return false;
         this._fontsLoaded = this._fontsLoaded || new Set();
         if (this._fontsLoaded.has(name)) return false;
         this._fontsLoaded.add(name);
@@ -687,7 +713,7 @@
         if (navName) navName.textContent = name || 'OX-Alpha';
         const title = document.querySelector('.brand-title');
         if (title && title.firstChild && title.firstChild.nodeType === 3) title.firstChild.textContent = (name || 'OX-Alpha') + ' ';
-        document.querySelectorAll('.nav-sparkle, .gemini-sparkle-icon').forEach(el => { el.textContent = b.emoji || '✦'; });
+        document.querySelectorAll('.nav-sparkle, .gemini-sparkle-icon').forEach(el => { if (b.emoji) el.textContent = b.emoji; else el.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i>'; });
         document.title = name ? `${name} — Workbench` : this._origTitle;
         if (b.accent && HEX.test(b.accent)) { document.documentElement.style.setProperty('--primary', b.accent); document.documentElement.style.setProperty('--brand-accent', b.accent); }
         else document.documentElement.style.removeProperty('--brand-accent');
@@ -1191,8 +1217,20 @@
             ]);
         };
     }
+    // ------------------------------------------------------------------ SIDEBAR TOOLS: collapsible section (clean layout, state remembered)
+    P.toggleSidebarTools = function (open) {
+        const nav = document.querySelector('.sidebar-footer-nav'), btn = document.getElementById('tools-toggle');
+        if (!nav) return false;
+        const on = typeof open === 'boolean' ? open : !nav.classList.contains('open');
+        nav.classList.toggle('open', on);
+        if (btn) btn.setAttribute('aria-expanded', String(on));
+        try { localStorage.setItem('ox_tools_open', on ? '1' : '0'); } catch (e) { /* private mode */ }
+        return on;
+    };
+    P.initSidebarTools = function () { let v = null; try { v = localStorage.getItem('ox_tools_open'); } catch (e) { /* ignore */ } this.toggleSidebarTools(v === '1'); };
     P.initSprint7UI = function () {
         this.getUIPrefs();
+        this.initSidebarTools();
         this.installNavExtras();
         this.installResizers();
         const ws = document.getElementById('content-workspace');

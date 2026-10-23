@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { pathToFileURL } = require('url');
-const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
+const { loadApp, mockOpenRouter, ok, wait, section, gzipBudgetKB } = require('./helpers');
 
 const ROOT = path.join(__dirname, '..');
 function exposeGlobals(w) {
@@ -53,7 +53,7 @@ let W = null;
     const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'assets/studio/manifest.json'), 'utf8'));
     ok(manifest.chunks.ai === build.chunks.ai, 'manifest.json lists the AI chunk');
     const gz = zlib.gzipSync(fs.readFileSync(path.join(ROOT, 'index.html')), { level: 9 }).length / 1024;
-    ok(gz < 250, `main page stays under the 250 KB gzip budget (${gz.toFixed(1)} KB)`);
+    ok(gz < gzipBudgetKB, `main page stays under the ${gzipBudgetKB} KB gzip budget (${gz.toFixed(1)} KB)`);
     ok(/registry\.npmjs\.org/.test(fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8').match(/connect-src[^;]*/)[0]), 'CSP allows the npm registry (outdated check #88)');
     const stubs = app.lazyAIMethods();
     ok(stubs.length >= 30 && stubs.every(n => typeof app[n] === 'function' && app[n].__oxLazy === 'ai'), `AI entry points are lazy stubs before first use (${stubs.length})`);

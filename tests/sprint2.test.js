@@ -176,6 +176,7 @@ const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
     const restored = boot2.app.sessions.find(s => s.id === 'sess_big');
     ok(boot2.app._idbRestored && restored && restored.messages[0].attachments[0].textContent.length === 50000, 'fresh boot restores full attachment from IndexedDB');
     ok(boot2.app.activeSessionId === 'sess_big', 'active session restored');
+    await boot2.app._collabReady; // let async init settle before tearing the window down (was a CI race)
     boot2.w.close();
 
     ok(errors.length === 0, 'no runtime errors' + (errors.length ? ': ' + errors.slice(0, 5).join(' | ') : ''));

@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const { pathToFileURL } = require('url');
-const { loadApp, mockOpenRouter, ok, wait, section } = require('./helpers');
+const { loadApp, mockOpenRouter, ok, wait, section, gzipBudgetKB } = require('./helpers');
 const { createGitHub } = require('./gh-mock');
 
 const ROOT = path.join(__dirname, '..');
@@ -67,7 +67,7 @@ let W = null;
     ok(manifest.chunks.github === build.chunks.github, 'manifest.json lists the GitHub chunk');
     const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     const gz = zlib.gzipSync(html, { level: 9 }).length / 1024;
-    ok(gz < 250, `main page stays under the 250 KB gzip budget (${gz.toFixed(1)} KB)`);
+    ok(gz < gzipBudgetKB, `main page stays under the ${gzipBudgetKB} KB gzip budget (${gz.toFixed(1)} KB)`);
     const csp = html.match(/connect-src[^;]*/)[0];
     ok(['uploads.github.com', 'codeload.github.com', 'gitlab.com', 'api.bitbucket.org', 'registry.npmjs.org', '*.blob.core.windows.net'].every(h => csp.includes(h)), 'CSP connect-src allows release uploads, GitLab/Bitbucket import and artifact downloads');
     ok(!/tweetnacl|blake2b/.test(html), 'crypto libraries are not in the main bundle');

@@ -64,6 +64,15 @@ function mockOpenRouter(responder) {
 let failures = 0;
 const ok = (cond, msg) => { console.log((cond ? '✅' : '❌') + ' ' + msg); if (!cond) { failures++; process.exitCode = 1; } };
 const wait = (ms) => new Promise(r => setTimeout(r, ms));
+/** Poll until cond() is truthy (or timeout). Returns as soon as it holds — robust on slow/loaded CI runners
+ *  where a fixed sleep is a coin flip; never slower than needed on a fast machine. */
+const waitFor = async (cond, timeoutMs = 10000, stepMs = 20) => {
+    const end = Date.now() + timeoutMs;
+    for (;;) { let v; try { v = cond(); } catch (e) { v = false; } if (v) return v; if (Date.now() > end) return false; await wait(stepMs); }
+};
 const section = (t) => console.log('\n— ' + t);
 
-module.exports = { loadApp, mockOpenRouter, ok, wait, section, getFailures: () => failures };
+/** Main-page gzip budget — single source of truth in package.json → config.gzipBudgetKB */
+const gzipBudgetKB = require('../package.json').config.gzipBudgetKB;
+
+module.exports = { gzipBudgetKB, loadApp, mockOpenRouter, ok, wait, waitFor, section, getFailures: () => failures };

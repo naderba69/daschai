@@ -6,7 +6,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { loadApp, ok, wait, section } = require('./helpers');
+const { loadApp, ok, wait, section, gzipBudgetKB } = require('./helpers');
 
 const ROOT = path.join(__dirname, '..');
 const read = (p) => fs.readFileSync(path.join(ROOT, p), 'utf8');
@@ -114,7 +114,45 @@ function computed(rules, selector, prop, vp) {
     ok(!/<!-- Sidebar/.test(html) && /<pre/.test(html) === /<pre/.test(layout), 'layout comments are stripped, <pre> blocks kept');
     const zlib = require('zlib');
     const gz = zlib.gzipSync(html, { level: 9 }).length / 1024;
-    ok(gz < 250, `main page stays under the 250 KB gzip budget (${gz.toFixed(1)} KB)`);
+    ok(gz < gzipBudgetKB, `main page stays under the ${gzipBudgetKB} KB gzip budget (${gz.toFixed(1)} KB)`);
+
+    section('v2.16 design system: tokens, clean chrome, compact phone banners');
+    const rootTok = (css.match(/:root \{([\s\S]*?)\n\}/) || [])[1] || '';
+    ok(/--primary: #5b9bff/.test(rootTok) && /--accent: #2f74f0/.test(rootTok) && /--radius-pill: 8px/.test(rootTok), 'one blue accent + crisp radii are the root tokens');
+    ok(!/#c084fc|155, 114, 207/.test(css), 'no leftover purple accent / glow colours in the main stylesheet');
+    ok(computed(rules, '.sidebar-footer-nav:not(.open) .sidebar-tools-grid', 'display', DESK) === 'none', 'the tools section is collapsible (hidden until opened)');
+    ok(computed(rules, '.input-kbd-hint', 'display', DESK) === 'none' && computed(rules, 'body.has-msgs .quick-suggestions-carousel', 'display', PHONE) === 'none', 'hints are hidden; suggestion chips disappear once the chat has messages');
+    ok(computed(rules, '.ox-banner', 'flex-wrap', PHONE) === 'nowrap' && computed(rules, '.top-tabs-bar.visible', 'display', PHONE) === 'none' && computed(rules, '.top-tabs-bar.visible', 'display', DESK) !== 'none', 'phones: banners stay one compact row; the tabs bar gives way to the drawer');
+    ok(computed(rules, '.top-tabs-bar', 'order', DESK) === '-1' && computed(rules, '.top-navbar', 'order', DESK) === '-2', 'the tabs bar always sits right under the navbar (above banners)');
+    const lay = read('src/layout.html');
+    ok(/id="tools-toggle"[^>]*aria-expanded="false"[^>]*aria-controls="sidebar-tools-grid"/.test(lay) && /id="sidebar-tools-grid"/.test(lay), 'the tools toggle is an accessible disclosure button');
+    ok(!/[✦↗]/.test(lay), 'no font-dependent symbol glyphs in the layout (icons instead)');
+    ok(!/['"](📌|⭐|🗄️)['"]/.test(read('src/features/13-conversations.js')), 'session filter chips use icons, not emoji');
+    ok(/IBM\+Plex\+Sans\+Arabic/.test(read('build.js')), 'IBM Plex Sans Arabic is the UI font');
+    const allCSS = [css, ...['ai', 'dev', 'integ', 'media', 'perf', 'studio', 'team', 'ui'].map(d => read(`src/${d}/${d}.css`)), read('src/integ/widgets.css')].join('\n');
+    ok(!/(?<![-\w])color:\s*(#34d399|#4ade80|#fbbf24|#f87171|#ef4444|#8ab4f8|#38bdf8|#93c5fd|#94a3b8|#cbd5e1|#e2e8f0|#64748b)\b/i.test(allCSS), 'status/text colours go through theme tokens (readable in light and dark), no fixed light-on-dark hex text');
+    const lightTok = (css.match(/\[data-theme="light"\] \{([\s\S]*?)\n\}/) || [])[1] || '';
+    ok(/--success: #047857/.test(lightTok) && /--warning: #b45309/.test(lightTok) && /--danger: #dc2626/.test(lightTok), 'light theme darkens the semantic colours for contrast on white');
+    ok(/\[data-theme="light"\] :is\(\.hljs-keyword/.test(css) && /\[data-theme="light"\] \.hljs \{/.test(css), 'highlight.js gets a light palette in the light theme');
+    ok(!/background: #121314/.test(lay) && !/style="[^"]*color: #fff;[^"]*min-width: 0;/.test(read('src/app.js')), 'no hard-coded dark panels / white text in app templates');
+    ok(!/(^|[\s,}])\.cm-line\b/.test(css) && /id="cmt-list"/.test(read('src/features/08-collab.js')) && !/getElementById\('cm-list'\)/.test(read('src/features/08-collab.js')), 'code comments no longer reuse CodeMirror\'s .cm-line (which restyled every editor line) nor the conversation manager\'s #cm-list');
+    ok(/\.code-studio-pane \{[^}]*container-type:\s*inline-size/.test(css) && /@container \(max-width: 720px\) \{ \.studio-action-btn > span:not\(\[class\]\) \{ display: none/.test(css) && /@container \(max-width: 480px\)[^\n]*\.studio-tabs-row \{ order: 1; flex-basis: 100%/.test(css) && computed(rules, '.studio-tabs-row', 'min-width', DESK) === '96px', 'studio header: open-file tabs keep room (icon-only actions on a narrow pane, two rows on very narrow)');
+    { const b = read('build.js'); const unpinned = (b.match(/cdn\.jsdelivr\.net\/npm\/(@[\w.-]+\/)?[\w.-]+\//g) || []).filter(u => !/@[\d]/.test(u.replace(/npm\/@[\w.-]+\//, 'npm/'))); ok(unpinned.length === 0 && /npm\/marked@15\.0\.12\/marked\.min\.js/.test(b), 'every jsDelivr npm script is version-pinned (unpinned marked 404s since v16 dropped marked.min.js → raw markdown) ' + unpinned.join(' ')); }
+    ok(/\.code-block-box \{\s*container-type:\s*inline-size/.test(css) && /@container \(max-width: 520px\) \{ \.code-tool-btn > span \{ display: none/.test(css) && /class="code-tool-btn test-btn" title="/.test(read('src/app.js')), 'narrow code blocks show icon-only tools, with names kept in title');
+    { // every in-app button uses FA icons, not font-dependent symbols/emoji (standalone export pages excluded: they have no FA)
+        const sym = /[\u2190-\u21FF\u2300-\u23FF\u2460-\u24FF\u2500-\u25FF\u2600-\u27BF\u2900-\u29FF\u2B00-\u2BFF]|[\uD83C-\uD83E][\uDC00-\uDFFF]/;
+        const walk = (d) => fs.readdirSync(path.join(ROOT, d), { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(d + '/' + e.name) : e.name.endsWith('.js') ? [d + '/' + e.name] : []);
+        const hits = [];
+        for (const f of walk('src')) read(f).split('\n').forEach((l, i) => { if (/<!doctype|<\/head>/i.test(l)) return; for (const m of l.matchAll(/<button\b[^>]*>([^<]{1,6})<\/button>/g)) if (sym.test(m[1])) hits.push(`${f}:${i + 1} ${m[1]}`); });
+        ok(hits.length === 0, 'no in-app <button> uses a symbol/emoji glyph as its icon ' + hits.slice(0, 5).join(' | '));
+    }
+    { const ui = read('src/features/12-ui.js'), plat = read('src/features/09-platform.js'), app = read('src/app.js');
+      ok(/P\.mermaidConfig = function/.test(ui) && /theme: 'base'/.test(ui) && /darkMode: !light/.test(ui) && /useMaxWidth: false/.test(ui) && /this\.mermaidConfig\(\)/.test(plat) && /mermaid\.initialize\(this\.mermaidConfig\(\)\)/.test(app) && !/theme: 'dark'/.test(plat + app), 'Mermaid diagrams follow the active theme tokens (no hard-coded dark palette) and re-init before each render');
+      ok(/\.mermaid-svg-box \{[^}]*background: var\(--bg-surface\)[^}]*direction: ltr/.test(css) && /@container \(max-width: 520px\) \{ \.mermaid-diagram-container \.mermaid-svg-box svg \{ max-width: none; flex-shrink: 0/.test(css), 'diagram box uses theme surface, scrolls from the diagram start, and keeps natural size on phones'); }
+    ok(/:where\(button\)\s*\{\s*color:\s*inherit/.test(css) && /:where\(a:not\(\[class\]\)\)\s*\{\s*color:\s*var\(--primary\)/.test(css), 'unstyled buttons/links follow the theme (no UA black text on dark cards, no #0000ee links)');
+    { const perf = read('src/perf/perf.css'), integ = read('src/integ/integ.css'); ok(!/(^|[^-])color:\s*#(0cce6b|ffa400|ff4e42)/.test(perf) && !/ix-lang-list[^{]*small\s*\{\s*opacity/.test(integ), 'perf ratings use semantic tokens and language codes use --text-muted (readable in the light theme)'); }
+    ok(computed(rules, '.cmd-palette-input', 'min-width', SMALL) === '0' && computed(rules, '.cmd-palette-footer', 'flex-wrap', SMALL) === 'wrap', '320px: the palette search field shrinks (Esc hint no longer clipped) and its footer wraps');
+    ok(/\.modal-header-bar > :not\(\.modal-title-heading\):not\(button\)/.test(css), 'header-group alignment no longer pushes icon buttons (close ×) off-centre');
 
     section('Runtime: menus flip above their anchor; the terminal fits its host');
     const { w, d, app, errors } = loadApp();
@@ -139,6 +177,18 @@ function computed(rules, selector, prop, vp) {
     ok(cols(340, 7.8) === 41 && cols(1000, 7.8) === 126 && cols(60, 7.8) === 20, 'columns follow the host width (41 on a phone instead of a fixed, cut-off 80)');
     ok(/new ResizeObserver\(\(\) => fit\(\)\)/.test(termSrc), 'the terminal refits on resize/rotation');
     ok(/Promise\.race\(\[SR\.available/.test(read('src/perf/audio.js')), 'the voice section never waits forever on SpeechRecognition.available()');
+    const tg = d.getElementById('tools-toggle'), fnav = d.querySelector('.sidebar-footer-nav');
+    ok(tg && fnav && !fnav.classList.contains('open') && tg.getAttribute('aria-expanded') === 'false', 'tools start collapsed');
+    app.toggleSidebarTools();
+    ok(fnav.classList.contains('open') && tg.getAttribute('aria-expanded') === 'true' && w.localStorage.getItem('ox_tools_open') === '1', 'toggling opens the tools and remembers the choice');
+    app.toggleSidebarTools(false);
+    const ses = app.sessions.find(x => x.id === app.activeSessionId);
+    if (ses) { ses.messages = [{ role: 'user', content: 'hi', timestamp: Date.now() }]; app.renderMessages(); }
+    ok(d.body.classList.contains('has-msgs'), 'body.has-msgs reflects a non-empty conversation');
+    if (ses) { ses.messages = []; app.renderMessages(); }
+    ok(!d.body.classList.contains('has-msgs'), '…and clears on an empty one');
+    const chipsHTML = (d.getElementById('sess-filter-bar') || {}).innerHTML || '';
+    ok(!chipsHTML || /fa-thumbtack/.test(chipsHTML), 'rendered filter chips carry icons');
     ok(errors.length === 0, `no runtime errors (${errors.slice(0, 2).join(' | ')})`);
 
     console.log(process.exitCode ? '\n❌ responsive test failed' : '\n✅ responsive test passed');

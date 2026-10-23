@@ -34,7 +34,7 @@ export function enhanceTable(table, { size = 25, doc } = {}) {
     const st = { q: '', sortCol: -1, sortDir: 1, page: 0, size };
     const bar = doc.createElement('div');
     bar.className = 'ox-tbar';
-    bar.innerHTML = '<input type="search" class="ox-tq" placeholder="تصفية…" aria-label="تصفية الجدول"><span class="ox-tcount"></span><span class="ox-tpager"><button class="ox-tprev" aria-label="السابق">‹</button><span class="ox-tpage"></span><button class="ox-tnext" aria-label="التالي">›</button></span><button class="ox-tcsv" title="تنزيل CSV">CSV</button><button class="ox-tcopy" title="نسخ كـ TSV">⧉</button>';
+    bar.innerHTML = '<input type="search" class="ox-tq" placeholder="تصفية…" aria-label="تصفية الجدول"><span class="ox-tcount"></span><span class="ox-tpager"><button class="ox-tprev" aria-label="السابق">‹</button><span class="ox-tpage"></span><button class="ox-tnext" aria-label="التالي">›</button></span><button class="ox-tcsv" title="تنزيل CSV">CSV</button><button class="ox-tcopy" title="نسخ كـ TSV"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>';
     table.parentNode.insertBefore(bar, table);
     const wrap = doc.createElement('div');
     wrap.className = 'ox-twrap';

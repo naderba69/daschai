@@ -901,7 +901,7 @@
         const list = ql ? all.filter(p => p.toLowerCase().includes(ql)) : all;
         this._ghRefs = [];
         tree.innerHTML = `<input class="form-input-box gh-tree-search" placeholder="🔍 بحث في ${all.length} ملف..." value="${this.escapeHTML(q || '')}" oninput="app.renderGitHubTreeList(this.value)" dir="ltr">`
-            + list.slice(0, 500).map(p => `<div class="session-item-row" style="padding:6px 10px" onclick="${call(this, 'previewGitHubFile', p)}"><i class="fa-solid fa-file-code" style="font-size:0.75rem;color:#34d399"></i><span class="truncate" style="font-family:var(--font-mono);font-size:0.76rem" dir="ltr">${this.escapeHTML(p)}</span></div>`).join('')
+            + list.slice(0, 500).map(p => `<div class="session-item-row" style="padding:6px 10px" onclick="${call(this, 'previewGitHubFile', p)}"><i class="fa-solid fa-file-code" style="font-size:0.75rem;color:var(--success)"></i><span class="truncate" style="font-family:var(--font-mono);font-size:0.76rem" dir="ltr">${this.escapeHTML(p)}</span></div>`).join('')
             + (list.length > 500 ? `<div class="gh-empty">+${list.length - 500} ملف — استخدم البحث</div>` : '');
         const input = tree.querySelector('input');
         if (input && q) { input.focus(); input.setSelectionRange(q.length, q.length); }
