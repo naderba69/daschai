@@ -37,8 +37,8 @@ function parseCSS(css) {
     return rules;
 }
 function mediaMatches(q, vp) {
-    // comma = OR; "and" = AND; unknown features (pointer, hover, prefers-*) are treated as not matching,
-    // except "screen"/"all". "print" never matches.
+    // comma = OR; "and" = AND. Viewport fixtures model pointer/hover capabilities explicitly;
+    // unsupported features remain non-matching. "screen"/"all" match; "print" never matches.
     return q.split(',').some(part => part.split(/\band\b/).every(t => {
         t = t.trim().replace(/^only\s+/, '');
         if (!t || t === 'screen' || t === 'all') return true;
@@ -47,6 +47,10 @@ function mediaMatches(q, vp) {
         if (m) { const v = m[2] === 'width' ? vp.w : vp.h; return m[1] === 'max' ? v <= +m[3] : v >= +m[3]; }
         const o = t.match(/^\(\s*orientation\s*:\s*(landscape|portrait)\s*\)$/);
         if (o) return (vp.w > vp.h ? 'landscape' : 'portrait') === o[1];
+        const p = t.match(/^\(\s*pointer\s*:\s*(coarse|fine|none)\s*\)$/);
+        if (p) return (vp.pointer || 'fine') === p[1];
+        const h = t.match(/^\(\s*hover\s*:\s*(hover|none)\s*\)$/);
+        if (h) return (vp.hover || 'hover') === h[1];
         return false;
     }));
 }
@@ -64,7 +68,7 @@ function computed(rules, selector, prop, vp) {
 (async () => {
     const css = read('src/styles.css');
     const rules = parseCSS(css);
-    const PHONE = { w: 390, h: 844 }, SMALL = { w: 320, h: 568 }, TABLET = { w: 768, h: 1024 }, DESK = { w: 1280, h: 800 }, LAND = { w: 844, h: 390 };
+    const PHONE = { w: 390, h: 844, pointer: 'coarse', hover: 'none' }, SMALL = { w: 320, h: 568, pointer: 'coarse', hover: 'none' }, TABLET = { w: 768, h: 1024, pointer: 'coarse', hover: 'none' }, DESK = { w: 1280, h: 800, pointer: 'fine', hover: 'hover' }, LAND = { w: 844, h: 390, pointer: 'coarse', hover: 'none' };
 
     section('Shell cascade at every breakpoint (the root cause of the broken phone layout)');
     for (const vp of [SMALL, PHONE, TABLET, LAND]) {
@@ -98,6 +102,12 @@ function computed(rules, selector, prop, vp) {
     const unclamped = cssFiles.flatMap(f => (read(f).match(/repeat\(\s*auto-(?:fill|fit)\s*,\s*minmax\(\s*\d+px/g) || []).map(m => `${f}: ${m}`));
     ok(cssFiles.length >= 10, `scanned ${cssFiles.length} stylesheets`);
     ok(unclamped.length === 0, `no fixed px track minimum can overflow a narrow container${unclamped.length ? ' → ' + unclamped.slice(0, 3).join(' | ') : ''}`);
+
+    section('Message editing actions — responsive and touch-friendly');
+    ok(computed(rules, '.msg-actions', 'flex-wrap', PHONE) === 'wrap' && computed(rules, '.msg-actions.is-user', 'max-width', PHONE) === '100%', 'message actions wrap and fit the full phone width');
+    ok(computed(rules, '.msg-card.usr.is-editing', 'max-width', PHONE) === '100%', 'the inline editor uses the full phone width instead of squeezing the textarea');
+    ok(computed(rules, '.msg-act', 'min-height', DESK) === '28px' && computed(rules, '.msg-act', 'min-height', PHONE) === '40px' && computed(rules, '.msg-actions.is-user', 'opacity', PHONE) === '1', 'touch: message actions stay visible without hover and targets grow to 40px');
+    ok(computed(rules, '.msg-edit-btns button', 'min-height', PHONE) === '40px', 'touch: inline edit actions also use 40px tap targets');
 
     section('Layout markup');
     const layout = read('src/layout.html');

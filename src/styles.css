@@ -3295,3 +3295,46 @@ html[dir="ltr"] .hero-action-card, html[dir="ltr"] .hub-mode-btn, html[dir="ltr"
     .session-actions-btns .sess-act { width: 32px; height: 32px; min-width: 32px; }
 }
 
+
+/* ==========================================================================
+   v2.17 — message actions, versions ‹ 2/3 ›, inline edit (src/features/22-branches.js)
+   ========================================================================== */
+.msg-actions { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; min-width: 0; }
+.msg-actions.is-user { margin-right: auto; max-width: 85%; opacity: 0; transition: opacity .15s ease; }
+.msg-bubble-row:hover .msg-actions.is-user, .msg-bubble-row:focus-within .msg-actions.is-user, .msg-actions.is-user:has(.msg-ver) { opacity: 1; }
+.msg-actions.is-bot { margin-inline-end: 6px; }
+.msg-actions.is-busy .msg-ver button { pointer-events: none; opacity: .4; }
+.msg-act { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 28px; min-width: 28px; padding: 3px 7px;
+    background: transparent; border: 1px solid transparent; border-radius: 6px; color: var(--text-muted); font: inherit; font-size: 0.72rem; font-weight: 500; cursor: pointer; transition: var(--transition); }
+.msg-act:hover:not(:disabled) { background: var(--bg-card); border-color: var(--border-subtle); color: var(--text-main); }
+.msg-act:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+.msg-act:disabled { opacity: .35; cursor: default; }
+.msg-act-regen i { color: var(--primary); }
+.msg-ver { display: inline-flex; align-items: center; gap: 0; direction: ltr; margin-inline-end: 4px; padding-inline-end: 6px; border-inline-end: 1px solid var(--border-subtle); }
+.msg-ver .msg-act { min-width: 24px; padding: 3px 4px; }
+.msg-ver-label { font-size: 0.72rem; font-variant-numeric: tabular-nums; color: var(--text-soft); min-width: 2.6em; text-align: center; }
+.msg-edited-tag { font-size: 0.68rem; color: var(--text-dim); font-style: italic; }
+
+.msg-card.usr.is-editing { width: 85%; max-width: 85%; padding: 8px; border-color: var(--primary); }
+.msg-edit-box { display: flex; flex-direction: column; gap: 8px; }
+.msg-edit-input { width: 100%; min-height: 64px; max-height: 320px; resize: vertical; box-sizing: border-box; padding: 8px 10px;
+    background: var(--bg-surface); color: var(--text-main); border: 1px solid var(--border-subtle); border-radius: 8px; font: inherit; line-height: 1.6; unicode-bidi: plaintext; }
+.msg-edit-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 22%, transparent); }
+.msg-edit-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.msg-edit-hint { font-size: 0.68rem; color: var(--text-dim); min-width: 0; }
+.msg-edit-btns { display: flex; gap: 6px; margin-inline-start: auto; }
+.msg-edit-btns button { display: inline-flex; align-items: center; gap: 6px; min-height: 30px; padding: 4px 12px; border-radius: 6px; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer; border: 1px solid var(--border-subtle); background: transparent; color: var(--text-soft); }
+.msg-edit-btns button:hover { background: var(--bg-card); color: var(--text-main); }
+.msg-edit-btns .msg-edit-send { background: var(--primary); border-color: var(--primary); color: #fff; }
+.msg-edit-btns .msg-edit-send:hover { background: color-mix(in srgb, var(--primary) 85%, #000); color: #fff; }
+
+/* touch screens have no hover: keep the row visible; phones: full-width edit box, 40px targets */
+@media (hover: none) { .msg-actions.is-user { opacity: 1; } }
+@media (pointer: coarse) { .msg-act { min-height: 40px; min-width: 40px; } .msg-ver .msg-act { min-width: 36px; } .msg-edit-btns button { min-height: 40px; } }
+@media (max-width: 600px) {
+    .msg-actions.is-user { max-width: 100%; }
+    .msg-card.usr.is-editing { width: 100%; max-width: 100%; }
+    .msg-act-regen span { display: none; }
+    .msg-edit-hint { display: none; }
+}
+@media print { .msg-actions, .msg-edit-box { display: none !important; } }

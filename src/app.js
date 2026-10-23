@@ -199,23 +199,22 @@ class OXAlphaApp {
             console.warn('LocalStorage quota reached, optimizing storage payload...');
             try {
                 if (key === 'ox_alpha_sessions_v2' && this.sessions) {
-                    const lightweight = this.sessions.map(s => ({
-                        ...s,
-                        messages: s.messages.map(m => {
-                            if (m.attachments && Array.isArray(m.attachments)) {
-                                return {
-                                    ...m,
-                                    attachments: m.attachments.map(att => ({
-                                        name: att.name,
-                                        isGitHubProject: att.isGitHubProject,
-                                        isZipProject: att.isZipProject,
-                                        textContent: att.textContent && att.textContent.length > 2000 ? `[محتوى المرفق: ${att.name} (${Math.round(att.textContent.length / 1000)}k حرف)]` : att.textContent
-                                    }))
-                                };
-                            }
-                            return m;
-                        })
-                    }));
+                    const lightAtt = att => ({
+                        name: att.name,
+                        isGitHubProject: att.isGitHubProject,
+                        isZipProject: att.isZipProject,
+                        textContent: att.textContent && att.textContent.length > 2000 ? `[محتوى المرفق: ${att.name} (${Math.round(att.textContent.length / 1000)}k حرف)]` : att.textContent
+                    });
+                    // Recursive: stored message versions (src/features/22-branches.js) keep their own attachments and tails
+                    const lightMsg = m => {
+                        if (!m || typeof m !== 'object') return m;
+                        const out = { ...m };
+                        if (Array.isArray(m.attachments)) out.attachments = m.attachments.map(lightAtt);
+                        if (Array.isArray(m.tail)) out.tail = m.tail.map(lightMsg);
+                        if (Array.isArray(m.versions)) out.versions = m.versions.map(lightMsg);
+                        return out;
+                    };
+                    const lightweight = this.sessions.map(s => ({ ...s, messages: s.messages.map(lightMsg) }));
                     localStorage.setItem(key, OXLZ.pack(JSON.stringify(lightweight)));
                 }
             } catch (e2) {
